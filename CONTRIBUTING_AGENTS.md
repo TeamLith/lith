@@ -193,14 +193,14 @@ This file is the task control plane for multi-agent execution and human review.
   - [ ] Support platform-appropriate navigation patterns on iOS and macOS.
   - [ ] Add placeholder empty states for unfinished sections.
   - [ ] Add lightweight UI tests or previews for shell navigation.
-- Status: TODO
-- Agent: unassigned
-- Last updated: 2026-04-12 15:12 IST
+- Status: IN_PROGRESS
+- Agent: codex
+- Last updated: 2026-04-13 03:34:48 IST +0530
 - PR/Commit: n/a
 - Changed files:
   - n/a
 - Notes/Blockers:
-  - Depends on `Bootstrap App Persistence and Dependency Container`.
+  - n/a
 
 ## Task: Implement Note List and Detail UI
 
