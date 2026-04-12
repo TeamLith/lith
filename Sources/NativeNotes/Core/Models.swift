@@ -98,14 +98,24 @@ public struct RSSFeed: Identifiable, Codable, Hashable, Sendable {
     public var category: String?
     public var lastFetchedAt: Date?
     public var isActive: Bool
+    public var refreshIntervalSeconds: Int32
 
-    public init(id: UUID = UUID(), title: String, feedURL: URL, category: String? = nil, lastFetchedAt: Date? = nil, isActive: Bool = true) {
+    public init(
+        id: UUID = UUID(),
+        title: String,
+        feedURL: URL,
+        category: String? = nil,
+        lastFetchedAt: Date? = nil,
+        isActive: Bool = true,
+        refreshIntervalSeconds: Int32 = 3_600
+    ) {
         self.id = id
         self.title = title
         self.feedURL = feedURL
         self.category = category
         self.lastFetchedAt = lastFetchedAt
         self.isActive = isActive
+        self.refreshIntervalSeconds = refreshIntervalSeconds
     }
 }
 
@@ -125,6 +135,7 @@ public struct RSSItem: Identifiable, Codable, Hashable, Sendable {
     public var publishedAt: Date?
     public var linkURL: URL
     public var status: RSSItemStatus
+    public var savedNoteID: UUID?
 
     public init(
         id: UUID = UUID(),
@@ -134,7 +145,8 @@ public struct RSSItem: Identifiable, Codable, Hashable, Sendable {
         author: String? = nil,
         publishedAt: Date? = nil,
         linkURL: URL,
-        status: RSSItemStatus = .new
+        status: RSSItemStatus = .new,
+        savedNoteID: UUID? = nil
     ) {
         self.id = id
         self.feedID = feedID
@@ -144,6 +156,83 @@ public struct RSSItem: Identifiable, Codable, Hashable, Sendable {
         self.publishedAt = publishedAt
         self.linkURL = linkURL
         self.status = status
+        self.savedNoteID = savedNoteID
+    }
+}
+
+public struct ParsedRSSFeed: Hashable, Sendable {
+    public var title: String
+    public var feedURL: URL
+    public var category: String?
+
+    public init(title: String, feedURL: URL, category: String? = nil) {
+        self.title = title
+        self.feedURL = feedURL
+        self.category = category
+    }
+}
+
+public struct ParsedRSSItem: Hashable, Sendable {
+    public var title: String
+    public var content: String
+    public var author: String?
+    public var publishedAt: Date?
+    public var linkURL: URL
+
+    public init(
+        title: String,
+        content: String,
+        author: String? = nil,
+        publishedAt: Date? = nil,
+        linkURL: URL
+    ) {
+        self.title = title
+        self.content = content
+        self.author = author
+        self.publishedAt = publishedAt
+        self.linkURL = linkURL
+    }
+}
+
+extension RSSFeed {
+    public init(
+        parsedFeed: ParsedRSSFeed,
+        id: UUID = UUID(),
+        lastFetchedAt: Date? = nil,
+        isActive: Bool = true,
+        refreshIntervalSeconds: Int32 = 3_600
+    ) {
+        self.init(
+            id: id,
+            title: parsedFeed.title,
+            feedURL: parsedFeed.feedURL,
+            category: parsedFeed.category,
+            lastFetchedAt: lastFetchedAt,
+            isActive: isActive,
+            refreshIntervalSeconds: refreshIntervalSeconds
+        )
+    }
+}
+
+extension RSSItem {
+    public init(
+        parsedItem: ParsedRSSItem,
+        feedID: UUID,
+        id: UUID = UUID(),
+        status: RSSItemStatus = .new,
+        savedNoteID: UUID? = nil
+    ) {
+        self.init(
+            id: id,
+            feedID: feedID,
+            title: parsedItem.title,
+            content: parsedItem.content,
+            author: parsedItem.author,
+            publishedAt: parsedItem.publishedAt,
+            linkURL: parsedItem.linkURL,
+            status: status,
+            savedNoteID: savedNoteID
+        )
     }
 }
 

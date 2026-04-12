@@ -75,15 +75,22 @@ This file is the task control plane for multi-agent execution and human review.
   - Feed/item persistence and upsert behavior
   - Parser mapping tests
 - Steps:
-  - [ ] Add `RssFeed` and `RssItem` data mappings.
-  - [ ] Add repository methods for add/list/update/upsert.
-  - [ ] Add tests for XML parser mapping and de-duplication.
-- Status: IN_PROGRESS
+  - [x] Add `RssFeed` and `RssItem` data mappings.
+  - [x] Add repository methods for add/list/update/upsert.
+  - [x] Add tests for XML parser mapping and de-duplication.
+- Status: DONE
 - Agent: codex
-- Last updated: 2026-04-12 15:22 IST
+- Last updated: 2026-04-12 15:40 IST
 - PR/Commit: n/a
 - Changed files:
-  - n/a
+  - CONTRIBUTING_AGENTS.md
+  - Sources/NativeNotes/Core/Contracts.swift
+  - Sources/NativeNotes/Core/Models.swift
+  - Sources/NativeNotes/Persistence/CoreDataNoteRepository.swift
+  - Sources/NativeNotes/Persistence/CoreDataRSSRepository.swift
+  - Sources/NativeNotes/Services/InMemoryStores.swift
+  - Tests/NativeNotesTests/NoteRepositoryTests.swift
+  - Tests/NativeNotesTests/RSSRepositoryTests.swift
 - Notes/Blockers:
   - n/a
 
