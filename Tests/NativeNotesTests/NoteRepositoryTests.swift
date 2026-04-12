@@ -5,7 +5,7 @@ import Testing
 @testable import NativeNotes
 
 @Test func coreDataNoteRepositoryCreatesAndFetchesNotes() async throws {
-    let repository = CoreDataNoteRepository(container: NativeNotesPersistentStore.makeContainer(inMemory: true))
+    let repository = CoreDataNoteRepository(container: try NativeNotesPersistentStore.makeContainer(inMemory: true))
     let note = Note(
         id: UUID(),
         title: "Design notes",
@@ -28,7 +28,7 @@ import Testing
 }
 
 @Test func coreDataNoteRepositoryUpdatesExistingNotesByIdentifier() async throws {
-    let repository = CoreDataNoteRepository(container: NativeNotesPersistentStore.makeContainer(inMemory: true))
+    let repository = CoreDataNoteRepository(container: try NativeNotesPersistentStore.makeContainer(inMemory: true))
     let id = UUID()
     let original = Note(
         id: id,
@@ -63,7 +63,7 @@ import Testing
 }
 
 @Test func coreDataNoteRepositoryDeletesNotes() async throws {
-    let repository = CoreDataNoteRepository(container: NativeNotesPersistentStore.makeContainer(inMemory: true))
+    let repository = CoreDataNoteRepository(container: try NativeNotesPersistentStore.makeContainer(inMemory: true))
     let note = Note(title: "Temporary", bodyMarkdown: "Delete me")
 
     try await repository.upsert(note)
@@ -77,7 +77,7 @@ import Testing
 }
 
 @Test func coreDataNoteRepositoryReturnsNewestNotesFirst() async throws {
-    let repository = CoreDataNoteRepository(container: NativeNotesPersistentStore.makeContainer(inMemory: true))
+    let repository = CoreDataNoteRepository(container: try NativeNotesPersistentStore.makeContainer(inMemory: true))
     let older = Note(title: "Older", bodyMarkdown: "", updatedAt: Date(timeIntervalSince1970: 10))
     let newer = Note(title: "Newer", bodyMarkdown: "", updatedAt: Date(timeIntervalSince1970: 20))
 

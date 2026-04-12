@@ -6,8 +6,8 @@ public final class CoreDataNoteRepository: @unchecked Sendable, NoteRepository {
     private let container: NSPersistentContainer
     private let context: NSManagedObjectContext
 
-    public init() {
-        self.container = NativeNotesPersistentStore.makeContainer()
+    public init() throws {
+        self.container = try NativeNotesPersistentStore.makeContainer()
         self.context = container.newBackgroundContext()
         self.context.mergePolicy = NSMergePolicy(merge: .mergeByPropertyObjectTrumpMergePolicyType)
         self.context.undoManager = nil
@@ -21,15 +21,15 @@ public final class CoreDataNoteRepository: @unchecked Sendable, NoteRepository {
     }
 
     public func upsert(_ note: Note) async throws {
-        try context.performSync {
+        try await context.perform {
             let managedNote = try self.fetchManagedNote(id: note.id) ?? ManagedNote(context: self.context)
-            managedNote.apply(note)
+            try managedNote.apply(note)
             try self.saveIfNeeded()
         }
     }
 
     public func delete(noteID: UUID) async throws {
-        try context.performSync {
+        try await context.perform {
             guard let managedNote = try self.fetchManagedNote(id: noteID) else {
                 return
             }
@@ -39,7 +39,7 @@ public final class CoreDataNoteRepository: @unchecked Sendable, NoteRepository {
     }
 
     public func allNotes() async throws -> [Note] {
-        try context.performSync {
+        try await context.perform {
             let request = ManagedNote.fetchRequest()
             request.sortDescriptors = [NSSortDescriptor(key: #keyPath(ManagedNote.updatedAt), ascending: false)]
             return try self.context.fetch(request).map { try $0.toDomainNote() }
@@ -47,7 +47,7 @@ public final class CoreDataNoteRepository: @unchecked Sendable, NoteRepository {
     }
 
     public func note(id: UUID) async throws -> Note? {
-        try context.performSync {
+        try await context.perform {
             try self.fetchManagedNote(id: id)?.toDomainNote()
         }
     }
@@ -67,7 +67,7 @@ public final class CoreDataNoteRepository: @unchecked Sendable, NoteRepository {
 }
 
 enum NativeNotesPersistentStore {
-    static func makeContainer(inMemory: Bool = false) -> NSPersistentContainer {
+    static func makeContainer(inMemory: Bool = false) throws -> NSPersistentContainer {
         let container = NSPersistentContainer(name: "NativeNotes", managedObjectModel: managedObjectModel())
         let description = NSPersistentStoreDescription()
         if inMemory {
@@ -78,8 +78,12 @@ enum NativeNotesPersistentStore {
         }
         description.shouldAddStoreAsynchronously = false
         container.persistentStoreDescriptions = [description]
+        var loadError: Error?
         container.loadPersistentStores { _, error in
-            precondition(error == nil, "Failed to load NativeNotes persistent store: \(String(describing: error))")
+            loadError = error
+        }
+        if let error = loadError {
+            throw error
         }
         container.viewContext.mergePolicy = NSMergePolicy(merge: .mergeByPropertyObjectTrumpMergePolicyType)
         container.viewContext.undoManager = nil
@@ -160,7 +164,7 @@ extension ManagedNote {
         NSFetchRequest<ManagedNote>(entityName: "Note")
     }
 
-    func apply(_ note: Note) {
+    func apply(_ note: Note) throws {
         id = note.id
         title = note.title
         bodyMarkdown = note.bodyMarkdown
@@ -171,8 +175,8 @@ extension ManagedNote {
         isPinned = note.isPinned
         isArchived = note.isArchived
         isTrashed = note.isTrashed
-        tagsData = encode(note.tags)
-        metadataData = encode(note.metadata)
+        tagsData = try encode(note.tags)
+        metadataData = try encode(note.metadata)
     }
 
     func toDomainNote() throws -> Note {
@@ -196,12 +200,8 @@ extension ManagedNote {
         )
     }
 
-    private func encode<T: Encodable>(_ value: T) -> Data {
-        do {
-            return try JSONEncoder().encode(value)
-        } catch {
-            preconditionFailure("Failed to encode managed note payload: \(error)")
-        }
+    private func encode<T: Encodable>(_ value: T) throws -> Data {
+        try JSONEncoder().encode(value)
     }
 
     private func decode<T: Decodable>(_ data: Data, as type: T.Type) throws -> T {
@@ -211,20 +211,6 @@ extension ManagedNote {
 
 enum CoreDataNoteRepositoryError: Error {
     case invalidSource(String)
-}
-
-extension NSManagedObjectContext {
-    fileprivate func performSync<T: Sendable>(_ work: @escaping @Sendable () throws -> T) throws -> T {
-        let box = ManagedContextResultBox<T>()
-        performAndWait {
-            box.result = Result { try work() }
-        }
-        return try box.result.get()
-    }
-}
-
-private final class ManagedContextResultBox<T: Sendable>: @unchecked Sendable {
-    var result: Result<T, Error>!
 }
 
 private enum ModelCache {
