@@ -162,8 +162,16 @@ private struct ShellDetailView: View {
 
 #if DEBUG
 @MainActor
-private let previewDependencies = try! AppDependencyContainer(mode: .inMemory)
+private func makePreviewDependencies() -> AppDependencyContainer {
+    do {
+        return try AppDependencyContainer(mode: .inMemory)
+    } catch {
+        preconditionFailure("Failed to initialize preview AppDependencyContainer in .inMemory mode: \(error)")
+    }
+}
 
+@MainActor
+private let previewDependencies = makePreviewDependencies()
 #Preview("iOS Shell") {
     RootView(dependencies: previewDependencies)
 }
