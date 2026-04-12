@@ -2,7 +2,9 @@
 
 This file is the task control plane for multi-agent execution and human review.
 
+For repo-local agent instructions, start with `AGENTS.md`.
 For stable repository orientation, read `REPO_MAP.md` before using this task board.
+For reviewer or coordination runs, also use `REVIEW_POLICY.md`.
 
 ## 1. Global checklist
 
@@ -62,9 +64,9 @@ For stable repository orientation, read `REPO_MAP.md` before using this task boa
 - PR/Commit: n/a
 - Changed files:
   - CONTRIBUTING_AGENTS.md
-  - Sources/NativeNotes/Core/Models.swift
-  - Sources/NativeNotes/Persistence/CoreDataNoteRepository.swift
-  - Tests/NativeNotesTests/NoteRepositoryTests.swift
+  - Sources/Lith/Core/Models.swift
+  - Sources/Lith/Persistence/CoreDataNoteRepository.swift
+  - Tests/LithTests/NoteRepositoryTests.swift
 - Notes/Blockers:
   - n/a
 
@@ -86,13 +88,13 @@ For stable repository orientation, read `REPO_MAP.md` before using this task boa
 - PR/Commit: n/a
 - Changed files:
   - CONTRIBUTING_AGENTS.md
-  - Sources/NativeNotes/Core/Contracts.swift
-  - Sources/NativeNotes/Core/Models.swift
-  - Sources/NativeNotes/Persistence/CoreDataNoteRepository.swift
-  - Sources/NativeNotes/Persistence/CoreDataRSSRepository.swift
-  - Sources/NativeNotes/Services/InMemoryStores.swift
-  - Tests/NativeNotesTests/NoteRepositoryTests.swift
-  - Tests/NativeNotesTests/RSSRepositoryTests.swift
+  - Sources/Lith/Core/Contracts.swift
+  - Sources/Lith/Core/Models.swift
+  - Sources/Lith/Persistence/CoreDataNoteRepository.swift
+  - Sources/Lith/Persistence/CoreDataRSSRepository.swift
+  - Sources/Lith/Services/InMemoryStores.swift
+  - Tests/LithTests/NoteRepositoryTests.swift
+  - Tests/LithTests/RSSRepositoryTests.swift
 - Notes/Blockers:
   - n/a
 
@@ -114,10 +116,10 @@ For stable repository orientation, read `REPO_MAP.md` before using this task boa
 - PR/Commit: n/a
 - Changed files:
   - CONTRIBUTING_AGENTS.md
-  - Sources/NativeNotes/Core/Contracts.swift
-  - Sources/NativeNotes/Services/SearchService.swift
-  - Tests/NativeNotesTests/CoreBehaviorTests.swift
-  - Tests/NativeNotesTests/SearchServiceTests.swift
+  - Sources/Lith/Core/Contracts.swift
+  - Sources/Lith/Services/SearchService.swift
+  - Tests/LithTests/CoreBehaviorTests.swift
+  - Tests/LithTests/SearchServiceTests.swift
 - Notes/Blockers:
   - n/a
 
@@ -144,14 +146,14 @@ For stable repository orientation, read `REPO_MAP.md` before using this task boa
   - CONTRIBUTING_AGENTS.md
   - Package.swift
   - project.yml
-  - NativeNotes.xcworkspace/contents.xcworkspacedata
-  - NativeNotesApps.xcodeproj/project.pbxproj
-  - NativeNotesApps.xcodeproj/project.xcworkspace/contents.xcworkspacedata
-  - NativeNotesApps.xcodeproj/xcshareddata/xcschemes/NativeNotesiOS.xcscheme
-  - NativeNotesApps.xcodeproj/xcshareddata/xcschemes/NativeNotesmacOS.xcscheme
-  - Apps/NativeNotesApp/Sources/Shared/RootView.swift
-  - Apps/NativeNotesApp/Sources/iOS/NativeNotesiOSApp.swift
-  - Apps/NativeNotesApp/Sources/macOS/NativeNotesmacOSApp.swift
+  - Lith.xcworkspace/contents.xcworkspacedata
+  - LithApps.xcodeproj/project.pbxproj
+  - LithApps.xcodeproj/project.xcworkspace/contents.xcworkspacedata
+  - LithApps.xcodeproj/xcshareddata/xcschemes/LithiOS.xcscheme
+  - LithApps.xcodeproj/xcshareddata/xcschemes/LithmacOS.xcscheme
+  - Apps/LithApp/Sources/Shared/RootView.swift
+  - Apps/LithApp/Sources/iOS/LithiOSApp.swift
+  - Apps/LithApp/Sources/macOS/LithmacOSApp.swift
 - Notes/Blockers:
   - n/a
 
@@ -174,11 +176,11 @@ For stable repository orientation, read `REPO_MAP.md` before using this task boa
 - PR/Commit: n/a
 - Changed files:
   - CONTRIBUTING_AGENTS.md
-  - Sources/NativeNotes/AppDependencyContainer.swift
-  - Apps/NativeNotesApp/Sources/Shared/RootView.swift
-  - Apps/NativeNotesApp/Sources/iOS/NativeNotesiOSApp.swift
-  - Apps/NativeNotesApp/Sources/macOS/NativeNotesmacOSApp.swift
-  - Tests/NativeNotesTests/AppDependencyContainerTests.swift
+  - Sources/Lith/AppDependencyContainer.swift
+  - Apps/LithApp/Sources/Shared/RootView.swift
+  - Apps/LithApp/Sources/iOS/LithiOSApp.swift
+  - Apps/LithApp/Sources/macOS/LithmacOSApp.swift
+  - Tests/LithTests/AppDependencyContainerTests.swift
 - Notes/Blockers:
   - n/a
 
@@ -638,16 +640,17 @@ For stable repository orientation, read `REPO_MAP.md` before using this task boa
 
 Use this bundle for each coding session:
 
-1. `REPO_MAP.md`
-2. `README.md`
-3. `ARCHITECTURE.md`
-4. `DATA_MODEL.md`
-5. Relevant feature/sync spec
-6. Relevant task section from this file
+1. `AGENTS.md`
+2. `REPO_MAP.md`
+3. `README.md`
+4. `ARCHITECTURE.md`
+5. `DATA_MODEL.md`
+6. Relevant feature/sync spec
+7. Relevant task section from this file
 
 Prompt pattern:
 
 > You are implementing `<Task Name>` from `CONTRIBUTING_AGENTS.md`.
-> Use these specs: `REPO_MAP.md`, `README.md`, `ARCHITECTURE.md`, `DATA_MODEL.md`, `<FEATURE_FILE>.md`, and the task block.
+> Use these specs: `AGENTS.md`, `REPO_MAP.md`, `README.md`, `ARCHITECTURE.md`, `DATA_MODEL.md`, `<FEATURE_FILE>.md`, and the task block.
 > Produce code and tests for a Swift/SwiftUI + Core Data project.
-> Update task status/checklist and include changed-file summary.
+> Update task status/checklist, review whether `REPO_MAP.md` needs changes, and include changed-file summary.
