@@ -247,9 +247,9 @@ For reviewer or coordination runs, also use `REVIEW_POLICY.md`.
   - [ ] Wire note editing and autosave/update behavior in note detail.
   - [ ] Add archive/delete or trash interactions consistent with the data model.
   - [ ] Add tests covering repository-backed CRUD flows from UI-facing view models.
-- Status: TODO
-- Agent: unassigned
-- Last updated: 2026-04-12 15:12 IST
+- Status: IN_PROGRESS
+- Agent: codex
+- Last updated: 2026-04-13 04:30:33 IST +0530
 - PR/Commit: n/a
 - Changed files:
   - n/a
