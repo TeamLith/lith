@@ -3,9 +3,14 @@ import NativeNotes
 
 struct RootView: View {
     private let title: String
+    private let dependencies: AppDependencyContainer
 
-    init(title: String = "NativeNotes") {
+    init(
+        title: String = "NativeNotes",
+        dependencies: AppDependencyContainer
+    ) {
         self.title = title
+        self.dependencies = dependencies
     }
 
     var body: some View {
@@ -19,6 +24,10 @@ struct RootView: View {
                     .font(.headline)
 
                 Text("Sample source: \(NoteSource.manual.rawValue)")
+                    .font(.subheadline)
+                    .foregroundStyle(.secondary)
+
+                Text("Persistence bootstrap: \(dependencies.persistentContainer.name)")
                     .font(.subheadline)
                     .foregroundStyle(.secondary)
             }
