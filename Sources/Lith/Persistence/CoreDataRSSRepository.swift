@@ -8,7 +8,7 @@ public final class CoreDataRSSRepository: @unchecked Sendable, RSSRepository {
     private let context: NSManagedObjectContext
 
     public init() throws {
-        self.container = try NativeNotesPersistentStore.makeContainer()
+        self.container = try LithPersistentStore.makeContainer()
         self.context = container.newBackgroundContext()
         self.context.mergePolicy = NSMergePolicy(merge: .mergeByPropertyObjectTrumpMergePolicyType)
         self.context.undoManager = nil
@@ -294,7 +294,7 @@ extension ManagedRSSItem {
     }
 }
 
-extension NativeNotesPersistentStore {
+extension LithPersistentStore {
     static func makeRSSEntities() -> [NSEntityDescription] {
         let feedEntity = NSEntityDescription()
         feedEntity.name = "RSSFeed"

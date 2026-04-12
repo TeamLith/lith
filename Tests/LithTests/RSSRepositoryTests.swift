@@ -1,6 +1,6 @@
 import Foundation
 import Testing
-@testable import NativeNotes
+@testable import Lith
 
 @Test func parsedRSSFeedMapsToDomainFeed() {
     let parsedFeed = ParsedRSSFeed(
@@ -83,7 +83,7 @@ import CoreData
 
 @available(macOS 10.15, iOS 13.0, *)
 @Test func coreDataRSSRepositoryAddsListsAndUpdatesFeeds() async throws {
-    let repository = CoreDataRSSRepository(container: try NativeNotesPersistentStore.makeContainer(inMemory: true))
+    let repository = CoreDataRSSRepository(container: try LithPersistentStore.makeContainer(inMemory: true))
     let feed = RSSFeed(
         title: "Engineering",
         feedURL: URL(string: "https://example.com/feed.xml")!,
@@ -108,7 +108,7 @@ import CoreData
 
 @available(macOS 10.15, iOS 13.0, *)
 @Test func coreDataRSSRepositoryDeduplicatesAndPreservesWorkflowState() async throws {
-    let repository = CoreDataRSSRepository(container: try NativeNotesPersistentStore.makeContainer(inMemory: true))
+    let repository = CoreDataRSSRepository(container: try LithPersistentStore.makeContainer(inMemory: true))
     let feed = RSSFeed(title: "Engineering", feedURL: URL(string: "https://example.com/feed.xml")!)
     let savedNoteID = UUID()
 

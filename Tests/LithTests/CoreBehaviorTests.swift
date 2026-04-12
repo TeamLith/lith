@@ -1,6 +1,6 @@
 import Foundation
 import Testing
-@testable import NativeNotes
+@testable import Lith
 
 @Test func wikiLinkParserExtractsTargets() {
     let parser = WikiLinkParser()

@@ -2,7 +2,7 @@
 import CoreData
 import Foundation
 import Testing
-@testable import NativeNotes
+@testable import Lith
 
 @available(macOS 10.15, iOS 13.0, *)
 @Test func appDependencyContainerBootstrapsInMemoryStore() throws {

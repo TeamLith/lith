@@ -31,17 +31,17 @@ Note:
 
 Asset catalog is now wired in both targets:
 
-- `Apps/NativeNotesApp/Resources/Assets.xcassets/AppIcon.appiconset`
+- `Apps/LithApp/Resources/Assets.xcassets/AppIcon.appiconset`
 
 Current icon files are placeholders generated from the system generic app icon. Replace them with your brand assets before external testing/release.
 
 Where to update:
 
-1. Open `NativeNotes.xcworkspace` in Xcode.
+1. Open `Lith.xcworkspace` in Xcode.
 2. Open `Assets.xcassets -> AppIcon`.
 3. Drag your `Lith` icon images into all required slots.
 4. Commit updated icon files in:
-   - `Apps/NativeNotesApp/Resources/Assets.xcassets/AppIcon.appiconset/`
+   - `Apps/LithApp/Resources/Assets.xcassets/AppIcon.appiconset/`
 
 Also in App Store Connect:
 
@@ -84,14 +84,14 @@ The workflow uploads `.ipa`/`.pkg` artifacts to the GitHub run as well.
 
 Mac:
 
-1. Xcode scheme: `NativeNotesmacOS`
+1. Xcode scheme: `LithmacOS`
 2. Destination: `My Mac`
 3. Run (`Cmd+R`)
 
 iPhone:
 
 1. Connect iPhone and enable Developer Mode.
-2. Xcode scheme: `NativeNotesiOS`
+2. Xcode scheme: `LithiOS`
 3. Destination: your iPhone
 4. Run (`Cmd+R`)
 5. Trust the dev certificate on device if prompted.

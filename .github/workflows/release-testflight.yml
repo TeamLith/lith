@@ -31,7 +31,7 @@ jobs:
       ASC_KEY_ID: ${{ secrets.APP_STORE_CONNECT_KEY_ID }}
       ASC_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
       ASC_PRIVATE_KEY: ${{ secrets.APP_STORE_CONNECT_PRIVATE_KEY }}
-      SCHEME: NativeNotesiOS
+      SCHEME: LithiOS
       DESTINATION: generic/platform=iOS
       ARCHIVE_NAME: LithiOS
       ASSET_GLOB: "*.ipa"
@@ -63,7 +63,7 @@ jobs:
           archive_path="$RUNNER_TEMP/${ARCHIVE_NAME}.xcarchive"
           set +e
           xcodebuild \
-            -workspace NativeNotes.xcworkspace \
+            -workspace Lith.xcworkspace \
             -scheme "$SCHEME" \
             -configuration Release \
             -destination "$DESTINATION" \
@@ -164,7 +164,7 @@ jobs:
       ASC_KEY_ID: ${{ secrets.APP_STORE_CONNECT_KEY_ID }}
       ASC_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
       ASC_PRIVATE_KEY: ${{ secrets.APP_STORE_CONNECT_PRIVATE_KEY }}
-      SCHEME: NativeNotesmacOS
+      SCHEME: LithmacOS
       DESTINATION: generic/platform=macOS
       ARCHIVE_NAME: LithmacOS
       ASSET_GLOB: "*.pkg"
@@ -196,7 +196,7 @@ jobs:
           archive_path="$RUNNER_TEMP/${ARCHIVE_NAME}.xcarchive"
           set +e
           xcodebuild \
-            -workspace NativeNotes.xcworkspace \
+            -workspace Lith.xcworkspace \
             -scheme "$SCHEME" \
             -configuration Release \
             -destination "$DESTINATION" \

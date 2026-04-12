@@ -1,8 +1,8 @@
 import SwiftUI
-import NativeNotes
+import Lith
 
 @main
-struct NativeNotesiOSApp: App {
+struct LithiOSApp: App {
     private let dependencies: AppDependencyContainer
 
     init() {
@@ -19,7 +19,7 @@ struct NativeNotesiOSApp: App {
         do {
             return try AppDependencyContainer(mode: .live)
         } catch {
-            preconditionFailure("Failed to bootstrap NativeNotes iOS dependencies: \(error)")
+            preconditionFailure("Failed to bootstrap Lith iOS dependencies: \(error)")
         }
     }
 }

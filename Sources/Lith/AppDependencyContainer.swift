@@ -17,7 +17,7 @@ public final class AppDependencyContainer: @unchecked Sendable {
     public let actionItemExtractionService: ActionItemExtractionServiceProtocol
 
     public init(mode: AppBootstrapMode = .live) throws {
-        let persistentContainer = try NativeNotesPersistentStore.makeContainer(inMemory: mode == .inMemory)
+        let persistentContainer = try LithPersistentStore.makeContainer(inMemory: mode == .inMemory)
         self.persistentContainer = persistentContainer
 
         let noteRepository = CoreDataNoteRepository(container: persistentContainer)

@@ -8,7 +8,7 @@ public final class CoreDataNoteRepository: @unchecked Sendable, NoteRepository {
     private let context: NSManagedObjectContext
 
     public init() throws {
-        self.container = try NativeNotesPersistentStore.makeContainer()
+        self.container = try LithPersistentStore.makeContainer()
         self.context = container.newBackgroundContext()
         self.context.mergePolicy = NSMergePolicy(merge: .mergeByPropertyObjectTrumpMergePolicyType)
         self.context.undoManager = nil
@@ -79,7 +79,7 @@ public final class CoreDataNoteRepository: @unchecked Sendable, NoteRepository {
     }
 }
 
-enum NativeNotesPersistentStore {
+enum LithPersistentStore {
     static func makeContainer(inMemory: Bool = false) throws -> NSPersistentContainer {
         let container = NSPersistentContainer(name: "Lith", managedObjectModel: managedObjectModel())
         let description = NSPersistentStoreDescription()
@@ -229,7 +229,7 @@ enum CoreDataNoteRepositoryError: Error {
 private enum ModelCache {
     static let model: NSManagedObjectModel = {
         let model = NSManagedObjectModel()
-        model.entities = [NativeNotesPersistentStore.makeNoteEntity()] + NativeNotesPersistentStore.makeRSSEntities()
+        model.entities = [LithPersistentStore.makeNoteEntity()] + LithPersistentStore.makeRSSEntities()
         return model
     }()
 }

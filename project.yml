@@ -8,21 +8,22 @@ configs:
   Debug: debug
   Release: release
 packages:
-  NativeNotes:
+  Lith:
     path: .
 settings:
   base:
     SWIFT_VERSION: 6.0
 targets:
-  NativeNotesiOS:
+  LithiOS:
     type: application
     platform: iOS
     sources:
-      - Apps/NativeNotesApp/Sources/Shared
-      - Apps/NativeNotesApp/Sources/iOS
+      - Apps/LithApp/Sources/Shared
+      - Apps/LithApp/Sources/iOS
+      - Apps/LithApp/Resources
     dependencies:
-      - package: NativeNotes
-        product: NativeNotes
+      - package: Lith
+        product: Lith
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: me.lith.ios
@@ -33,15 +34,16 @@ targets:
         INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad: UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight
         CURRENT_PROJECT_VERSION: 1
         MARKETING_VERSION: 0.1.0
-  NativeNotesmacOS:
+  LithmacOS:
     type: application
     platform: macOS
     sources:
-      - Apps/NativeNotesApp/Sources/Shared
-      - Apps/NativeNotesApp/Sources/macOS
+      - Apps/LithApp/Sources/Shared
+      - Apps/LithApp/Sources/macOS
+      - Apps/LithApp/Resources
     dependencies:
-      - package: NativeNotes
-        product: NativeNotes
+      - package: Lith
+        product: Lith
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: me.lith.macos
@@ -50,20 +52,20 @@ targets:
         CURRENT_PROJECT_VERSION: 1
         MARKETING_VERSION: 0.1.0
 schemes:
-  NativeNotesiOS:
+  LithiOS:
     shared: true
     build:
       targets:
-        NativeNotesiOS: all
+        LithiOS: all
     run:
       config: Debug
     archive:
       config: Release
-  NativeNotesmacOS:
+  LithmacOS:
     shared: true
     build:
       targets:
-        NativeNotesmacOS: all
+        LithmacOS: all
     run:
       config: Debug
     archive:

@@ -1,6 +1,6 @@
 import Foundation
 import Testing
-@testable import NativeNotes
+@testable import Lith
 
 @Test func searchMatchesTitleBodyTagsMetadataAndTranscript() async throws {
     let titleNote = Note(id: UUID(), title: "Project Atlas", bodyMarkdown: "Kickoff", tags: [])

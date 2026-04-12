@@ -1,5 +1,5 @@
 import SwiftUI
-import NativeNotes
+import Lith
 
 struct RootView: View {
     private let title: String
