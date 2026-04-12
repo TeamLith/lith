@@ -50,6 +50,8 @@ targets:
         PRODUCT_BUNDLE_IDENTIFIER: me.lith.macos
         GENERATE_INFOPLIST_FILE: YES
         INFOPLIST_KEY_CFBundleDisplayName: Lith
+        INFOPLIST_KEY_LSApplicationCategoryType: public.app-category.productivity
+        CODE_SIGN_ENTITLEMENTS: Apps/LithApp/Sources/macOS/LithmacOS.entitlements
         CURRENT_PROJECT_VERSION: 1
         MARKETING_VERSION: 0.1.0
 schemes:
