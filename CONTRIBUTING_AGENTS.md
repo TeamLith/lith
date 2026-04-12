@@ -189,16 +189,17 @@ This file is the task control plane for multi-agent execution and human review.
   - SwiftUI shell with top-level navigation
   - Placeholder screens for major product areas
 - Steps:
-  - [ ] Build root navigation shell for notes, RSS, search/graph, and settings.
-  - [ ] Support platform-appropriate navigation patterns on iOS and macOS.
-  - [ ] Add placeholder empty states for unfinished sections.
-  - [ ] Add lightweight UI tests or previews for shell navigation.
-- Status: IN_PROGRESS
+  - [x] Build root navigation shell for notes, RSS, search/graph, and settings.
+  - [x] Support platform-appropriate navigation patterns on iOS and macOS.
+  - [x] Add placeholder empty states for unfinished sections.
+  - [x] Add lightweight UI tests or previews for shell navigation.
+- Status: DONE
 - Agent: codex
-- Last updated: 2026-04-13 03:34:48 IST +0530
+- Last updated: 2026-04-13 03:37:32 IST +0530
 - PR/Commit: n/a
 - Changed files:
-  - n/a
+  - CONTRIBUTING_AGENTS.md
+  - Apps/LithApp/Sources/Shared/RootView.swift
 - Notes/Blockers:
   - n/a
 
