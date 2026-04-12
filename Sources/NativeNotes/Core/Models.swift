@@ -49,6 +49,28 @@ public struct Note: Identifiable, Codable, Hashable, Sendable {
     }
 }
 
+extension Note {
+    private enum CodingKeys: String, CodingKey {
+        case id, title, bodyMarkdown, tags, createdAt, updatedAt, accessedAt, source, isPinned, isArchived, isTrashed, metadata
+    }
+
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        id = try container.decode(UUID.self, forKey: .id)
+        title = try container.decode(String.self, forKey: .title)
+        bodyMarkdown = try container.decode(String.self, forKey: .bodyMarkdown)
+        tags = try container.decodeIfPresent(Set<String>.self, forKey: .tags) ?? []
+        createdAt = try container.decode(Date.self, forKey: .createdAt)
+        updatedAt = try container.decode(Date.self, forKey: .updatedAt)
+        accessedAt = try container.decodeIfPresent(Date.self, forKey: .accessedAt)
+        source = try container.decodeIfPresent(NoteSource.self, forKey: .source) ?? .manual
+        isPinned = try container.decodeIfPresent(Bool.self, forKey: .isPinned) ?? false
+        isArchived = try container.decodeIfPresent(Bool.self, forKey: .isArchived) ?? false
+        isTrashed = try container.decodeIfPresent(Bool.self, forKey: .isTrashed) ?? false
+        metadata = try container.decodeIfPresent([String: String].self, forKey: .metadata) ?? [:]
+    }
+}
+
 public enum LinkType: String, Codable, Sendable {
     case wikilink
     case rssSource
