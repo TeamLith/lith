@@ -1,0 +1,70 @@
+name: NativeNotesApps
+options:
+  minimumXcodeGenVersion: 2.45.0
+  deploymentTarget:
+    iOS: "17.0"
+    macOS: "14.0"
+configs:
+  Debug: debug
+  Release: release
+packages:
+  NativeNotes:
+    path: .
+settings:
+  base:
+    SWIFT_VERSION: 6.0
+targets:
+  NativeNotesiOS:
+    type: application
+    platform: iOS
+    sources:
+      - Apps/NativeNotesApp/Sources/Shared
+      - Apps/NativeNotesApp/Sources/iOS
+    dependencies:
+      - package: NativeNotes
+        product: NativeNotes
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.nativenotes.ios
+        GENERATE_INFOPLIST_FILE: YES
+        INFOPLIST_KEY_CFBundleDisplayName: NativeNotes
+        INFOPLIST_KEY_UIApplicationSceneManifest_Generation: YES
+        INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone: UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight
+        INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad: UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight
+        CURRENT_PROJECT_VERSION: 1
+        MARKETING_VERSION: 0.1.0
+  NativeNotesmacOS:
+    type: application
+    platform: macOS
+    sources:
+      - Apps/NativeNotesApp/Sources/Shared
+      - Apps/NativeNotesApp/Sources/macOS
+    dependencies:
+      - package: NativeNotes
+        product: NativeNotes
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.nativenotes.macos
+        GENERATE_INFOPLIST_FILE: YES
+        INFOPLIST_KEY_CFBundleDisplayName: NativeNotes
+        CURRENT_PROJECT_VERSION: 1
+        MARKETING_VERSION: 0.1.0
+schemes:
+  NativeNotesiOS:
+    shared: true
+    build:
+      targets:
+        NativeNotesiOS: all
+    run:
+      config: Debug
+    archive:
+      config: Release
+  NativeNotesmacOS:
+    shared: true
+    build:
+      targets:
+        NativeNotesmacOS: all
+    run:
+      config: Debug
+    archive:
+      config: Release

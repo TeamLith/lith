@@ -130,16 +130,26 @@ This file is the task control plane for multi-agent execution and human review.
   - Shared package integration for iOS and macOS app targets
   - Buildable app entry points on both platforms
 - Steps:
-  - [ ] Create Xcode workspace/project structure using the existing Swift package.
-  - [ ] Add iOS and macOS SwiftUI app targets that link the shared package.
-  - [ ] Add shared schemes/configurations for local development and CI builds.
-  - [ ] Verify both app targets compile without feature wiring beyond bootstrapping.
-- Status: TODO
-- Agent: unassigned
-- Last updated: 2026-04-12 15:12 IST
+  - [x] Create Xcode workspace/project structure using the existing Swift package.
+  - [x] Add iOS and macOS SwiftUI app targets that link the shared package.
+  - [x] Add shared schemes/configurations for local development and CI builds.
+  - [x] Verify both app targets compile without feature wiring beyond bootstrapping.
+- Status: DONE
+- Agent: codex
+- Last updated: 2026-04-12 17:29:13 IST+0530
 - PR/Commit: n/a
 - Changed files:
-  - n/a
+  - CONTRIBUTING_AGENTS.md
+  - Package.swift
+  - project.yml
+  - NativeNotes.xcworkspace/contents.xcworkspacedata
+  - NativeNotesApps.xcodeproj/project.pbxproj
+  - NativeNotesApps.xcodeproj/project.xcworkspace/contents.xcworkspacedata
+  - NativeNotesApps.xcodeproj/xcshareddata/xcschemes/NativeNotesiOS.xcscheme
+  - NativeNotesApps.xcodeproj/xcshareddata/xcschemes/NativeNotesmacOS.xcscheme
+  - Apps/NativeNotesApp/Sources/Shared/RootView.swift
+  - Apps/NativeNotesApp/Sources/iOS/NativeNotesiOSApp.swift
+  - Apps/NativeNotesApp/Sources/macOS/NativeNotesmacOSApp.swift
 - Notes/Blockers:
   - n/a
 
