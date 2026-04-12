@@ -17,6 +17,7 @@ public struct SearchService: SearchServiceProtocol, Sendable {
         }
     }
 
+    @available(*, deprecated, renamed: "search(query:filters:)", message: "Use search(query:filters:) instead.")
     public func search(query: String, filter: SearchFilter) async throws -> [Note] {
         try await search(query: query, filters: filter)
     }

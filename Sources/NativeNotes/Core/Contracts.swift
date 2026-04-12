@@ -26,6 +26,13 @@ public protocol SearchServiceProtocol: Sendable {
     func search(query: String, filters: SearchFilter) async throws -> [Note]
 }
 
+public extension SearchServiceProtocol {
+    @available(*, deprecated, renamed: "search(query:filters:)")
+    func search(query: String, filter: SearchFilter) async throws -> [Note] {
+        try await search(query: query, filters: filter)
+    }
+}
+
 public protocol RSSConversionServiceProtocol: Sendable {
     func makeNote(from item: RSSItem, feed: RSSFeed, commentary: String?) -> Note
 }
