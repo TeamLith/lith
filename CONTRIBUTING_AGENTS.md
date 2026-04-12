@@ -50,16 +50,19 @@ This file is the task control plane for multi-agent execution and human review.
   - Core Data model changes
   - Unit tests for note CRUD
 - Steps:
-  - [ ] Define Core Data entity `Note` with required fields.
-  - [ ] Generate model classes / repository mapping.
-  - [ ] Add CRUD repository API.
-  - [ ] Add tests in `NoteRepositoryTests`.
-- Status: IN_PROGRESS
+  - [x] Define Core Data entity `Note` with required fields.
+  - [x] Generate model classes / repository mapping.
+  - [x] Add CRUD repository API.
+  - [x] Add tests in `NoteRepositoryTests`.
+- Status: DONE
 - Agent: codex
-- Last updated: 2026-04-12 14:18 IST
+- Last updated: 2026-04-12 14:50 IST
 - PR/Commit: n/a
 - Changed files:
-  - n/a
+  - CONTRIBUTING_AGENTS.md
+  - Sources/NativeNotes/Core/Models.swift
+  - Sources/NativeNotes/Persistence/CoreDataNoteRepository.swift
+  - Tests/NativeNotesTests/NoteRepositoryTests.swift
 - Notes/Blockers:
   - n/a
 

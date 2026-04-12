@@ -13,8 +13,11 @@ public struct Note: Identifiable, Codable, Hashable, Sendable {
     public var tags: Set<String>
     public var createdAt: Date
     public var updatedAt: Date
+    public var accessedAt: Date?
     public var source: NoteSource
     public var isPinned: Bool
+    public var isArchived: Bool
+    public var isTrashed: Bool
     public var metadata: [String: String]
 
     public init(
@@ -24,8 +27,11 @@ public struct Note: Identifiable, Codable, Hashable, Sendable {
         tags: Set<String> = [],
         createdAt: Date = Date(),
         updatedAt: Date = Date(),
+        accessedAt: Date? = nil,
         source: NoteSource = .manual,
         isPinned: Bool = false,
+        isArchived: Bool = false,
+        isTrashed: Bool = false,
         metadata: [String: String] = [:]
     ) {
         self.id = id
@@ -34,8 +40,11 @@ public struct Note: Identifiable, Codable, Hashable, Sendable {
         self.tags = tags
         self.createdAt = createdAt
         self.updatedAt = updatedAt
+        self.accessedAt = accessedAt
         self.source = source
         self.isPinned = isPinned
+        self.isArchived = isArchived
+        self.isTrashed = isTrashed
         self.metadata = metadata
     }
 }
