@@ -172,12 +172,17 @@ private func makePreviewDependencies() -> AppDependencyContainer {
 
 @MainActor
 private let previewDependencies = makePreviewDependencies()
+
+#if os(iOS)
 #Preview("iOS Shell") {
     RootView(dependencies: previewDependencies)
 }
+#endif
 
+#if os(macOS)
 #Preview("macOS Shell") {
     RootView(dependencies: previewDependencies)
         .frame(width: 1100, height: 700)
 }
+#endif
 #endif
