@@ -9,6 +9,8 @@
 /* Begin PBXBuildFile section */
 		20D68500FB85D42D88F7DDA4 /* NativeNotesiOSApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2011249E8099C3BB08264968 /* NativeNotesiOSApp.swift */; };
 		5FE04522EA6DB889585D4574 /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30AB78E943E5A9185B46F61A /* RootView.swift */; };
+		A1B2C3D4E5F6012345678901 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F6012345678903 /* Assets.xcassets */; };
+		A1B2C3D4E5F6012345678902 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F6012345678903 /* Assets.xcassets */; };
 		BF6ACCB895417A863C97C394 /* NativeNotes in Frameworks */ = {isa = PBXBuildFile; productRef = 2ECFB180D64E03874878F154 /* NativeNotes */; };
 		CBF4795468B04B7B6F2637C4 /* NativeNotes in Frameworks */ = {isa = PBXBuildFile; productRef = BC6086DDC9EAFF5CF819F385 /* NativeNotes */; };
 		DE7195737D17928DA72BDD7A /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30AB78E943E5A9185B46F61A /* RootView.swift */; };
@@ -20,6 +22,7 @@
 		2011249E8099C3BB08264968 /* NativeNotesiOSApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NativeNotesiOSApp.swift; sourceTree = "<group>"; };
 		30AB78E943E5A9185B46F61A /* RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
 		5366F22D7116D050B8F95CB9 /* NativeNotesmacOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = NativeNotesmacOS.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		A1B2C3D4E5F6012345678903 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		A0AE709E04DD84A00CE8CCFD /* Notes + ToDo */ = {isa = PBXFileReference; lastKnownFileType = folder; name = "Notes + ToDo"; path = .; sourceTree = SOURCE_ROOT; };
 		F031CD1F4C780240B751869F /* NativeNotesmacOSApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NativeNotesmacOSApp.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -88,6 +91,15 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		A1B2C3D4E5F6012345678904 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				A1B2C3D4E5F6012345678903 /* Assets.xcassets */,
+			);
+			name = Resources;
+			path = Apps/NativeNotesApp/Resources;
+			sourceTree = "<group>";
+		};
 		9E47B165EBD5258002E9E6C5 = {
 			isa = PBXGroup;
 			children = (
@@ -95,6 +107,7 @@
 				64C69469C3198890867AE26C /* macOS */,
 				49ECBC3AA8D2EE322D587CF1 /* Packages */,
 				03913AD8A4EB4CEA1A10E908 /* Shared */,
+				A1B2C3D4E5F6012345678904 /* Resources */,
 				79ED313778EDA204EEA6CC40 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -108,6 +121,7 @@
 			buildPhases = (
 				71D1A4C287BF07C58B817010 /* Sources */,
 				7D11F84FFBB0DCBC262488DD /* Frameworks */,
+				A1B2C3D4E5F6012345678905 /* Resources */,
 			);
 			buildRules = (
 			);
@@ -127,6 +141,7 @@
 			buildPhases = (
 				6370418F4200FFEDF088647E /* Sources */,
 				CB093A2EFDB8D075ACFDEC5B /* Frameworks */,
+				A1B2C3D4E5F6012345678906 /* Resources */,
 			);
 			buildRules = (
 			);
@@ -174,6 +189,25 @@
 		};
 /* End PBXProject section */
 
+/* Begin PBXResourcesBuildPhase section */
+		A1B2C3D4E5F6012345678905 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A1B2C3D4E5F6012345678901 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A1B2C3D4E5F6012345678906 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A1B2C3D4E5F6012345678902 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
 		6370418F4200FFEDF088647E /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
@@ -203,13 +237,14 @@
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_CFBundleDisplayName = NativeNotes;
+				INFOPLIST_KEY_CFBundleDisplayName = Lith;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
 				MARKETING_VERSION = 0.1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.nativenotes.macos;
+				PRODUCT_NAME = Lith;
 				SDKROOT = macosx;
 			};
 			name = Debug;
@@ -221,13 +256,14 @@
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_CFBundleDisplayName = NativeNotes;
+				INFOPLIST_KEY_CFBundleDisplayName = Lith;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
 				MARKETING_VERSION = 0.1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.nativenotes.macos;
+				PRODUCT_NAME = Lith;
 				SDKROOT = macosx;
 			};
 			name = Release;
@@ -295,7 +331,7 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CURRENT_PROJECT_VERSION = 1;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_CFBundleDisplayName = NativeNotes;
+				INFOPLIST_KEY_CFBundleDisplayName = Lith;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
@@ -305,6 +341,7 @@
 				);
 				MARKETING_VERSION = 0.1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.nativenotes.ios;
+				PRODUCT_NAME = Lith;
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -317,7 +354,7 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CURRENT_PROJECT_VERSION = 1;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_CFBundleDisplayName = NativeNotes;
+				INFOPLIST_KEY_CFBundleDisplayName = Lith;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
@@ -327,6 +364,7 @@
 				);
 				MARKETING_VERSION = 0.1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.nativenotes.ios;
+				PRODUCT_NAME = Lith;
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
