@@ -27,7 +27,7 @@ public protocol SearchServiceProtocol: Sendable {
 }
 
 public extension SearchServiceProtocol {
-    @available(*, deprecated, renamed: "search(query:filters:)")
+    @available(*, deprecated, renamed: "search(query:filters:)", message: "Use search(query:filters:) instead.")
     func search(query: String, filter: SearchFilter) async throws -> [Note] {
         try await search(query: query, filters: filter)
     }
