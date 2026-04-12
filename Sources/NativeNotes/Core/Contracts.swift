@@ -12,6 +12,16 @@ public protocol LinkRepository: Sendable {
     func links() async throws -> [Link]
 }
 
+public protocol RSSRepository: Sendable {
+    func addFeed(_ feed: RSSFeed) async throws
+    func feeds() async throws -> [RSSFeed]
+    func feed(id: UUID) async throws -> RSSFeed?
+    func updateLastFetchedAt(for feedID: UUID, to date: Date?) async throws
+    func upsertItems(_ items: [RSSItem]) async throws
+    func items(feedID: UUID?) async throws -> [RSSItem]
+    func item(id: UUID) async throws -> RSSItem?
+}
+
 public protocol SearchServiceProtocol: Sendable {
     func search(query: String, filter: SearchFilter) async throws -> [Note]
 }

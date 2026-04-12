@@ -4,6 +4,7 @@ import Foundation
 import Testing
 @testable import NativeNotes
 
+@available(macOS 10.15, iOS 13.0, *)
 @Test func coreDataNoteRepositoryCreatesAndFetchesNotes() async throws {
     let repository = CoreDataNoteRepository(container: try NativeNotesPersistentStore.makeContainer(inMemory: true))
     let note = Note(
@@ -27,6 +28,7 @@ import Testing
     #expect(fetched == note)
 }
 
+@available(macOS 10.15, iOS 13.0, *)
 @Test func coreDataNoteRepositoryUpdatesExistingNotesByIdentifier() async throws {
     let repository = CoreDataNoteRepository(container: try NativeNotesPersistentStore.makeContainer(inMemory: true))
     let id = UUID()
@@ -62,6 +64,7 @@ import Testing
     #expect(allNotes.count == 1)
 }
 
+@available(macOS 10.15, iOS 13.0, *)
 @Test func coreDataNoteRepositoryDeletesNotes() async throws {
     let repository = CoreDataNoteRepository(container: try NativeNotesPersistentStore.makeContainer(inMemory: true))
     let note = Note(title: "Temporary", bodyMarkdown: "Delete me")
@@ -76,6 +79,7 @@ import Testing
     #expect(allNotes.isEmpty)
 }
 
+@available(macOS 10.15, iOS 13.0, *)
 @Test func coreDataNoteRepositoryReturnsNewestNotesFirst() async throws {
     let repository = CoreDataNoteRepository(container: try NativeNotesPersistentStore.makeContainer(inMemory: true))
     let older = Note(title: "Older", bodyMarkdown: "", updatedAt: Date(timeIntervalSince1970: 10))

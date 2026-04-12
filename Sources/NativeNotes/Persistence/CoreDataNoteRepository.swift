@@ -2,6 +2,7 @@
 @preconcurrency import CoreData
 import Foundation
 
+@available(macOS 10.15, iOS 13.0, *)
 public final class CoreDataNoteRepository: @unchecked Sendable, NoteRepository {
     private let container: NSPersistentContainer
     private let context: NSManagedObjectContext
@@ -21,7 +22,7 @@ public final class CoreDataNoteRepository: @unchecked Sendable, NoteRepository {
     }
 
     public func upsert(_ note: Note) async throws {
-        try await context.perform {
+        try await perform {
             let managedNote = try self.fetchManagedNote(id: note.id) ?? ManagedNote(context: self.context)
             try managedNote.apply(note)
             try self.saveIfNeeded()
@@ -29,7 +30,7 @@ public final class CoreDataNoteRepository: @unchecked Sendable, NoteRepository {
     }
 
     public func delete(noteID: UUID) async throws {
-        try await context.perform {
+        try await perform {
             guard let managedNote = try self.fetchManagedNote(id: noteID) else {
                 return
             }
@@ -39,7 +40,7 @@ public final class CoreDataNoteRepository: @unchecked Sendable, NoteRepository {
     }
 
     public func allNotes() async throws -> [Note] {
-        try await context.perform {
+        try await perform {
             let request = ManagedNote.fetchRequest()
             request.sortDescriptors = [NSSortDescriptor(key: #keyPath(ManagedNote.updatedAt), ascending: false)]
             return try self.context.fetch(request).map { try $0.toDomainNote() }
@@ -47,7 +48,7 @@ public final class CoreDataNoteRepository: @unchecked Sendable, NoteRepository {
     }
 
     public func note(id: UUID) async throws -> Note? {
-        try await context.perform {
+        try await perform {
             try self.fetchManagedNote(id: id)?.toDomainNote()
         }
     }
@@ -62,6 +63,18 @@ public final class CoreDataNoteRepository: @unchecked Sendable, NoteRepository {
     private func saveIfNeeded() throws {
         if context.hasChanges {
             try context.save()
+        }
+    }
+
+    private func perform<T>(_ work: @escaping @Sendable () throws -> T) async throws -> T {
+        try await withCheckedThrowingContinuation { continuation in
+            context.perform {
+                do {
+                    continuation.resume(returning: try work())
+                } catch {
+                    continuation.resume(throwing: error)
+                }
+            }
         }
     }
 }
@@ -216,7 +229,7 @@ enum CoreDataNoteRepositoryError: Error {
 private enum ModelCache {
     static let model: NSManagedObjectModel = {
         let model = NSManagedObjectModel()
-        model.entities = [NativeNotesPersistentStore.makeNoteEntity()]
+        model.entities = [NativeNotesPersistentStore.makeNoteEntity()] + NativeNotesPersistentStore.makeRSSEntities()
         return model
     }()
 }
