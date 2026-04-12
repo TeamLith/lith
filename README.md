@@ -13,6 +13,9 @@ Native iOS/macOS note-taking app spec repo designed for multi-agent execution an
 
 ## Specs index
 
+- [AGENTS.md](./AGENTS.md)
+- [AGENT_POLICY.md](./AGENT_POLICY.md)
+- [REVIEW_POLICY.md](./REVIEW_POLICY.md)
 - [PRODUCT_OVERVIEW.md](./PRODUCT_OVERVIEW.md)
 - [REPO_MAP.md](./REPO_MAP.md)
 - [ARCHITECTURE.md](./ARCHITECTURE.md)
@@ -28,13 +31,17 @@ Native iOS/macOS note-taking app spec repo designed for multi-agent execution an
 
 ## How AI agents contribute
 
-1. Pick one task block from `CONTRIBUTING_AGENTS.md`.
-2. Read orientation first: `REPO_MAP.md`.
-3. Read global context next: `README.md`, `ARCHITECTURE.md`, `DATA_MODEL.md`.
-4. Read the relevant feature/sync file for that task.
-5. Implement code + tests.
-6. Update checklist status, `Agent`, and `Last updated` in `CONTRIBUTING_AGENTS.md`.
-7. Include a short file-change summary for human/GitHub review.
+1. Start with `AGENTS.md`.
+2. Read orientation next: `REPO_MAP.md`.
+3. Pick one task block from `CONTRIBUTING_AGENTS.md`.
+4. Read global context next: `README.md`, `ARCHITECTURE.md`, `DATA_MODEL.md`.
+5. Read the relevant feature or sync file for that task.
+6. Implement code + tests.
+7. Update checklist status, `Agent`, and `Last updated` in `CONTRIBUTING_AGENTS.md`.
+8. Review `REPO_MAP.md` before closing the task and update it only if repo orientation changed.
+9. Include a short file-change summary for human or GitHub review.
+
+Reviewer or coordination sessions should start with `AGENTS.md` and then use `REVIEW_POLICY.md`.
 
 ## Pause and resume workflow
 
