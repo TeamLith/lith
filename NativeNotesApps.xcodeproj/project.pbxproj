@@ -243,7 +243,7 @@
 					"@executable_path/../Frameworks",
 				);
 				MARKETING_VERSION = 0.1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.nativenotes.macos;
+				PRODUCT_BUNDLE_IDENTIFIER = me.lith.macos;
 				PRODUCT_NAME = Lith;
 				SDKROOT = macosx;
 			};
@@ -262,7 +262,7 @@
 					"@executable_path/../Frameworks",
 				);
 				MARKETING_VERSION = 0.1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.nativenotes.macos;
+				PRODUCT_BUNDLE_IDENTIFIER = me.lith.macos;
 				PRODUCT_NAME = Lith;
 				SDKROOT = macosx;
 			};
@@ -340,7 +340,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 0.1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.nativenotes.ios;
+				PRODUCT_BUNDLE_IDENTIFIER = me.lith.ios;
 				PRODUCT_NAME = Lith;
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -363,7 +363,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 0.1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.nativenotes.ios;
+				PRODUCT_BUNDLE_IDENTIFIER = me.lith.ios;
 				PRODUCT_NAME = Lith;
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";

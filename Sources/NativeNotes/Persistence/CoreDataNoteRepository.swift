@@ -81,7 +81,7 @@ public final class CoreDataNoteRepository: @unchecked Sendable, NoteRepository {
 
 enum NativeNotesPersistentStore {
     static func makeContainer(inMemory: Bool = false) throws -> NSPersistentContainer {
-        let container = NSPersistentContainer(name: "NativeNotes", managedObjectModel: managedObjectModel())
+        let container = NSPersistentContainer(name: "Lith", managedObjectModel: managedObjectModel())
         let description = NSPersistentStoreDescription()
         if inMemory {
             description.type = NSInMemoryStoreType
@@ -106,15 +106,15 @@ enum NativeNotesPersistentStore {
     private static func defaultStoreURL() -> URL {
         let fileManager = FileManager.default
         let applicationSupportURL = fileManager.urls(for: .applicationSupportDirectory, in: .userDomainMask)[0]
-        let storeDirectoryURL = applicationSupportURL.appendingPathComponent("NativeNotes", isDirectory: true)
+        let storeDirectoryURL = applicationSupportURL.appendingPathComponent("Lith", isDirectory: true)
 
         do {
             try fileManager.createDirectory(at: storeDirectoryURL, withIntermediateDirectories: true)
         } catch {
-            preconditionFailure("Failed to create NativeNotes persistent store directory: \(error)")
+            preconditionFailure("Failed to create Lith persistent store directory: \(error)")
         }
 
-        return storeDirectoryURL.appendingPathComponent("NativeNotes.sqlite")
+        return storeDirectoryURL.appendingPathComponent("Lith.sqlite")
     }
 
     private static func managedObjectModel() -> NSManagedObjectModel {

@@ -33,11 +33,11 @@ jobs:
       ASC_PRIVATE_KEY: ${{ secrets.APP_STORE_CONNECT_PRIVATE_KEY }}
       SCHEME: NativeNotesiOS
       DESTINATION: generic/platform=iOS
-      ARCHIVE_NAME: NativeNotesiOS
+      ARCHIVE_NAME: LithiOS
       ASSET_GLOB: "*.ipa"
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Validate required secrets
         run: |
@@ -61,6 +61,7 @@ jobs:
         run: |
           set -euo pipefail
           archive_path="$RUNNER_TEMP/${ARCHIVE_NAME}.xcarchive"
+          set +e
           xcodebuild \
             -workspace NativeNotes.xcworkspace \
             -scheme "$SCHEME" \
@@ -73,7 +74,14 @@ jobs:
             -authenticationKeyIssuerID "$ASC_ISSUER_ID" \
             DEVELOPMENT_TEAM="$APPLE_TEAM_ID" \
             CODE_SIGN_STYLE=Automatic \
-            clean archive
+            clean archive 2>&1 | tee "$RUNNER_TEMP/archive-${ARCHIVE_NAME}.log"
+          status=${PIPESTATUS[0]}
+          set -e
+          if [ "$status" -ne 0 ]; then
+            echo "Archive failed with status $status. Key diagnostics:"
+            grep -E "error:|No signing|provision|profile|certificate|Authentication|team|bundle identifier|CodeSign" "$RUNNER_TEMP/archive-${ARCHIVE_NAME}.log" | tail -n 120 || true
+            exit "$status"
+          fi
           echo "ARCHIVE_PATH=$archive_path" >> "$GITHUB_ENV"
 
       - name: Export build
@@ -133,7 +141,7 @@ jobs:
       - name: Upload export artifact
         uses: actions/upload-artifact@v4
         with:
-          name: NativeNotesiOS-release
+          name: Lith-iOS-release
           path: ${{ env.ASSET_PATH }}
           if-no-files-found: error
 
@@ -158,11 +166,11 @@ jobs:
       ASC_PRIVATE_KEY: ${{ secrets.APP_STORE_CONNECT_PRIVATE_KEY }}
       SCHEME: NativeNotesmacOS
       DESTINATION: generic/platform=macOS
-      ARCHIVE_NAME: NativeNotesmacOS
+      ARCHIVE_NAME: LithmacOS
       ASSET_GLOB: "*.pkg"
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Validate required secrets
         run: |
@@ -186,6 +194,7 @@ jobs:
         run: |
           set -euo pipefail
           archive_path="$RUNNER_TEMP/${ARCHIVE_NAME}.xcarchive"
+          set +e
           xcodebuild \
             -workspace NativeNotes.xcworkspace \
             -scheme "$SCHEME" \
@@ -198,7 +207,14 @@ jobs:
             -authenticationKeyIssuerID "$ASC_ISSUER_ID" \
             DEVELOPMENT_TEAM="$APPLE_TEAM_ID" \
             CODE_SIGN_STYLE=Automatic \
-            clean archive
+            clean archive 2>&1 | tee "$RUNNER_TEMP/archive-${ARCHIVE_NAME}.log"
+          status=${PIPESTATUS[0]}
+          set -e
+          if [ "$status" -ne 0 ]; then
+            echo "Archive failed with status $status. Key diagnostics:"
+            grep -E "error:|No signing|provision|profile|certificate|Authentication|team|bundle identifier|CodeSign" "$RUNNER_TEMP/archive-${ARCHIVE_NAME}.log" | tail -n 120 || true
+            exit "$status"
+          fi
           echo "ARCHIVE_PATH=$archive_path" >> "$GITHUB_ENV"
 
       - name: Export build
@@ -258,7 +274,7 @@ jobs:
       - name: Upload export artifact
         uses: actions/upload-artifact@v4
         with:
-          name: NativeNotesmacOS-release
+          name: Lith-macOS-release
           path: ${{ env.ASSET_PATH }}
           if-no-files-found: error
 

@@ -63,8 +63,8 @@ In **GitHub -> Settings -> Secrets and variables -> Actions**, add:
 ## 4) Apple-side one-time setup
 
 1. In Apple Developer, ensure App IDs exist and match bundle IDs:
-   - `com.nativenotes.ios`
-   - `com.nativenotes.macos`
+   - `me.lith.ios`
+   - `me.lith.macos`
 2. In App Store Connect, create both apps with those bundle IDs.
 3. In App Store Connect -> Users and Access -> Keys:
    - Create API key (recommended role: App Manager).
