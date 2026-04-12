@@ -108,6 +108,473 @@ This file is the task control plane for multi-agent execution and human review.
 - Notes/Blockers:
   - n/a
 
+## Task: Set Up Xcode Workspace and App Targets
+
+- Input specs:
+  - `README.md`
+  - `ARCHITECTURE.md`
+  - `PRODUCT_OVERVIEW.md`
+- Deliverables:
+  - Xcode workspace/project for app development
+  - Shared package integration for iOS and macOS app targets
+  - Buildable app entry points on both platforms
+- Steps:
+  - [ ] Create Xcode workspace/project structure using the existing Swift package.
+  - [ ] Add iOS and macOS SwiftUI app targets that link the shared package.
+  - [ ] Add shared schemes/configurations for local development and CI builds.
+  - [ ] Verify both app targets compile without feature wiring beyond bootstrapping.
+- Status: TODO
+- Agent: unassigned
+- Last updated: 2026-04-12 15:12 IST
+- PR/Commit: n/a
+- Changed files:
+  - n/a
+- Notes/Blockers:
+  - n/a
+
+## Task: Bootstrap App Persistence and Dependency Container
+
+- Input specs:
+  - `ARCHITECTURE.md`
+  - `DATA_MODEL.md`
+- Deliverables:
+  - Shared persistence bootstrap for app runtime
+  - Dependency container/environment wiring for repositories and services
+- Steps:
+  - [ ] Define app-level dependency container for repositories and domain services.
+  - [ ] Configure persistent store loading for app and preview/test contexts.
+  - [ ] Inject dependencies into SwiftUI app roots for both iOS and macOS.
+  - [ ] Add smoke tests or previews for container startup behavior.
+- Status: TODO
+- Agent: unassigned
+- Last updated: 2026-04-12 15:12 IST
+- PR/Commit: n/a
+- Changed files:
+  - n/a
+- Notes/Blockers:
+  - Depends on `Set Up Xcode Workspace and App Targets`.
+
+## Task: Implement Base UI Shell
+
+- Input specs:
+  - `ARCHITECTURE.md`
+  - `FEATURE_TEXT_NOTES.md`
+- Deliverables:
+  - SwiftUI shell with top-level navigation
+  - Placeholder screens for major product areas
+- Steps:
+  - [ ] Build root navigation shell for notes, RSS, search/graph, and settings.
+  - [ ] Support platform-appropriate navigation patterns on iOS and macOS.
+  - [ ] Add placeholder empty states for unfinished sections.
+  - [ ] Add lightweight UI tests or previews for shell navigation.
+- Status: TODO
+- Agent: unassigned
+- Last updated: 2026-04-12 15:12 IST
+- PR/Commit: n/a
+- Changed files:
+  - n/a
+- Notes/Blockers:
+  - Depends on `Bootstrap App Persistence and Dependency Container`.
+
+## Task: Implement Note List and Detail UI
+
+- Input specs:
+  - `FEATURE_TEXT_NOTES.md`
+  - `ARCHITECTURE.md`
+  - `DATA_MODEL.md`
+- Deliverables:
+  - SwiftUI notes list screen
+  - SwiftUI note detail/editor screen
+- Steps:
+  - [ ] Build note list sections for pinned and recent notes.
+  - [ ] Build note detail editor with markdown-first editing flow.
+  - [ ] Add note selection/navigation behavior for iOS and macOS.
+  - [ ] Add previews or UI tests for populated and empty states.
+- Status: TODO
+- Agent: unassigned
+- Last updated: 2026-04-12 15:12 IST
+- PR/Commit: n/a
+- Changed files:
+  - n/a
+- Notes/Blockers:
+  - Depends on `Implement Base UI Shell`.
+
+## Task: Wire Note CRUD Flows Into UI
+
+- Input specs:
+  - `FEATURE_TEXT_NOTES.md`
+  - `DATA_MODEL.md`
+- Deliverables:
+  - Create/edit/delete flows backed by `NoteRepository`
+  - Basic list refresh and persistence behavior
+- Steps:
+  - [ ] Wire note creation from the list UI into repository-backed persistence.
+  - [ ] Wire note editing and autosave/update behavior in note detail.
+  - [ ] Add archive/delete or trash interactions consistent with the data model.
+  - [ ] Add tests covering repository-backed CRUD flows from UI-facing view models.
+- Status: TODO
+- Agent: unassigned
+- Last updated: 2026-04-12 15:12 IST
+- PR/Commit: n/a
+- Changed files:
+  - n/a
+- Notes/Blockers:
+  - Depends on `Implement Note List and Detail UI`.
+
+## Task: Implement Wikilink Parsing and Link Persistence
+
+- Input specs:
+  - `FEATURE_TEXT_NOTES.md`
+  - `DATA_MODEL.md` (`Link`)
+- Deliverables:
+  - Wikilink parsing and resolution pipeline
+  - Link persistence/backlink query support
+- Steps:
+  - [ ] Parse `[[...]]` references from note markdown.
+  - [ ] Resolve links against existing notes and persist `Link` records.
+  - [ ] Expose backlink queries for note detail presentation.
+  - [ ] Add parser and persistence tests for create/update scenarios.
+- Status: TODO
+- Agent: unassigned
+- Last updated: 2026-04-12 15:12 IST
+- PR/Commit: n/a
+- Changed files:
+  - n/a
+- Notes/Blockers:
+  - Depends on `Wire Note CRUD Flows Into UI`.
+
+## Task: Implement RSS Fetcher
+
+- Input specs:
+  - `FEATURE_RSS_INBOX.md`
+  - `ARCHITECTURE.md`
+- Deliverables:
+  - Feed fetch service around RSS parser dependency
+  - Manual refresh workflow and error handling
+- Steps:
+  - [ ] Wrap FeedKit or equivalent MIT-compatible parser behind an adapter boundary.
+  - [ ] Implement manual refresh fetching for configured feeds.
+  - [ ] Map parser output into RSS repository upsert operations.
+  - [ ] Add tests for success, malformed feed, and retryable error paths.
+- Status: TODO
+- Agent: unassigned
+- Last updated: 2026-04-12 15:12 IST
+- PR/Commit: n/a
+- Changed files:
+  - n/a
+- Notes/Blockers:
+  - Depends on `Implement RSS Data Layer`.
+
+## Task: Implement RSS Inbox UI
+
+- Input specs:
+  - `FEATURE_RSS_INBOX.md`
+  - `ARCHITECTURE.md`
+  - `DATA_MODEL.md`
+- Deliverables:
+  - SwiftUI RSS inbox grouped by feed/category
+  - Approve-to-save note workflow
+- Steps:
+  - [ ] Build feed and item list UI with grouped sections.
+  - [ ] Add refresh and item state controls (`new`, `approved`, `ignored`).
+  - [ ] Implement `Approve -> Save as Note` flow with source metadata linkage.
+  - [ ] Add UI/view-model tests for approval and save behavior.
+- Status: TODO
+- Agent: unassigned
+- Last updated: 2026-04-12 15:12 IST
+- PR/Commit: n/a
+- Changed files:
+  - n/a
+- Notes/Blockers:
+  - Depends on `Implement RSS Fetcher`.
+
+## Task: Implement Search UI
+
+- Input specs:
+  - `FEATURE_SEARCH_GRAPH.md`
+  - `ARCHITECTURE.md`
+- Deliverables:
+  - Search screen with query input and filters
+  - Navigation from search results to note detail
+- Steps:
+  - [ ] Build search input and filter controls for source, dates, and tags.
+  - [ ] Render result list with snippets and metadata badges.
+  - [ ] Wire result navigation to note detail.
+  - [ ] Add UI/view-model tests for query and filter behavior.
+- Status: TODO
+- Agent: unassigned
+- Last updated: 2026-04-12 15:12 IST
+- PR/Commit: n/a
+- Changed files:
+  - n/a
+- Notes/Blockers:
+  - Depends on `Implement Search API`.
+
+## Task: Implement Graph Data Builder
+
+- Input specs:
+  - `FEATURE_SEARCH_GRAPH.md`
+  - `DATA_MODEL.md` (`Note`, `Link`)
+- Deliverables:
+  - Repository-backed graph projection API
+  - Local neighborhood filtering support
+- Steps:
+  - [ ] Read notes and links from persistence-backed repositories.
+  - [ ] Build graph projection structs for global and local graph modes.
+  - [ ] Add bounded depth filtering for local graph exploration.
+  - [ ] Add tests covering projection correctness and filtering behavior.
+- Status: TODO
+- Agent: unassigned
+- Last updated: 2026-04-12 15:12 IST
+- PR/Commit: n/a
+- Changed files:
+  - n/a
+- Notes/Blockers:
+  - Depends on `Implement Wikilink Parsing and Link Persistence`.
+
+## Task: Implement Graph View
+
+- Input specs:
+  - `FEATURE_SEARCH_GRAPH.md`
+  - `ARCHITECTURE.md`
+- Deliverables:
+  - Interactive graph screen
+  - Navigation from graph nodes to note detail
+- Steps:
+  - [ ] Render graph nodes and edges with an initial deterministic layout.
+  - [ ] Add pan/zoom and node selection behavior.
+  - [ ] Support local graph mode centered on a selected note.
+  - [ ] Add UI or snapshot coverage for core graph interactions.
+- Status: TODO
+- Agent: unassigned
+- Last updated: 2026-04-12 15:12 IST
+- PR/Commit: n/a
+- Changed files:
+  - n/a
+- Notes/Blockers:
+  - Depends on `Implement Graph Data Builder`.
+
+## Task: Implement CloudKit Schema
+
+- Input specs:
+  - `SYNC_ICLOUD.md`
+  - `DATA_MODEL.md`
+- Deliverables:
+  - CloudKit record mapping definitions
+  - Migration/index documentation for sync entities
+- Steps:
+  - [ ] Map each synced entity to a CloudKit record type and field set.
+  - [ ] Define required indexes and conflict-resolution metadata.
+  - [ ] Document migration expectations for future field additions.
+  - [ ] Add tests or validation helpers for mapping integrity where feasible.
+- Status: TODO
+- Agent: unassigned
+- Last updated: 2026-04-12 15:12 IST
+- PR/Commit: n/a
+- Changed files:
+  - n/a
+- Notes/Blockers:
+  - n/a
+
+## Task: Implement Sync Engine
+
+- Input specs:
+  - `SYNC_ICLOUD.md`
+  - `ARCHITECTURE.md`
+- Deliverables:
+  - iCloud sync adapter over persistent storage
+  - Sync status/error reporting pipeline
+- Steps:
+  - [ ] Integrate `NSPersistentCloudKitContainer` or equivalent CloudKit-backed path.
+  - [ ] Implement pull/push cycle handling with retry/throttle behavior.
+  - [ ] Record sync status and recoverable errors for UI presentation.
+  - [ ] Add integration-style tests for disabled iCloud and conflict paths where feasible.
+- Status: TODO
+- Agent: unassigned
+- Last updated: 2026-04-12 15:12 IST
+- PR/Commit: n/a
+- Changed files:
+  - n/a
+- Notes/Blockers:
+  - Depends on `Implement CloudKit Schema`.
+
+## Task: Implement iCloud Settings UI
+
+- Input specs:
+  - `SYNC_ICLOUD.md`
+  - `ARCHITECTURE.md`
+- Deliverables:
+  - Settings controls for sync enablement and status
+  - Last-sync and error presentation
+- Steps:
+  - [ ] Add iCloud enable/disable controls in settings.
+  - [ ] Show sync status and last successful sync timestamp.
+  - [ ] Surface recoverable error messaging and retry entry points.
+  - [ ] Add UI/view-model tests for sync settings behavior.
+- Status: TODO
+- Agent: unassigned
+- Last updated: 2026-04-12 15:12 IST
+- PR/Commit: n/a
+- Changed files:
+  - n/a
+- Notes/Blockers:
+  - Depends on `Implement Sync Engine`.
+
+## Task: Implement Audio Recording Infrastructure
+
+- Input specs:
+  - `FEATURE_AUDIO_NOTES.md`
+  - `DATA_MODEL.md` (`AudioNote`)
+- Deliverables:
+  - Recording service and local/iCloud file lifecycle
+  - `AudioNote` persistence wiring
+- Steps:
+  - [ ] Implement recording service using Apple audio APIs.
+  - [ ] Persist deterministic audio file locations by note/recording ID.
+  - [ ] Persist `AudioNote` metadata and interruption/error states.
+  - [ ] Add tests for file naming, metadata persistence, and failure handling.
+- Status: TODO
+- Agent: unassigned
+- Last updated: 2026-04-12 15:12 IST
+- PR/Commit: n/a
+- Changed files:
+  - n/a
+- Notes/Blockers:
+  - Depends on `Wire Note CRUD Flows Into UI`.
+
+## Task: Implement Transcription Service
+
+- Input specs:
+  - `FEATURE_AUDIO_NOTES.md`
+  - `ARCHITECTURE.md`
+- Deliverables:
+  - Speech transcription service
+  - Transcript/status persistence workflow
+- Steps:
+  - [ ] Implement speech transcription using Apple Speech framework.
+  - [ ] Persist transcript text and `transcriptionStatus`.
+  - [ ] Expose progress/completion updates for UI consumption.
+  - [ ] Add tests or protocol-backed fakes for transcription state handling.
+- Status: TODO
+- Agent: unassigned
+- Last updated: 2026-04-12 15:12 IST
+- PR/Commit: n/a
+- Changed files:
+  - n/a
+- Notes/Blockers:
+  - Depends on `Implement Audio Recording Infrastructure`.
+
+## Task: Implement Audio UI
+
+- Input specs:
+  - `FEATURE_AUDIO_NOTES.md`
+  - `ARCHITECTURE.md`
+- Deliverables:
+  - Recording/playback controls in note detail
+  - Transcript presentation and correction UI
+- Steps:
+  - [ ] Add record/stop/playback controls to note detail.
+  - [ ] Show recording duration and transcription progress.
+  - [ ] Render transcript with editable correction support.
+  - [ ] Add UI/view-model tests for recording and transcript states.
+- Status: TODO
+- Agent: unassigned
+- Last updated: 2026-04-12 15:12 IST
+- PR/Commit: n/a
+- Changed files:
+  - n/a
+- Notes/Blockers:
+  - Depends on `Implement Transcription Service`.
+
+## Task: Implement Basic App Intent for Create Note
+
+- Input specs:
+  - `FEATURE_SIRI_INTELLIGENCE.md`
+  - `ARCHITECTURE.md`
+  - `DATA_MODEL.md` (`Note`)
+- Deliverables:
+  - App Intent for note creation
+  - Domain-service wiring and confirmation response
+- Steps:
+  - [ ] Define create-note App Intent parameters and response model.
+  - [ ] Wire intent execution to note creation in shared services.
+  - [ ] Add intent availability to the iOS app target.
+  - [ ] Add tests for parameter mapping and note creation behavior.
+- Status: TODO
+- Agent: unassigned
+- Last updated: 2026-04-12 15:12 IST
+- PR/Commit: n/a
+- Changed files:
+  - n/a
+- Notes/Blockers:
+  - Depends on `Wire Note CRUD Flows Into UI`.
+
+## Task: Implement Transcript Action Item Extractor
+
+- Input specs:
+  - `FEATURE_SIRI_INTELLIGENCE.md`
+  - `DATA_MODEL.md` (`ActionItem`)
+- Deliverables:
+  - Transcript-to-action-item extraction pipeline
+  - Persistence path for accepted action items
+- Steps:
+  - [ ] Parse transcript text into structured action-item drafts.
+  - [ ] Add heuristic date/assignee detection rules.
+  - [ ] Persist accepted items as `ActionItem` records.
+  - [ ] Add tests using canned transcript fixtures and edge cases.
+- Status: TODO
+- Agent: unassigned
+- Last updated: 2026-04-12 15:12 IST
+- PR/Commit: n/a
+- Changed files:
+  - n/a
+- Notes/Blockers:
+  - Depends on `Implement Transcription Service`.
+
+## Task: Implement Action Item UI
+
+- Input specs:
+  - `FEATURE_SIRI_INTELLIGENCE.md`
+  - `ARCHITECTURE.md`
+- Deliverables:
+  - Structured checklist UI under transcripts/notes
+  - Edit and mark-done flows
+- Steps:
+  - [ ] Render action items in note detail or transcript review UI.
+  - [ ] Support mark-done, edit, and delete interactions.
+  - [ ] Add acceptance/review gate before exporting or reminding.
+  - [ ] Add UI/view-model tests for action item lifecycle behavior.
+- Status: TODO
+- Agent: unassigned
+- Last updated: 2026-04-12 15:12 IST
+- PR/Commit: n/a
+- Changed files:
+  - n/a
+- Notes/Blockers:
+  - Depends on `Implement Transcript Action Item Extractor`.
+
+## Task: Add Critical Flow Test Coverage
+
+- Input specs:
+  - `ARCHITECTURE.md`
+  - Relevant feature specs for completed flows
+- Deliverables:
+  - Unit/UI/integration coverage for primary user journeys
+  - Documented test matrix for regression prevention
+- Steps:
+  - [ ] Add test coverage for note CRUD, RSS approval, and search flows.
+  - [ ] Add UI coverage for navigation shell and primary screens.
+  - [ ] Add integration coverage for persistence startup and sync-disabled mode.
+  - [ ] Document remaining test gaps and deferred scenarios.
+- Status: TODO
+- Agent: unassigned
+- Last updated: 2026-04-12 15:12 IST
+- PR/Commit: n/a
+- Changed files:
+  - n/a
+- Notes/Blockers:
+  - Run after the corresponding product flows exist.
+
 ## 4. Pause/resume protocol (token-safe)
 
 - Before stopping, every agent must update:
