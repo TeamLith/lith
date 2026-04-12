@@ -32,9 +32,7 @@ struct NoteDetailView: View {
         .toolbar {
             ToolbarItem(placement: .primaryAction) {
                 Button(isEditing ? "Done" : "Edit") {
-                    if isEditing {
-                        draftBody = draftBody // persist hook for follow-up task
-                    }
+                    // Persistence on Done is wired in the "Wire Note CRUD Flows Into UI" follow-up task.
                     isEditing.toggle()
                 }
             }
