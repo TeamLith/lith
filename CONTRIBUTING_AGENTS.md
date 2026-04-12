@@ -106,9 +106,9 @@ This file is the task control plane for multi-agent execution and human review.
   - [ ] Add unified search entry point.
   - [ ] Implement filter support (source, dates, tags).
   - [ ] Add tests for query and filter combinations.
-- Status: TODO
-- Agent: unassigned
-- Last updated: 2026-03-27 00:00 IST
+- Status: IN_PROGRESS
+- Agent: codex
+- Last updated: 2026-04-12 16:34 IST
 - PR/Commit: n/a
 - Changed files:
   - n/a
