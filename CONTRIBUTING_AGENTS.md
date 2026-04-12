@@ -217,9 +217,9 @@ This file is the task control plane for multi-agent execution and human review.
   - [ ] Build note detail editor with markdown-first editing flow.
   - [ ] Add note selection/navigation behavior for iOS and macOS.
   - [ ] Add previews or UI tests for populated and empty states.
-- Status: TODO
-- Agent: unassigned
-- Last updated: 2026-04-12 15:12 IST
+- Status: IN_PROGRESS
+- Agent: codex
+- Last updated: 2026-04-12 22:28 UTC
 - PR/Commit: n/a
 - Changed files:
   - n/a
