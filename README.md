@@ -23,6 +23,7 @@ Native iOS/macOS note-taking app spec repo designed for multi-agent execution an
 - [FEATURE_SEARCH_GRAPH.md](./FEATURE_SEARCH_GRAPH.md)
 - [SYNC_ICLOUD.md](./SYNC_ICLOUD.md)
 - [CONTRIBUTING_AGENTS.md](./CONTRIBUTING_AGENTS.md)
+- [Docs/RELEASING_WITH_GITHUB.md](./Docs/RELEASING_WITH_GITHUB.md)
 
 ## How AI agents contribute
 

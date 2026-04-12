@@ -1,0 +1,153 @@
+name: Release to TestFlight
+
+on:
+  workflow_dispatch:
+    inputs:
+      platform:
+        description: "Which app to release"
+        required: true
+        type: choice
+        options:
+          - ios
+          - macos
+          - both
+        default: both
+      internal_only:
+        description: "Restrict this upload to internal TestFlight testers only"
+        required: true
+        type: boolean
+        default: true
+
+permissions:
+  contents: read
+
+jobs:
+  release:
+    name: Release (${{ matrix.platform }})
+    runs-on: macos-15
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - platform: ios
+            scheme: NativeNotesiOS
+            destination: generic/platform=iOS
+            archive_name: NativeNotesiOS
+            asset_glob: "*.ipa"
+          - platform: macos
+            scheme: NativeNotesmacOS
+            destination: generic/platform=macOS
+            archive_name: NativeNotesmacOS
+            asset_glob: "*.pkg"
+    env:
+      APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+      ASC_KEY_ID: ${{ secrets.APP_STORE_CONNECT_KEY_ID }}
+      ASC_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
+      ASC_PRIVATE_KEY: ${{ secrets.APP_STORE_CONNECT_PRIVATE_KEY }}
+    if: ${{ github.event.inputs.platform == 'both' || github.event.inputs.platform == matrix.platform }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Validate required secrets
+        run: |
+          set -euo pipefail
+          for var in APPLE_TEAM_ID ASC_KEY_ID ASC_ISSUER_ID ASC_PRIVATE_KEY; do
+            if [ -z "${!var:-}" ]; then
+              echo "Missing required secret: $var" >&2
+              exit 1
+            fi
+          done
+
+      - name: Install App Store Connect API key
+        run: |
+          set -euo pipefail
+          key_path="$RUNNER_TEMP/AuthKey_${ASC_KEY_ID}.p8"
+          printf "%s" "$ASC_PRIVATE_KEY" > "$key_path"
+          chmod 600 "$key_path"
+          echo "ASC_KEY_PATH=$key_path" >> "$GITHUB_ENV"
+
+      - name: Archive app
+        run: |
+          set -euo pipefail
+          archive_path="$RUNNER_TEMP/${{ matrix.archive_name }}.xcarchive"
+          xcodebuild \
+            -workspace NativeNotes.xcworkspace \
+            -scheme "${{ matrix.scheme }}" \
+            -configuration Release \
+            -destination "${{ matrix.destination }}" \
+            -archivePath "$archive_path" \
+            -allowProvisioningUpdates \
+            -authenticationKeyPath "$ASC_KEY_PATH" \
+            -authenticationKeyID "$ASC_KEY_ID" \
+            -authenticationKeyIssuerID "$ASC_ISSUER_ID" \
+            DEVELOPMENT_TEAM="$APPLE_TEAM_ID" \
+            CODE_SIGN_STYLE=Automatic \
+            clean archive
+          echo "ARCHIVE_PATH=$archive_path" >> "$GITHUB_ENV"
+
+      - name: Export build
+        run: |
+          set -euo pipefail
+          export_dir="$RUNNER_TEMP/export-${{ matrix.platform }}"
+          mkdir -p "$export_dir"
+
+          cat > "$RUNNER_TEMP/exportOptions.plist" <<PLIST
+          <?xml version="1.0" encoding="UTF-8"?>
+          <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+          <plist version="1.0">
+          <dict>
+            <key>destination</key>
+            <string>export</string>
+            <key>manageAppVersionAndBuildNumber</key>
+            <false/>
+            <key>method</key>
+            <string>app-store-connect</string>
+            <key>signingStyle</key>
+            <string>automatic</string>
+            <key>teamID</key>
+            <string>${APPLE_TEAM_ID}</string>
+            <key>testFlightInternalTestingOnly</key>
+            <${{ github.event.inputs.internal_only == 'true' && 'true' || 'false' }}/>
+            <key>uploadSymbols</key>
+            <true/>
+          </dict>
+          </plist>
+          PLIST
+
+          xcodebuild \
+            -exportArchive \
+            -archivePath "$ARCHIVE_PATH" \
+            -exportPath "$export_dir" \
+            -exportOptionsPlist "$RUNNER_TEMP/exportOptions.plist" \
+            -allowProvisioningUpdates \
+            -authenticationKeyPath "$ASC_KEY_PATH" \
+            -authenticationKeyID "$ASC_KEY_ID" \
+            -authenticationKeyIssuerID "$ASC_ISSUER_ID"
+
+          asset_path="$(find "$export_dir" -maxdepth 1 -name "${{ matrix.asset_glob }}" -print -quit)"
+          if [ -z "$asset_path" ]; then
+            echo "No export artifact found matching ${{ matrix.asset_glob }} in $export_dir" >&2
+            ls -la "$export_dir"
+            exit 1
+          fi
+
+          echo "EXPORT_DIR=$export_dir" >> "$GITHUB_ENV"
+          echo "ASSET_PATH=$asset_path" >> "$GITHUB_ENV"
+
+      - name: Upload export artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.archive_name }}-release
+          path: ${{ env.ASSET_PATH }}
+          if-no-files-found: error
+
+      - name: Upload to TestFlight
+        run: |
+          set -euo pipefail
+          xcrun iTMSTransporter \
+            -m upload \
+            -assetFile "$ASSET_PATH" \
+            -apiKey "$ASC_KEY_ID" \
+            -apiIssuer "$ASC_ISSUER_ID" \
+            -v informational
