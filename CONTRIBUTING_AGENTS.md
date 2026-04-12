@@ -243,18 +243,25 @@ For reviewer or coordination runs, also use `REVIEW_POLICY.md`.
   - Create/edit/delete flows backed by `NoteRepository`
   - Basic list refresh and persistence behavior
 - Steps:
-  - [ ] Wire note creation from the list UI into repository-backed persistence.
-  - [ ] Wire note editing and autosave/update behavior in note detail.
-  - [ ] Add archive/delete or trash interactions consistent with the data model.
-  - [ ] Add tests covering repository-backed CRUD flows from UI-facing view models.
-- Status: IN_PROGRESS
+  - [x] Wire note creation from the list UI into repository-backed persistence.
+  - [x] Wire note editing and autosave/update behavior in note detail.
+  - [x] Add archive/delete or trash interactions consistent with the data model.
+  - [x] Add tests covering repository-backed CRUD flows from UI-facing view models.
+- Status: DONE
 - Agent: codex
-- Last updated: 2026-04-13 04:30:33 IST +0530
+- Last updated: 2026-04-13 04:39:13 IST +0530
 - PR/Commit: n/a
 - Changed files:
-  - n/a
+  - CONTRIBUTING_AGENTS.md
+  - Sources/Lith/UI/NoteListViewModel.swift
+  - Sources/Lith/UI/NoteDetailViewModel.swift
+  - Apps/LithApp/Sources/Shared/Notes/NoteListView.swift
+  - Apps/LithApp/Sources/Shared/Notes/NoteDetailView.swift
+  - Apps/LithApp/Sources/Shared/RootView.swift
+  - Tests/LithTests/NoteListViewModelTests.swift
+  - Tests/LithTests/NoteDetailViewModelTests.swift
 - Notes/Blockers:
-  - Depends on `Implement Note List and Detail UI`.
+  - n/a
 
 ## Task: Implement Wikilink Parsing and Link Persistence
 

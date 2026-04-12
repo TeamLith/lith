@@ -66,9 +66,11 @@ struct RootView: View {
     private let dependencies: AppDependencyContainer
 
     @State private var selectedSection: AppSection? = .notes
+    @State private var noteListViewModel: NoteListViewModel
 
     init(dependencies: AppDependencyContainer) {
         self.dependencies = dependencies
+        self._noteListViewModel = State(initialValue: NoteListViewModel(repository: dependencies.noteRepository))
     }
 
     var body: some View {
@@ -78,7 +80,11 @@ struct RootView: View {
         TabView {
             ForEach(AppSection.allCases) { section in
                 NavigationStack {
-                    ShellDetailView(section: section, dependencies: dependencies)
+                    ShellDetailView(
+                        section: section,
+                        dependencies: dependencies,
+                        noteListViewModel: noteListViewModel
+                    )
                 }
                 .tabItem {
                     Label(section.title, systemImage: section.systemImage)
@@ -89,7 +95,7 @@ struct RootView: View {
     }
 
 #if os(macOS)
-    @State private var selectedNote: Note?
+    @State private var selectedNoteID: UUID?
 
     private var macOSBody: some View {
         Group {
@@ -99,12 +105,18 @@ struct RootView: View {
                 } content: {
                     NoteListView(
                         repository: dependencies.noteRepository,
-                        selectedNote: $selectedNote
+                        viewModel: noteListViewModel,
+                        selectedNoteID: $selectedNoteID
                     )
                     .navigationSplitViewColumnWidth(min: 240, ideal: 300)
                 } detail: {
-                    if let note = selectedNote {
-                        NoteDetailView(note: note)
+                    if let selectedNoteID {
+                        NoteDetailView(
+                            repository: dependencies.noteRepository,
+                            noteID: selectedNoteID
+                        ) {
+                            await noteListViewModel.loadNotes()
+                        }
                     } else {
                         ContentUnavailableView(
                             "No Note Selected",
@@ -119,7 +131,8 @@ struct RootView: View {
                 } detail: {
                     ShellDetailView(
                         section: selectedSection ?? .notes,
-                        dependencies: dependencies
+                        dependencies: dependencies,
+                        noteListViewModel: noteListViewModel
                     )
                 }
             }
@@ -140,11 +153,15 @@ struct RootView: View {
 private struct ShellDetailView: View {
     let section: AppSection
     let dependencies: AppDependencyContainer
+    let noteListViewModel: NoteListViewModel
 
     var body: some View {
 #if os(iOS)
         if section == .notes {
-            NoteListView(repository: dependencies.noteRepository)
+            NoteListView(
+                repository: dependencies.noteRepository,
+                viewModel: noteListViewModel
+            )
         } else {
             placeholderBody
         }

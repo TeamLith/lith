@@ -1,4 +1,5 @@
 import SwiftUI
+import Observation
 import Lith
 
 /// Note list screen showing pinned and recent note sections.
@@ -9,25 +10,49 @@ import Lith
 /// and pushes `NoteDetailView` via `NavigationLink`.
 @available(iOS 17, macOS 14, *)
 struct NoteListView: View {
-    @State private var viewModel: NoteListViewModel
+    let repository: NoteRepository
+    @Bindable var viewModel: NoteListViewModel
 
 #if os(macOS)
-    @Binding var selectedNote: Note?
+    @Binding var selectedNoteID: UUID?
 
-    init(repository: NoteRepository, selectedNote: Binding<Note?>) {
-        self._viewModel = State(initialValue: NoteListViewModel(repository: repository))
-        self._selectedNote = selectedNote
+    init(
+        repository: NoteRepository,
+        viewModel: NoteListViewModel,
+        selectedNoteID: Binding<UUID?>
+    ) {
+        self.repository = repository
+        self.viewModel = viewModel
+        self._selectedNoteID = selectedNoteID
     }
 #else
-    init(repository: NoteRepository) {
-        self._viewModel = State(initialValue: NoteListViewModel(repository: repository))
+    init(repository: NoteRepository, viewModel: NoteListViewModel) {
+        self.repository = repository
+        self.viewModel = viewModel
     }
 #endif
 
     var body: some View {
         noteListContent
             .navigationTitle("Notes")
+            .onAppear { Task { await viewModel.loadNotes() } }
             .task { await viewModel.loadNotes() }
+            .toolbar {
+                ToolbarItem(placement: .primaryAction) {
+                    Button {
+                        Task {
+                            guard let note = await viewModel.createNote() else {
+                                return
+                            }
+#if os(macOS)
+                            selectedNoteID = note.id
+#endif
+                        }
+                    } label: {
+                        Label("New Note", systemImage: "plus")
+                    }
+                }
+            }
     }
 
     // MARK: - List content
@@ -89,13 +114,32 @@ struct NoteListView: View {
 #if os(macOS)
         noteRowContent(for: note)
             .contentShape(Rectangle())
-            .onTapGesture { selectedNote = note }
-            .background(selectedNote?.id == note.id ? Color.accentColor.opacity(0.12) : Color.clear)
+            .onTapGesture { selectedNoteID = note.id }
+            .background(selectedNoteID == note.id ? Color.accentColor.opacity(0.12) : Color.clear)
+            .contextMenu { noteActions(for: note) }
 #else
         NavigationLink {
-            NoteDetailView(note: note)
+            NoteDetailView(repository: repository, noteID: note.id) {
+                await viewModel.loadNotes()
+            }
         } label: {
             noteRowContent(for: note)
+        }
+        .contextMenu { noteActions(for: note) }
+        .swipeActions(edge: .leading, allowsFullSwipe: false) {
+            Button {
+                Task { await archive(noteID: note.id) }
+            } label: {
+                Label("Archive", systemImage: "archivebox")
+            }
+            .tint(.blue)
+        }
+        .swipeActions(edge: .trailing, allowsFullSwipe: false) {
+            Button(role: .destructive) {
+                Task { await moveToTrash(noteID: note.id) }
+            } label: {
+                Label("Trash", systemImage: "trash")
+            }
         }
 #endif
     }
@@ -126,6 +170,54 @@ struct NoteListView: View {
                 .foregroundStyle(.tertiary)
         }
         .padding(.vertical, 2)
+    }
+
+    @ViewBuilder
+    private func noteActions(for note: Note) -> some View {
+        Button {
+            Task { await archive(noteID: note.id) }
+        } label: {
+            Label("Archive", systemImage: "archivebox")
+        }
+
+        Button(role: .destructive) {
+            Task { await moveToTrash(noteID: note.id) }
+        } label: {
+            Label("Move to Trash", systemImage: "trash")
+        }
+
+        Button(role: .destructive) {
+            Task { await delete(noteID: note.id) }
+        } label: {
+            Label("Delete Permanently", systemImage: "xmark.bin")
+        }
+    }
+
+    private func archive(noteID: UUID) async {
+        await viewModel.archive(noteID: noteID)
+#if os(macOS)
+        if selectedNoteID == noteID {
+            selectedNoteID = nil
+        }
+#endif
+    }
+
+    private func moveToTrash(noteID: UUID) async {
+        await viewModel.moveToTrash(noteID: noteID)
+#if os(macOS)
+        if selectedNoteID == noteID {
+            selectedNoteID = nil
+        }
+#endif
+    }
+
+    private func delete(noteID: UUID) async {
+        await viewModel.delete(noteID: noteID)
+#if os(macOS)
+        if selectedNoteID == noteID {
+            selectedNoteID = nil
+        }
+#endif
     }
 }
 
@@ -162,15 +254,23 @@ private let sampleNotes: [Note] = [
 #if os(iOS)
 @available(iOS 17, macOS 14, *)
 #Preview("Populated notes list (iOS)") {
+    let repository = makeInMemoryRepository(notes: sampleNotes)
     NavigationStack {
-        NoteListView(repository: makeInMemoryRepository(notes: sampleNotes))
+        NoteListView(
+            repository: repository,
+            viewModel: NoteListViewModel(repository: repository)
+        )
     }
 }
 
 @available(iOS 17, macOS 14, *)
 #Preview("Empty notes list (iOS)") {
+    let repository = makeInMemoryRepository()
     NavigationStack {
-        NoteListView(repository: makeInMemoryRepository())
+        NoteListView(
+            repository: repository,
+            viewModel: NoteListViewModel(repository: repository)
+        )
     }
 }
 #endif
@@ -178,15 +278,17 @@ private let sampleNotes: [Note] = [
 #if os(macOS)
 @available(iOS 17, macOS 14, *)
 #Preview("Populated notes list (macOS)") {
-    @Previewable @State var selected: Note? = nil
+    @Previewable @State var selectedNoteID: UUID? = nil
+    let repository = makeInMemoryRepository(notes: sampleNotes)
     NavigationSplitView {
         NoteListView(
-            repository: makeInMemoryRepository(notes: sampleNotes),
-            selectedNote: $selected
+            repository: repository,
+            viewModel: NoteListViewModel(repository: repository),
+            selectedNoteID: $selectedNoteID
         )
     } detail: {
-        if let note = selected {
-            NoteDetailView(note: note)
+        if let selectedNoteID {
+            NoteDetailView(repository: repository, noteID: selectedNoteID)
         } else {
             Text("Select a note")
         }
@@ -196,11 +298,13 @@ private let sampleNotes: [Note] = [
 
 @available(iOS 17, macOS 14, *)
 #Preview("Empty notes list (macOS)") {
-    @Previewable @State var selected: Note? = nil
+    @Previewable @State var selectedNoteID: UUID? = nil
+    let repository = makeInMemoryRepository()
     NavigationSplitView {
         NoteListView(
-            repository: makeInMemoryRepository(),
-            selectedNote: $selected
+            repository: repository,
+            viewModel: NoteListViewModel(repository: repository),
+            selectedNoteID: $selectedNoteID
         )
     } detail: {
         Text("No note selected")

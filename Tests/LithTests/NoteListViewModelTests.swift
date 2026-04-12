@@ -71,4 +71,58 @@ struct NoteListViewModelTests {
         await vm.loadNotes()
         #expect(vm.loadError == nil)
     }
+
+    @Test("createNote persists a new note and refreshes the list")
+    func createNotePersistsNewNote() async throws {
+        let repo = InMemoryNoteRepository()
+        let vm = NoteListViewModel(repository: repo)
+
+        let created = await vm.createNote()
+
+        #expect(created != nil)
+        #expect(vm.recentNotes.count == 1)
+        #expect(vm.recentNotes.first?.id == created?.id)
+        #expect(try await repo.note(id: created?.id ?? UUID())?.id == created?.id)
+    }
+
+    @Test("archive marks the note archived and removes it from visible buckets")
+    func archiveHidesNoteFromVisibleBuckets() async throws {
+        let note = Note(title: "Archive me", bodyMarkdown: "Body")
+        let repo = InMemoryNoteRepository(seed: [note])
+        let vm = NoteListViewModel(repository: repo)
+
+        await vm.archive(noteID: note.id)
+
+        let stored = try await repo.note(id: note.id)
+        #expect(stored?.isArchived == true)
+        #expect(vm.pinnedNotes.isEmpty)
+        #expect(vm.recentNotes.isEmpty)
+    }
+
+    @Test("moveToTrash marks the note trashed and removes it from visible buckets")
+    func moveToTrashHidesNoteFromVisibleBuckets() async throws {
+        let note = Note(title: "Trash me", bodyMarkdown: "Body")
+        let repo = InMemoryNoteRepository(seed: [note])
+        let vm = NoteListViewModel(repository: repo)
+
+        await vm.moveToTrash(noteID: note.id)
+
+        let stored = try await repo.note(id: note.id)
+        #expect(stored?.isTrashed == true)
+        #expect(vm.pinnedNotes.isEmpty)
+        #expect(vm.recentNotes.isEmpty)
+    }
+
+    @Test("delete permanently removes the note")
+    func deleteRemovesTheNote() async throws {
+        let note = Note(title: "Delete me", bodyMarkdown: "Body")
+        let repo = InMemoryNoteRepository(seed: [note])
+        let vm = NoteListViewModel(repository: repo)
+
+        await vm.delete(noteID: note.id)
+
+        #expect(try await repo.note(id: note.id) == nil)
+        #expect(vm.pinnedNotes.isEmpty)
+        #expect(vm.recentNotes.isEmpty)
+    }
 }
