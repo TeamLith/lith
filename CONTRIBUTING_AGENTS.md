@@ -166,14 +166,14 @@ This file is the task control plane for multi-agent execution and human review.
   - [ ] Configure persistent store loading for app and preview/test contexts.
   - [ ] Inject dependencies into SwiftUI app roots for both iOS and macOS.
   - [ ] Add smoke tests or previews for container startup behavior.
-- Status: TODO
-- Agent: unassigned
-- Last updated: 2026-04-12 15:12 IST
+- Status: IN_PROGRESS
+- Agent: codex
+- Last updated: 2026-04-12 17:46:33 IST+0530
 - PR/Commit: n/a
 - Changed files:
   - n/a
 - Notes/Blockers:
-  - Depends on `Set Up Xcode Workspace and App Targets`.
+  - n/a
 
 ## Task: Implement Base UI Shell
 
