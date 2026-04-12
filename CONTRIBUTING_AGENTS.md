@@ -2,6 +2,8 @@
 
 This file is the task control plane for multi-agent execution and human review.
 
+For stable repository orientation, read `REPO_MAP.md` before using this task board.
+
 ## 1. Global checklist
 
 - [ ] Set up Swift Package / Xcode workspace. (see `ARCHITECTURE.md`)
@@ -636,15 +638,16 @@ This file is the task control plane for multi-agent execution and human review.
 
 Use this bundle for each coding session:
 
-1. `README.md`
-2. `ARCHITECTURE.md`
-3. `DATA_MODEL.md`
-4. Relevant feature/sync spec
-5. Relevant task section from this file
+1. `REPO_MAP.md`
+2. `README.md`
+3. `ARCHITECTURE.md`
+4. `DATA_MODEL.md`
+5. Relevant feature/sync spec
+6. Relevant task section from this file
 
 Prompt pattern:
 
 > You are implementing `<Task Name>` from `CONTRIBUTING_AGENTS.md`.
-> Use these specs: `README.md`, `ARCHITECTURE.md`, `DATA_MODEL.md`, `<FEATURE_FILE>.md`, and the task block.
+> Use these specs: `REPO_MAP.md`, `README.md`, `ARCHITECTURE.md`, `DATA_MODEL.md`, `<FEATURE_FILE>.md`, and the task block.
 > Produce code and tests for a Swift/SwiftUI + Core Data project.
 > Update task status/checklist and include changed-file summary.

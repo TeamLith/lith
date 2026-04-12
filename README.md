@@ -14,6 +14,7 @@ Native iOS/macOS note-taking app spec repo designed for multi-agent execution an
 ## Specs index
 
 - [PRODUCT_OVERVIEW.md](./PRODUCT_OVERVIEW.md)
+- [REPO_MAP.md](./REPO_MAP.md)
 - [ARCHITECTURE.md](./ARCHITECTURE.md)
 - [DATA_MODEL.md](./DATA_MODEL.md)
 - [FEATURE_TEXT_NOTES.md](./FEATURE_TEXT_NOTES.md)
@@ -28,11 +29,12 @@ Native iOS/macOS note-taking app spec repo designed for multi-agent execution an
 ## How AI agents contribute
 
 1. Pick one task block from `CONTRIBUTING_AGENTS.md`.
-2. Read global context first: `README.md`, `ARCHITECTURE.md`, `DATA_MODEL.md`.
-3. Read the relevant feature/sync file for that task.
-4. Implement code + tests.
-5. Update checklist status, `Agent`, and `Last updated` in `CONTRIBUTING_AGENTS.md`.
-6. Include a short file-change summary for human/GitHub review.
+2. Read orientation first: `REPO_MAP.md`.
+3. Read global context next: `README.md`, `ARCHITECTURE.md`, `DATA_MODEL.md`.
+4. Read the relevant feature/sync file for that task.
+5. Implement code + tests.
+6. Update checklist status, `Agent`, and `Last updated` in `CONTRIBUTING_AGENTS.md`.
+7. Include a short file-change summary for human/GitHub review.
 
 ## Pause and resume workflow
 
