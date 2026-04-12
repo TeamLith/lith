@@ -7,14 +7,19 @@ public struct SearchService: SearchServiceProtocol, Sendable {
         self.repository = repository
     }
 
-    public func search(query: String, filter: SearchFilter) async throws -> [Note] {
+    public func search(query: String, filters: SearchFilter) async throws -> [Note] {
         let notes = try await repository.allNotes()
         return notes.filter { note in
-            guard filter.sources.contains(note.source) else { return false }
-            if !filter.tags.isEmpty && filter.tags.isDisjoint(with: note.tags) { return false }
-            if let range = filter.dateRange, !range.contains(note.updatedAt) { return false }
+            guard filters.sources.contains(note.source) else { return false }
+            if !filters.tags.isEmpty && filters.tags.isDisjoint(with: note.tags) { return false }
+            if let range = filters.dateRange, !range.contains(note.updatedAt) { return false }
             return query.isEmpty || SearchQueryEvaluator.matches(note: note, query: query)
         }
+    }
+
+    @available(*, deprecated, renamed: "search(query:filters:)", message: "Use search(query:filters:) instead.")
+    public func search(query: String, filter: SearchFilter) async throws -> [Note] {
+        try await search(query: query, filters: filter)
     }
 }
 

@@ -23,7 +23,14 @@ public protocol RSSRepository: Sendable {
 }
 
 public protocol SearchServiceProtocol: Sendable {
-    func search(query: String, filter: SearchFilter) async throws -> [Note]
+    func search(query: String, filters: SearchFilter) async throws -> [Note]
+}
+
+public extension SearchServiceProtocol {
+    @available(*, deprecated, renamed: "search(query:filters:)", message: "Use search(query:filters:) instead.")
+    func search(query: String, filter: SearchFilter) async throws -> [Note] {
+        try await search(query: query, filters: filter)
+    }
 }
 
 public protocol RSSConversionServiceProtocol: Sendable {
