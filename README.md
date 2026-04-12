@@ -38,8 +38,9 @@ Native iOS/macOS note-taking app spec repo designed for multi-agent execution an
 5. Read the relevant feature or sync file for that task.
 6. Implement code + tests.
 7. Update checklist status, `Agent`, and `Last updated` in `CONTRIBUTING_AGENTS.md`.
-8. Review `REPO_MAP.md` before closing the task and update it only if repo orientation changed.
-9. Include a short file-change summary for human or GitHub review.
+8. If the task is completed, bump `MARKETING_VERSION` and `CURRENT_PROJECT_VERSION`, keeping `project.yml` and generated Xcode project settings in sync.
+9. Review `REPO_MAP.md` before closing the task and update it only if repo orientation changed.
+10. Include a short file-change summary for human or GitHub review.
 
 Reviewer or coordination sessions should start with `AGENTS.md` and then use `REVIEW_POLICY.md`.
 
