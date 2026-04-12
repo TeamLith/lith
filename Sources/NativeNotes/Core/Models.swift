@@ -13,8 +13,11 @@ public struct Note: Identifiable, Codable, Hashable, Sendable {
     public var tags: Set<String>
     public var createdAt: Date
     public var updatedAt: Date
+    public var accessedAt: Date?
     public var source: NoteSource
     public var isPinned: Bool
+    public var isArchived: Bool
+    public var isTrashed: Bool
     public var metadata: [String: String]
 
     public init(
@@ -24,8 +27,11 @@ public struct Note: Identifiable, Codable, Hashable, Sendable {
         tags: Set<String> = [],
         createdAt: Date = Date(),
         updatedAt: Date = Date(),
+        accessedAt: Date? = nil,
         source: NoteSource = .manual,
         isPinned: Bool = false,
+        isArchived: Bool = false,
+        isTrashed: Bool = false,
         metadata: [String: String] = [:]
     ) {
         self.id = id
@@ -34,9 +40,34 @@ public struct Note: Identifiable, Codable, Hashable, Sendable {
         self.tags = tags
         self.createdAt = createdAt
         self.updatedAt = updatedAt
+        self.accessedAt = accessedAt
         self.source = source
         self.isPinned = isPinned
+        self.isArchived = isArchived
+        self.isTrashed = isTrashed
         self.metadata = metadata
+    }
+}
+
+extension Note {
+    private enum CodingKeys: String, CodingKey {
+        case id, title, bodyMarkdown, tags, createdAt, updatedAt, accessedAt, source, isPinned, isArchived, isTrashed, metadata
+    }
+
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        id = try container.decode(UUID.self, forKey: .id)
+        title = try container.decode(String.self, forKey: .title)
+        bodyMarkdown = try container.decode(String.self, forKey: .bodyMarkdown)
+        tags = try container.decodeIfPresent(Set<String>.self, forKey: .tags) ?? []
+        createdAt = try container.decode(Date.self, forKey: .createdAt)
+        updatedAt = try container.decode(Date.self, forKey: .updatedAt)
+        accessedAt = try container.decodeIfPresent(Date.self, forKey: .accessedAt)
+        source = try container.decodeIfPresent(NoteSource.self, forKey: .source) ?? .manual
+        isPinned = try container.decodeIfPresent(Bool.self, forKey: .isPinned) ?? false
+        isArchived = try container.decodeIfPresent(Bool.self, forKey: .isArchived) ?? false
+        isTrashed = try container.decodeIfPresent(Bool.self, forKey: .isTrashed) ?? false
+        metadata = try container.decodeIfPresent([String: String].self, forKey: .metadata) ?? [:]
     }
 }
 
