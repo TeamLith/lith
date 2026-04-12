@@ -6,7 +6,7 @@ struct RootView: View {
     private let dependencies: AppDependencyContainer
 
     init(
-        title: String = "NativeNotes",
+        title: String = "Lith",
         dependencies: AppDependencyContainer
     ) {
         self.title = title
