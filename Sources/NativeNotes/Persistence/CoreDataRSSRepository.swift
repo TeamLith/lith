@@ -23,11 +23,14 @@ public final class CoreDataRSSRepository: @unchecked Sendable, RSSRepository {
 
     public func addFeed(_ feed: RSSFeed) async throws {
         try await perform {
-            let managedFeed = try self.fetchManagedFeed(id: feed.id)
-                ?? self.fetchManagedFeed(urlString: feed.feedURL.absoluteString)
-                ?? ManagedRSSFeed(context: self.context)
-            let domainFeed = self.merge(existing: managedFeed.toDomainFeedOrNil(), incoming: feed)
-            managedFeed.apply(domainFeed)
+            if let managedFeed = try self.fetchManagedFeed(id: feed.id)
+                ?? self.fetchManagedFeed(urlString: feed.feedURL.absoluteString) {
+                let domainFeed = self.merge(existing: managedFeed.toDomainFeedOrNil(), incoming: feed)
+                managedFeed.apply(domainFeed)
+            } else {
+                let managedFeed = ManagedRSSFeed(context: self.context)
+                managedFeed.apply(feed)
+            }
             try self.saveIfNeeded()
         }
     }
@@ -36,7 +39,7 @@ public final class CoreDataRSSRepository: @unchecked Sendable, RSSRepository {
         try await perform {
             let request = ManagedRSSFeed.fetchRequest()
             request.sortDescriptors = [NSSortDescriptor(key: #keyPath(ManagedRSSFeed.title), ascending: true)]
-            return try self.context.fetch(request).map { $0.toDomainFeed() }
+            return try self.context.fetch(request).map { try $0.toDomainFeed() }
         }
     }
 
@@ -63,10 +66,19 @@ public final class CoreDataRSSRepository: @unchecked Sendable, RSSRepository {
                     throw CoreDataRSSRepositoryError.missingFeed(item.feedID)
                 }
 
-                let managedItem = try self.fetchManagedItem(id: item.id)
+                let existingManagedItem = try self.fetchManagedItem(id: item.id)
                     ?? self.fetchManagedItem(feedID: item.feedID, linkURLString: item.linkURL.absoluteString)
-                    ?? ManagedRSSItem(context: self.context)
-                let domainItem = try self.merge(existing: managedItem.toDomainItemOrNil(), incoming: item)
+                let managedItem: ManagedRSSItem
+                let domainItem: RSSItem
+
+                if let existingManagedItem {
+                    managedItem = existingManagedItem
+                    domainItem = try self.merge(existing: existingManagedItem.toDomainItemOrNil(), incoming: item)
+                } else {
+                    managedItem = ManagedRSSItem(context: self.context)
+                    domainItem = self.merge(existing: nil, incoming: item)
+                }
+
                 try managedItem.apply(domainItem, feed: managedFeed)
             }
             try self.saveIfNeeded()
@@ -190,11 +202,14 @@ extension ManagedRSSFeed {
         refreshIntervalSeconds = feed.refreshIntervalSeconds
     }
 
-    func toDomainFeed() -> RSSFeed {
-        RSSFeed(
+    func toDomainFeed() throws -> RSSFeed {
+        guard let url = URL(string: urlString) else {
+            throw CoreDataRSSRepositoryError.invalidURL(urlString)
+        }
+        return RSSFeed(
             id: id,
             title: title,
-            feedURL: URL(string: urlString)!,
+            feedURL: url,
             category: category,
             lastFetchedAt: lastFetchedAt,
             isActive: isActive,

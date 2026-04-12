@@ -119,6 +119,23 @@ public struct RSSFeed: Identifiable, Codable, Hashable, Sendable {
     }
 }
 
+extension RSSFeed {
+    private enum CodingKeys: String, CodingKey {
+        case id, title, feedURL, category, lastFetchedAt, isActive, refreshIntervalSeconds
+    }
+
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        id = try container.decode(UUID.self, forKey: .id)
+        title = try container.decode(String.self, forKey: .title)
+        feedURL = try container.decode(URL.self, forKey: .feedURL)
+        category = try container.decodeIfPresent(String.self, forKey: .category)
+        lastFetchedAt = try container.decodeIfPresent(Date.self, forKey: .lastFetchedAt)
+        isActive = try container.decodeIfPresent(Bool.self, forKey: .isActive) ?? true
+        refreshIntervalSeconds = try container.decodeIfPresent(Int32.self, forKey: .refreshIntervalSeconds) ?? 3_600
+    }
+}
+
 public enum RSSItemStatus: String, Codable, Sendable {
     case new
     case approved
