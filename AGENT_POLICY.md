@@ -62,6 +62,10 @@ This file holds the durable repo policy for autonomous implementation runs. `AGE
      - `Changed files:` actual paths
      - `Notes/Blockers:` concise notes or `n/a`
    - Tick completed checkboxes in that task’s `Steps`.
+   - If the task is completed, increment app versions before the final implementation commit:
+     - bump `MARKETING_VERSION`
+     - bump `CURRENT_PROJECT_VERSION`
+     - keep `project.yml` and generated Xcode project settings aligned
 
 10. Commit and push:
    - Commit implementation with a clear message: `feat(<task-slug>): <what was implemented>`.

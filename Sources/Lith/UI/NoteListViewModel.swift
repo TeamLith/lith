@@ -38,4 +38,66 @@ public final class NoteListViewModel {
             loadError = error
         }
     }
+
+    @discardableResult
+    public func createNote() async -> Note? {
+        let now = Date()
+        let note = Note(
+            title: "",
+            bodyMarkdown: "",
+            createdAt: now,
+            updatedAt: now
+        )
+
+        do {
+            try await repository.upsert(note)
+            await loadNotes()
+            return note
+        } catch {
+            loadError = error
+            return nil
+        }
+    }
+
+    public func archive(noteID: UUID) async {
+        await updateNote(noteID: noteID) { note in
+            var updated = note
+            updated.isArchived = true
+            updated.isTrashed = false
+            updated.updatedAt = Date()
+            return updated
+        }
+    }
+
+    public func moveToTrash(noteID: UUID) async {
+        await updateNote(noteID: noteID) { note in
+            var updated = note
+            updated.isArchived = false
+            updated.isTrashed = true
+            updated.updatedAt = Date()
+            return updated
+        }
+    }
+
+    public func delete(noteID: UUID) async {
+        do {
+            try await repository.delete(noteID: noteID)
+            await loadNotes()
+        } catch {
+            loadError = error
+        }
+    }
+
+    private func updateNote(noteID: UUID, mutate: (Note) -> Note) async {
+        do {
+            guard let note = try await repository.note(id: noteID) else {
+                return
+            }
+
+            try await repository.upsert(mutate(note))
+            await loadNotes()
+        } catch {
+            loadError = error
+        }
+    }
 }

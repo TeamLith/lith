@@ -52,6 +52,10 @@ Follow this order before making changes:
 ## Task Close-Out
 
 - Update the claimed task with final status, timestamp, changed files, and concise notes or blockers before exit.
+- When a claimed task is completed, increment the app versions before finishing the work:
+  - bump `MARKETING_VERSION`
+  - bump `CURRENT_PROJECT_VERSION`
+  - keep `project.yml` and generated Xcode project settings in sync
 - If blocked, leave the task `IN_PROGRESS` and record the blocker clearly.
 - Report whether `REPO_MAP.md` was reviewed and whether it was updated.
 
