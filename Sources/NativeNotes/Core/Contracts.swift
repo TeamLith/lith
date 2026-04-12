@@ -23,7 +23,7 @@ public protocol RSSRepository: Sendable {
 }
 
 public protocol SearchServiceProtocol: Sendable {
-    func search(query: String, filter: SearchFilter) async throws -> [Note]
+    func search(query: String, filters: SearchFilter) async throws -> [Note]
 }
 
 public protocol RSSConversionServiceProtocol: Sendable {

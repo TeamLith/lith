@@ -103,15 +103,19 @@ This file is the task control plane for multi-agent execution and human review.
   - `SearchService.search(query:filters:)`
   - Test coverage for title/body/tags/metadata/transcript match
 - Steps:
-  - [ ] Add unified search entry point.
-  - [ ] Implement filter support (source, dates, tags).
-  - [ ] Add tests for query and filter combinations.
-- Status: IN_PROGRESS
+  - [x] Add unified search entry point.
+  - [x] Implement filter support (source, dates, tags).
+  - [x] Add tests for query and filter combinations.
+- Status: DONE
 - Agent: codex
-- Last updated: 2026-04-12 16:34 IST
+- Last updated: 2026-04-12 16:37 IST
 - PR/Commit: n/a
 - Changed files:
-  - n/a
+  - CONTRIBUTING_AGENTS.md
+  - Sources/NativeNotes/Core/Contracts.swift
+  - Sources/NativeNotes/Services/SearchService.swift
+  - Tests/NativeNotesTests/CoreBehaviorTests.swift
+  - Tests/NativeNotesTests/SearchServiceTests.swift
 - Notes/Blockers:
   - n/a
 

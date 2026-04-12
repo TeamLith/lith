@@ -26,13 +26,13 @@ import Testing
     ])
     let service = SearchService(repository: repo)
 
-    let andResult = try await service.search(query: "SwiftUI AND CloudKit", filter: SearchFilter())
+    let andResult = try await service.search(query: "SwiftUI AND CloudKit", filters: SearchFilter())
     #expect(andResult.count == 1)
 
-    let orResult = try await service.search(query: "RSS OR Audio", filter: SearchFilter())
+    let orResult = try await service.search(query: "RSS OR Audio", filters: SearchFilter())
     #expect(orResult.count == 2)
 
-    let notResult = try await service.search(query: "NOT RSS", filter: SearchFilter())
+    let notResult = try await service.search(query: "NOT RSS", filters: SearchFilter())
     #expect(notResult.count == 2)
 }
 
