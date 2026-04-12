@@ -87,7 +87,17 @@ enum NativeNotesPersistentStore {
     }
 
     private static func defaultStoreURL() -> URL {
-        FileManager.default.temporaryDirectory.appendingPathComponent("NativeNotes.sqlite")
+        let fileManager = FileManager.default
+        let applicationSupportURL = fileManager.urls(for: .applicationSupportDirectory, in: .userDomainMask)[0]
+        let storeDirectoryURL = applicationSupportURL.appendingPathComponent("NativeNotes", isDirectory: true)
+
+        do {
+            try fileManager.createDirectory(at: storeDirectoryURL, withIntermediateDirectories: true)
+        } catch {
+            preconditionFailure("Failed to create NativeNotes persistent store directory: \(error)")
+        }
+
+        return storeDirectoryURL.appendingPathComponent("NativeNotes.sqlite")
     }
 
     private static func managedObjectModel() -> NSManagedObjectModel {
