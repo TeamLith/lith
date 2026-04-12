@@ -73,19 +73,7 @@ struct RootView: View {
 
     var body: some View {
 #if os(macOS)
-        NavigationSplitView {
-            List(AppSection.allCases, selection: $selectedSection) { section in
-                Label(section.title, systemImage: section.systemImage)
-                    .tag(section)
-            }
-            .navigationTitle("Lith")
-            .navigationSplitViewColumnWidth(min: 220, ideal: 240)
-        } detail: {
-            ShellDetailView(
-                section: selectedSection ?? .notes,
-                dependencies: dependencies
-            )
-        }
+        macOSBody
 #else
         TabView {
             ForEach(AppSection.allCases) { section in
@@ -99,6 +87,54 @@ struct RootView: View {
         }
 #endif
     }
+
+#if os(macOS)
+    @State private var selectedNote: Note?
+
+    private var macOSBody: some View {
+        Group {
+            if selectedSection == .notes {
+                NavigationSplitView {
+                    appSidebar
+                } content: {
+                    NoteListView(
+                        repository: dependencies.noteRepository,
+                        selectedNote: $selectedNote
+                    )
+                    .navigationSplitViewColumnWidth(min: 240, ideal: 300)
+                } detail: {
+                    if let note = selectedNote {
+                        NoteDetailView(note: note)
+                    } else {
+                        ContentUnavailableView(
+                            "No Note Selected",
+                            systemImage: "note.text",
+                            description: Text("Select a note from the list to read or edit it.")
+                        )
+                    }
+                }
+            } else {
+                NavigationSplitView {
+                    appSidebar
+                } detail: {
+                    ShellDetailView(
+                        section: selectedSection ?? .notes,
+                        dependencies: dependencies
+                    )
+                }
+            }
+        }
+    }
+
+    private var appSidebar: some View {
+        List(AppSection.allCases, selection: $selectedSection) { section in
+            Label(section.title, systemImage: section.systemImage)
+                .tag(section)
+        }
+        .navigationTitle("Lith")
+        .navigationSplitViewColumnWidth(min: 220, ideal: 240)
+    }
+#endif
 }
 
 private struct ShellDetailView: View {
@@ -106,6 +142,18 @@ private struct ShellDetailView: View {
     let dependencies: AppDependencyContainer
 
     var body: some View {
+#if os(iOS)
+        if section == .notes {
+            NoteListView(repository: dependencies.noteRepository)
+        } else {
+            placeholderBody
+        }
+#else
+        placeholderBody
+#endif
+    }
+
+    private var placeholderBody: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 24) {
                 VStack(alignment: .leading, spacing: 8) {

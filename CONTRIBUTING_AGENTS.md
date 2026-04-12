@@ -213,18 +213,22 @@ This file is the task control plane for multi-agent execution and human review.
   - SwiftUI notes list screen
   - SwiftUI note detail/editor screen
 - Steps:
-  - [ ] Build note list sections for pinned and recent notes.
-  - [ ] Build note detail editor with markdown-first editing flow.
-  - [ ] Add note selection/navigation behavior for iOS and macOS.
-  - [ ] Add previews or UI tests for populated and empty states.
-- Status: IN_PROGRESS
+  - [x] Build note list sections for pinned and recent notes.
+  - [x] Build note detail editor with markdown-first editing flow.
+  - [x] Add note selection/navigation behavior for iOS and macOS.
+  - [x] Add previews or UI tests for populated and empty states.
+- Status: DONE
 - Agent: codex
-- Last updated: 2026-04-12 22:28 UTC
-- PR/Commit: n/a
+- Last updated: 2026-04-12 22:35 UTC
+- PR/Commit: feat/note-list-detail-ui
 - Changed files:
-  - n/a
+  - Sources/Lith/UI/NoteListViewModel.swift
+  - Apps/LithApp/Sources/Shared/Notes/NoteListView.swift
+  - Apps/LithApp/Sources/Shared/Notes/NoteDetailView.swift
+  - Apps/LithApp/Sources/Shared/RootView.swift
+  - Tests/LithTests/NoteListViewModelTests.swift
 - Notes/Blockers:
-  - Depends on `Implement Base UI Shell`.
+  - n/a
 
 ## Task: Wire Note CRUD Flows Into UI
 
