@@ -24,6 +24,14 @@ public protocol RSSRepository: Sendable {
     func item(id: UUID) async throws -> RSSItem?
 }
 
+public protocol RSSFeedDataLoading: Sendable {
+    func loadData(from url: URL) async throws -> Data
+}
+
+public protocol RSSFeedParsing: Sendable {
+    func parse(data: Data, sourceURL: URL) throws -> ParsedRSSDocument
+}
+
 public protocol SearchServiceProtocol: Sendable {
     func search(query: String, filters: SearchFilter) async throws -> [Note]
 }
@@ -37,6 +45,10 @@ public extension SearchServiceProtocol {
 
 public protocol RSSConversionServiceProtocol: Sendable {
     func makeNote(from item: RSSItem, feed: RSSFeed, commentary: String?) -> Note
+}
+
+public protocol RSSFetchServiceProtocol: Sendable {
+    func refreshAllFeeds() async throws -> RSSRefreshReport
 }
 
 public protocol ActionItemExtractionServiceProtocol: Sendable {

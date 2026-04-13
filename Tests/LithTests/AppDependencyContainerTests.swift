@@ -25,9 +25,11 @@ import Testing
         query: "Searchable",
         filters: SearchFilter()
     )
+    let refreshReport = try await dependencies.rssFetchService.refreshAllFeeds()
 
     #expect(fetched?.id == note.id)
     #expect(searchResults.map(\.id).contains(note.id))
+    #expect(refreshReport.results.isEmpty)
 }
 
 @available(macOS 10.15, iOS 13.0, *)

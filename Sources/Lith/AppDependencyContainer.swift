@@ -15,6 +15,7 @@ public final class AppDependencyContainer: @unchecked Sendable {
     public let rssRepository: RSSRepository
     public let searchService: SearchServiceProtocol
     public let rssConversionService: RSSConversionServiceProtocol
+    public let rssFetchService: RSSFetchServiceProtocol
     public let actionItemExtractionService: ActionItemExtractionServiceProtocol
     public let wikiLinkService: WikiLinkServiceProtocol
 
@@ -31,6 +32,7 @@ public final class AppDependencyContainer: @unchecked Sendable {
         self.rssRepository = rssRepository
         self.searchService = SearchService(repository: noteRepository)
         self.rssConversionService = RSSConversionService()
+        self.rssFetchService = RSSFetchService(repository: rssRepository)
         self.actionItemExtractionService = ActionItemExtractionService()
         self.wikiLinkService = WikiLinkService(noteRepository: noteRepository, linkRepository: linkRepository)
     }
