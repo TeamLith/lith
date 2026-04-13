@@ -6,6 +6,7 @@ This file is the stable orientation guide for future agent and human sessions. R
 
 - Use this file to understand the current project layout, primary entry points, and where to make changes.
 - Use `HUMANS.md` for human setup, validation, and release-owner responsibilities.
+- Use `CONTRIBUTING.md` for the GitHub-native issue, PR, and handoff workflow.
 - Use GitHub Issues for active task state and handoff details.
 - Use `CONTRIBUTING_AGENTS.md` only as legacy task inventory, migration record, and historical archive.
 - Update this file only when repository structure, ownership boundaries, or core build workflows materially change.
@@ -34,16 +35,18 @@ Read only what matches the task:
      - relevant `Docs/*.md`
 - Humans:
   1. `HUMANS.md`
-  2. `README.md`
-  3. `REPO_MAP.md`
-  4. relevant GitHub Issue or Project board when coordinating tracked work
-  5. relevant `FEATURE_*.md`, `SYNC_ICLOUD.md`, or `Docs/*.md`
+  2. `CONTRIBUTING.md`
+  3. `README.md`
+  4. `REPO_MAP.md`
+  5. relevant GitHub Issue or Project board when coordinating tracked work
+  6. relevant `FEATURE_*.md`, `SYNC_ICLOUD.md`, or `Docs/*.md`
 
 ## High-Value Paths
 
 ### Product and planning
 
 - `README.md`: top-level product summary and contributor workflow.
+- `CONTRIBUTING.md`: GitHub-native contributor guide, issue/PR expectations, and human-vs-agent routing.
 - `HUMANS.md`: human operator setup, validation, and release-owner guide.
 - `AGENTS.md`: repo-local default instruction file for autonomous agents.
 - `AGENT_POLICY.md`: expanded autonomous workflow and reporting policy.

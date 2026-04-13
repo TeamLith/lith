@@ -3,6 +3,7 @@
 Native iOS/macOS note-taking app spec repo designed for multi-agent execution and human collaboration. The product is local-first with optional iCloud sync, starts with text notes and wiki-links, adds RSS approve-to-save workflows, then audio transcription and Siri-assisted action extraction, with Obsidian-like graph/search navigation.
 
 The repository now uses GitHub Issues as the source of truth for active work. Repo-local Markdown task lists remain only as archival context plus a record of the legacy backlog that was migrated to GitHub.
+For the GitHub-native contribution and review flow surfaced in Issues and pull requests, start with `CONTRIBUTING.md`.
 
 ## Tech constraints
 
@@ -16,6 +17,7 @@ The repository now uses GitHub Issues as the source of truth for active work. Re
 ## Specs index
 
 - [HUMANS.md](./HUMANS.md)
+- [CONTRIBUTING.md](./CONTRIBUTING.md)
 - [AGENTS.md](./AGENTS.md)
 - [AGENT_POLICY.md](./AGENT_POLICY.md)
 - [REVIEW_POLICY.md](./REVIEW_POLICY.md)
@@ -34,7 +36,7 @@ The repository now uses GitHub Issues as the source of truth for active work. Re
 
 ## How humans contribute
 
-1. Start with `HUMANS.md`.
+1. Start with `CONTRIBUTING.md` for the issue and PR workflow, then use `HUMANS.md` for setup and release-owned steps.
 2. Use `README.md` and `REPO_MAP.md` to orient on the repo and find the right spec files.
 3. Use GitHub Issues and, if desired, a GitHub Project board to coordinate tracked work with agents or other humans.
 4. Run `scripts/validate.sh` before merging or handing work off.

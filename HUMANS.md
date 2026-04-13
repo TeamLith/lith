@@ -5,10 +5,11 @@ Use this file for local setup, day-to-day development, and release steps that re
 ## Start Here
 
 1. Read `README.md` for the product summary and spec index.
-2. Read `REPO_MAP.md` for repository layout, entry points, and canonical build/test commands.
-3. Read only the feature or sync specs that match the work you are doing.
-4. Use GitHub Issues as the active work queue and assignment surface when coordinating with agents or other humans.
-5. Use `Docs/RELEASING_WITH_GITHUB.md` for TestFlight and App Store release setup.
+2. Read `CONTRIBUTING.md` for the GitHub issue and pull request workflow.
+3. Read `REPO_MAP.md` for repository layout, entry points, and canonical build/test commands.
+4. Read only the feature or sync specs that match the work you are doing.
+5. Use GitHub Issues as the active work queue and assignment surface when coordinating with agents or other humans.
+6. Use `Docs/RELEASING_WITH_GITHUB.md` for TestFlight and App Store release setup.
 
 ## One-Time Setup Checklist
 
@@ -21,7 +22,7 @@ Use this file for local setup, day-to-day development, and release steps that re
 
 ## Daily Development Workflow
 
-1. Start with `README.md`, `REPO_MAP.md`, and the relevant spec documents.
+1. Start with `CONTRIBUTING.md`, `README.md`, `REPO_MAP.md`, and the relevant spec documents.
 2. If the work is tracked, keep exactly one GitHub Issue current per branch or agent run.
 3. Prefer changes under `Sources/Lith` unless the work is truly app-shell-specific.
 4. Treat `project.yml` as the source of truth for target structure and regenerate the Xcode project after structural changes.
@@ -42,7 +43,7 @@ xcodebuild -scheme LithiOS -project LithApps.xcodeproj -configuration Debug -des
 ## Humans vs Agents
 
 - Humans own machine-local setup, tool installation, Apple signing, App Store Connect access, GitHub secrets, device provisioning, and final release approval.
-- Agents may implement one scoped task at a time, update repo docs and task metadata, run local validation, and bump versions when a tracked task is completed.
+- Agents may implement one scoped task at a time, update repo docs and task metadata, run local validation, and bump versions only when a tracked issue changes shipped app behavior or app/release metadata.
 - Humans should intervene when work requires credentials, legal or license judgment, Apple account changes, or any setup input an agent cannot discover safely.
 - Agents should not invent secrets, signing identities, team IDs, or release metadata that only a human can provide.
 

@@ -5,7 +5,7 @@ body:
   - type: markdown
     attributes:
       value: |
-        Keep one issue scoped to one branch and one PR.
+        Review [`CONTRIBUTING.md`](https://github.com/TeamLith/lith/blob/main/CONTRIBUTING.md) before opening tracked work. Keep one issue scoped to one branch and one PR.
   - type: textarea
     id: problem
     attributes:
@@ -35,6 +35,14 @@ body:
     validations:
       required: true
   - type: textarea
+    id: out_of_scope
+    attributes:
+      label: Out of Scope / Non-goals
+      description: Optional guardrails for what this issue should not expand into.
+      placeholder: |
+        - No platform-specific redesign
+        - Do not change sync behavior
+  - type: textarea
     id: implementation_steps
     attributes:
       label: Suggested Steps
@@ -53,7 +61,7 @@ body:
     id: validation
     attributes:
       label: Validation Expectations
-      description: Builds, tests, or manual checks required before close-out.
+      description: Builds, tests, or manual checks required before close-out. Use `scripts/validate.sh` when app wiring or repo workflow changes.
       placeholder: |
         - swift test
         - scripts/validate.sh

@@ -432,9 +432,9 @@ For reviewer or coordination runs, also use `REVIEW_POLICY.md`.
 - [ ] Identify the highest-value missing or unclear contribution/review surfaces.
 - [ ] Implement only low-risk repo-local changes that improve contribution quality or review routing.
 - [ ] Document any human-only follow-up, admin settings, or ownership decisions still required.
-- Status: IN_PROGRESS
-- Agent: codex
-- Last updated: 2026-04-13 21:44:54 IST +0530
+- Status: TODO
+- Agent: unassigned
+- Last updated: 2026-04-13 20:35 IST
 - PR/Commit: n/a
 - Changed files:
   - n/a
