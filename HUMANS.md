@@ -52,6 +52,14 @@ xcodebuild -scheme LithiOS -project LithApps.xcodeproj -configuration Debug -des
 - Review agent branches or commits before merging, especially when version bumps or workflow docs changed.
 - If an agent reports a blocker tied to credentials or signing, resolve that input as a human and then resume the task.
 
+## Triggering A Repo Self-Improvement Run
+
+- Ask explicitly for a repo self-improvement run, for example:
+  `Run a repo self-improvement pass per AGENTS.md. Audit the workflow against current best practices, use current primary sources, make bounded improvements, and avoid product feature work.`
+- This run type is separate from the normal first-`TODO` task flow and is intended for improving repo instructions, validation, CI, release process, and repo-local skill guidance.
+- Expect the agent to keep the run bounded, cite or summarize current primary-source guidance when recommendations are time-sensitive, and add follow-up `TODO` tasks for larger work instead of expanding scope silently.
+- Review the resulting branch or diff like any other process change, especially if it alters validation, release workflow, or contributor instructions.
+
 ## Release Flow
 
 1. Merge approved changes to `main` after the `Validate` GitHub Actions workflow passes.

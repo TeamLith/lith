@@ -52,6 +52,8 @@ Native iOS/macOS note-taking app spec repo designed for multi-agent execution an
 10. Review `REPO_MAP.md` before closing the task and update it only if repo orientation changed.
 11. Include a short file-change summary for human or GitHub review.
 
+Agents also support an explicit repo self-improvement run mode when a user asks for a repo self-improvement pass, audit, or equivalent. That mode bypasses the normal first-`TODO` auto-pick, stays bounded to repo-process work, and requires current primary sources when best-practice guidance may have changed.
+
 Reviewer or coordination sessions should start with `AGENTS.md` and then use `REVIEW_POLICY.md`.
 
 ## Pause and resume workflow

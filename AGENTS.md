@@ -17,6 +17,15 @@ Follow this order before making changes:
 - For reviewer or coordination runs, also follow `REVIEW_POLICY.md`.
 - Reviewer or coordination agents must not implement product features.
 
+## Run Modes
+
+- Default implementation run:
+  use the task board flow below and pick the first task with `Status: TODO`.
+- Repo self-improvement run:
+  if the user explicitly asks for a repo self-improvement run, pass, or audit, do not auto-pick a `TODO`. Follow the dedicated self-improvement workflow in `AGENT_POLICY.md` instead.
+- Self-improvement runs must stay bounded to repo workflow, validation, CI, release process, docs, or repo-local skill guidance. They must not drift into product feature implementation.
+- When recommendations or best practices may have changed, use current primary sources instead of relying on static memory.
+
 ## Task Workflow
 
 - Work on exactly one task from `CONTRIBUTING_AGENTS.md`.
@@ -56,6 +65,7 @@ Follow this order before making changes:
   - bump `MARKETING_VERSION`
   - bump `CURRENT_PROJECT_VERSION`
   - keep `project.yml` and generated Xcode project settings in sync
+- Repo self-improvement runs do not require an app version bump unless the improvement intentionally changes app or release metadata.
 - If blocked, leave the task `IN_PROGRESS` and record the blocker clearly.
 - Report whether `REPO_MAP.md` was reviewed and whether it was updated.
 
