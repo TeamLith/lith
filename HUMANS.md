@@ -48,7 +48,7 @@ xcodebuild -scheme LithiOS -project LithApps.xcodeproj -configuration Debug -des
 
 ## Working With Agents
 
-- Point implementation agents at `AGENTS.md` and ask them to follow the repo task workflow.
+- Point implementation agents at `AGENTS.md` and ask them to follow the issue workflow.
 - For parallel agent runs, create or assign one GitHub Issue per unit of work before starting the agents.
 - Use GitHub Issue assignment as the lock and GitHub Projects or labels as the board view.
 - Treat `CONTRIBUTING_AGENTS.md` as legacy migration input or historical context, not the live task board.

@@ -11,7 +11,7 @@ This file holds the durable repo policy for autonomous implementation runs. `AGE
 
 ## Run Types
 
-### Default Task Run
+### Default Issue Run
 
 - This is the normal mode.
 - Work one GitHub Issue at a time.
