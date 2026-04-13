@@ -7,9 +7,10 @@ This repository uses this file as the default repo-local instruction entry point
 Follow this order before making changes:
 
 1. Read `REPO_MAP.md`.
-2. Read `CONTRIBUTING_AGENTS.md`.
+2. Read the selected GitHub Issue or issue body supplied for the run.
 3. Read `README.md`, `ARCHITECTURE.md`, and `DATA_MODEL.md`.
-4. Read only the feature or sync specs required by the selected task.
+4. Read only the feature or sync specs required by the selected issue.
+5. Read `CONTRIBUTING_AGENTS.md` only when migrating legacy tasks or checking archived task history.
 
 ## Role Selection
 
@@ -20,24 +21,23 @@ Follow this order before making changes:
 ## Run Modes
 
 - Default implementation run:
-  use the task board flow below and pick the first task with `Status: TODO`.
+  use the GitHub issue flow below and work one issue at a time.
 - Repo self-improvement run:
   if the user explicitly asks for a repo self-improvement run, pass, or audit, do not auto-pick a `TODO`. Follow the dedicated self-improvement workflow in `AGENT_POLICY.md` instead.
 - Self-improvement runs must stay bounded to repo workflow, contributor workflow, review/handoff process, validation, CI, release process, docs, or repo-local skill guidance. They must not drift into product feature implementation.
 - When recommendations or best practices may have changed, use current primary sources instead of relying on static memory.
 
-## Task Workflow
+## Issue Workflow
 
-- Work on exactly one task from `CONTRIBUTING_AGENTS.md`.
-- Pick the first task with `Status: TODO`.
-- If no TODO task exists, stop and report `No TODO tasks available`.
-- Claim the task before coding by marking it `IN_PROGRESS`, setting `Agent: codex`, updating `Last updated`, and using `Changed files: n/a` until real paths are known.
-- Do not edit task state for tasks you did not work on.
-- Do not implement unrelated tasks.
+- Work on exactly one GitHub Issue at a time.
+- Prefer an issue explicitly provided by the user or already assigned to you.
+- If your environment supports GitHub assignment and a human has not pre-assigned work, claim the issue on GitHub before coding.
+- If your environment cannot assign issues, do not auto-pick from an unclaimed backlog in parallel mode; ask for an issue number or human assignment instead.
+- Do not implement unrelated work outside the chosen issue.
 
 ## Repo Self-Improvement Runs
 
-- Only perform repo-process, workflow, or documentation improvements when that work is either the selected task in `CONTRIBUTING_AGENTS.md` or an explicitly requested repo self-improvement run.
+- Only perform repo-process, workflow, or documentation improvements when that work is either the selected GitHub Issue or an explicitly requested repo self-improvement run.
 - Keep these runs bounded to agent instructions, human contribution guidance, task tracking, review/handoff workflow, contribution intake/review guidance, validation workflow, release/process docs, or clearly justified repo-local skill guidance.
 - Update existing guidance before inventing new files, parallel docs, or new repo structure.
 - Escalate to a human for secrets, signing, legal/license choices, paid services, or one-time setup inputs an agent cannot discover safely.
@@ -45,9 +45,9 @@ Follow this order before making changes:
 
 ## Git Workflow
 
-- If the worktree is clean, sync from `main` and create a branch for exactly one task.
+- If the worktree is clean, sync from `main` and create a branch for exactly one issue.
 - If the worktree is dirty or switching branches would risk unrelated changes, stop and report that condition instead of forcing git operations.
-- Keep claim and implementation commits separate when following the task workflow in `AGENT_POLICY.md`.
+- Keep claim and implementation commits separate when following the issue workflow in `AGENT_POLICY.md`.
 
 ## Validation
 
@@ -68,13 +68,13 @@ Follow this order before making changes:
 
 ## Task Close-Out
 
-- Update the claimed task with final status, timestamp, changed files, and concise notes or blockers before exit.
-- When a claimed task is completed, increment the app versions before finishing the work:
+- Update the linked GitHub Issue or PR with concise notes, blockers, and validation status when your environment supports it.
+- When a claimed issue is completed, increment the app versions before finishing the work:
   - bump `MARKETING_VERSION`
   - bump `CURRENT_PROJECT_VERSION`
   - keep `project.yml` and generated Xcode project settings in sync
 - Repo self-improvement runs do not require an app version bump unless the improvement intentionally changes app or release metadata.
-- If blocked, leave the task `IN_PROGRESS` and record the blocker clearly.
+- If blocked, leave the issue open and record the blocker clearly.
 - Report whether `REPO_MAP.md` was reviewed and whether it was updated.
 
 ## Detailed Policy
