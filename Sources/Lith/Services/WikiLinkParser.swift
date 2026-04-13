@@ -24,8 +24,13 @@ public struct WikiLinkParser: Sendable {
 
     public func links(for source: Note, allNotes: [Note]) -> [Link] {
         let index = Dictionary(uniqueKeysWithValues: allNotes.map { ($0.title.lowercased(), $0.id) })
+        var seenTargets: Set<UUID> = []
+
         return targets(in: source.bodyMarkdown).compactMap { target in
             guard let targetID = index[target.lowercased()], targetID != source.id else {
+                return nil
+            }
+            guard seenTargets.insert(targetID).inserted else {
                 return nil
             }
             return Link(fromNoteID: source.id, toNoteID: targetID, type: .wikilink)

@@ -55,7 +55,9 @@ Read only what matches the task:
 - `Sources/Lith/AppDependencyContainer.swift`: app bootstrap and dependency wiring.
 - `Sources/Lith/Core`: shared models and contracts.
 - `Sources/Lith/Persistence`: Core Data repositories.
+- `Sources/Lith/Persistence/CoreDataLinkRepository.swift`: persisted wikilink/backlink storage.
 - `Sources/Lith/Services`: search, RSS conversion, wiki links, action extraction, and test/in-memory support.
+- `Sources/Lith/Services/WikiLinkService.swift`: wikilink resolution and backlink queries.
 - `Sources/Lith/Graph`: graph models and builder logic.
 - `Sources/Lith/Sync`: sync conflict handling.
 - `Sources/Lith/UI`: shared UI-facing view models.
@@ -95,7 +97,7 @@ Read only what matches the task:
 ## Fast Routing Guide
 
 - Note CRUD, repositories, and entities:
-  start with `DATA_MODEL.md`, `Sources/Lith/Core`, `Sources/Lith/Persistence`, and `Tests/LithTests`.
+  start with `DATA_MODEL.md`, `Sources/Lith/Core`, `Sources/Lith/Persistence`, `Sources/Lith/Services/WikiLinkService.swift`, and `Tests/LithTests`.
 - SwiftUI shell or screens:
   start with `Apps/LithApp/Sources/Shared`, platform app entry points, and `FEATURE_TEXT_NOTES.md`.
 - Search or graph:

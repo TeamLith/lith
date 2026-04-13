@@ -13,7 +13,9 @@ struct NoteDetailViewModelTests {
             isPinned: true
         )
         let repo = InMemoryNoteRepository(seed: [note])
-        let vm = NoteDetailViewModel(noteID: note.id, repository: repo)
+        let linkRepository = InMemoryLinkRepository()
+        let wikiLinkService = WikiLinkService(noteRepository: repo, linkRepository: linkRepository)
+        let vm = NoteDetailViewModel(noteID: note.id, repository: repo, wikiLinkService: wikiLinkService)
 
         await vm.loadNote()
 
@@ -27,9 +29,12 @@ struct NoteDetailViewModelTests {
     func scheduleAutosavePersistsEdits() async throws {
         let note = Note(title: "Original", bodyMarkdown: "Before")
         let repo = InMemoryNoteRepository(seed: [note])
+        let linkRepository = InMemoryLinkRepository()
+        let wikiLinkService = WikiLinkService(noteRepository: repo, linkRepository: linkRepository)
         let vm = NoteDetailViewModel(
             noteID: note.id,
             repository: repo,
+            wikiLinkService: wikiLinkService,
             autosaveDelayNanoseconds: 20_000_000
         )
 
@@ -43,13 +48,16 @@ struct NoteDetailViewModelTests {
         let stored = try await repo.note(id: note.id)
         #expect(stored?.title == "Updated")
         #expect(stored?.bodyMarkdown == "After")
+        #expect(try await linkRepository.links(from: note.id).isEmpty)
     }
 
     @Test("archive persists archived state")
     func archivePersistsArchivedState() async throws {
         let note = Note(title: "Archive", bodyMarkdown: "Body")
         let repo = InMemoryNoteRepository(seed: [note])
-        let vm = NoteDetailViewModel(noteID: note.id, repository: repo)
+        let linkRepository = InMemoryLinkRepository()
+        let wikiLinkService = WikiLinkService(noteRepository: repo, linkRepository: linkRepository)
+        let vm = NoteDetailViewModel(noteID: note.id, repository: repo, wikiLinkService: wikiLinkService)
 
         await vm.loadNote()
         _ = await vm.archive()
@@ -57,5 +65,39 @@ struct NoteDetailViewModelTests {
         let stored = try await repo.note(id: note.id)
         #expect(stored?.isArchived == true)
         #expect(stored?.isTrashed == false)
+    }
+
+    @Test("saveNow resolves wikilinks into persisted link records")
+    func saveNowPersistsResolvedWikiLinks() async throws {
+        let target = Note(title: "Target", bodyMarkdown: "")
+        let source = Note(title: "Source", bodyMarkdown: "")
+        let repo = InMemoryNoteRepository(seed: [source, target])
+        let linkRepository = InMemoryLinkRepository()
+        let wikiLinkService = WikiLinkService(noteRepository: repo, linkRepository: linkRepository)
+        let vm = NoteDetailViewModel(noteID: source.id, repository: repo, wikiLinkService: wikiLinkService)
+
+        await vm.loadNote()
+        vm.bodyMarkdown = "See [[Target]] and [[Target]]"
+        _ = await vm.saveNow()
+
+        let links = try await linkRepository.links(from: source.id)
+        #expect(links.count == 1)
+        #expect(links.first?.toNoteID == target.id)
+    }
+
+    @Test("loadNote surfaces backlink notes for presentation")
+    func loadNoteSurfacesBacklinks() async {
+        let target = Note(title: "Target", bodyMarkdown: "")
+        let source = Note(title: "Source", bodyMarkdown: "See [[Target]]")
+        let repo = InMemoryNoteRepository(seed: [source, target])
+        let linkRepository = InMemoryLinkRepository(
+            seed: [Link(fromNoteID: source.id, toNoteID: target.id, type: .wikilink)]
+        )
+        let wikiLinkService = WikiLinkService(noteRepository: repo, linkRepository: linkRepository)
+        let vm = NoteDetailViewModel(noteID: target.id, repository: repo, wikiLinkService: wikiLinkService)
+
+        await vm.loadNote()
+
+        #expect(vm.backlinks.map(\.id) == [source.id])
     }
 }

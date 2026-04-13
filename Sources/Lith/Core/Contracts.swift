@@ -10,6 +10,8 @@ public protocol NoteRepository: Sendable {
 public protocol LinkRepository: Sendable {
     func replaceLinks(from sourceNoteID: UUID, with links: [Link]) async throws
     func links() async throws -> [Link]
+    func links(from sourceNoteID: UUID) async throws -> [Link]
+    func backlinks(to targetNoteID: UUID) async throws -> [Link]
 }
 
 public protocol RSSRepository: Sendable {
@@ -39,6 +41,11 @@ public protocol RSSConversionServiceProtocol: Sendable {
 
 public protocol ActionItemExtractionServiceProtocol: Sendable {
     func extract(from transcript: String, sourceNoteID: UUID, referenceDate: Date) -> [ActionItem]
+}
+
+public protocol WikiLinkServiceProtocol: Sendable {
+    func refreshLinks(for sourceNoteID: UUID) async throws -> [Link]
+    func backlinks(to noteID: UUID) async throws -> [Note]
 }
 
 public enum SyncConflictPolicy: Sendable {
