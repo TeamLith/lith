@@ -31,8 +31,10 @@ Follow this order before making changes:
 
 - Work on exactly one GitHub Issue at a time.
 - Prefer an issue explicitly provided by the user or already assigned to you.
-- If your environment supports GitHub assignment and a human has not pre-assigned work, claim the issue on GitHub before coding.
-- If your environment cannot assign issues, do not auto-pick from an unclaimed backlog in parallel mode; ask for an issue number or human assignment instead.
+- Before coding, make the reservation visible on GitHub.
+- If your environment supports GitHub assignment and a human has not pre-assigned work, assign the issue to yourself before coding.
+- If assignment is unavailable but issue comments are writable, post a claim comment on the issue before creating a branch or editing files.
+- If your environment can do neither, do not auto-pick from an unclaimed backlog in parallel mode; ask for an issue number or human assignment instead.
 - Do not implement unrelated work outside the chosen issue.
 
 ## Repo Self-Improvement Runs

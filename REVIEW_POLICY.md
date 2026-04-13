@@ -24,6 +24,7 @@ This file defines the repo-local workflow for reviewer and coordination agents. 
 
 3. Detect coordination issues:
    - Multiple open implementation issues assigned to the same agent without explanation.
+   - Open implementation issues that have no assignee, no visible claim comment, and no linked PR.
    - Same or overlapping scope across separate open issues or PRs.
    - Closed issues missing linked PRs, validation notes, or resolution context.
    - Legacy tasks still marked `TODO` even though the corresponding GitHub Issue is open or completed.

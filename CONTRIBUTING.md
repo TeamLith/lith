@@ -13,6 +13,9 @@ Use GitHub-native workflow for tracked work. GitHub Issues are the source of tru
 
 - Work one GitHub Issue at a time.
 - Prefer an issue that is explicitly assigned, confirmed by a human, or otherwise clearly reserved before coding.
+- Keep the issue open until the work is actually done; use assignment or a visible claim comment to show that it is in progress.
+- If assignment is not available in the current environment, post a claim comment on the issue before creating a branch or editing files.
+- If an open issue has neither an assignee nor a visible claim comment or linked PR, treat it as unclaimed.
 - Use the `Feature Task` issue form for product or technical implementation and `Repo Self-Improvement` for docs, workflow, CI, release, or contributor-process improvements.
 - Keep one issue scoped to one branch and one pull request.
 - Record blockers, validation notes, and handoff context on the GitHub Issue or linked pull request instead of in branch-local task state.

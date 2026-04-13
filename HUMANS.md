@@ -51,7 +51,8 @@ xcodebuild -scheme LithiOS -project LithApps.xcodeproj -configuration Debug -des
 
 - Point implementation agents at `AGENTS.md` and ask them to follow the issue workflow.
 - For parallel agent runs, create or assign one GitHub Issue per unit of work before starting the agents.
-- Use GitHub Issue assignment as the lock and GitHub Projects or labels as the board view.
+- Use GitHub Issue assignment as the preferred lock and GitHub Projects or labels as the board view.
+- If assignment is not available in the active environment, require the agent to leave a visible claim comment on the issue before branch creation or file edits.
 - Treat `CONTRIBUTING_AGENTS.md` as legacy migration input or historical context, not the live task board.
 - If future legacy task lists ever need to be imported into GitHub Issues, run `python3 scripts/migrate_pending_tasks_to_github_issues.py --create` with `GITHUB_TOKEN` or `GH_TOKEN` set.
 - Review agent branches or commits before merging, especially when version bumps or workflow docs changed.

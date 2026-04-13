@@ -16,8 +16,10 @@ This file holds the durable repo policy for autonomous implementation runs. `AGE
 - This is the normal mode.
 - Work one GitHub Issue at a time.
 - Prefer an explicitly provided or pre-assigned issue.
-- If the environment supports GitHub assignment, claim the chosen issue on GitHub before implementation.
-- If the environment cannot claim issues, do not auto-pick from the shared backlog in parallel mode.
+- Before implementation, make the reservation visible on GitHub.
+- If the environment supports GitHub assignment, assign the chosen issue before implementation.
+- If assignment is unavailable but issue comments are writable, post a claim comment before implementation.
+- If the environment can do neither, do not auto-pick from the shared backlog in parallel mode.
 
 ### Explicit Repo Self-Improvement Run
 
@@ -51,12 +53,13 @@ This file holds the durable repo policy for autonomous implementation runs. `AGE
 3. Select one issue:
    - Prefer an issue explicitly given by the user.
    - Otherwise prefer an issue already assigned to you.
-   - If your environment can write to GitHub, claim an unassigned issue before coding.
-   - If your environment cannot claim issues, stop and ask for an issue number or assignment instead of racing another agent.
+   - If your environment can assign issues, assign an unassigned issue before coding.
+   - If assignment is unavailable but issue comments are writable, post a claim comment before branch creation or file edits.
+   - If your environment can do neither, stop and ask for an issue number or assignment instead of racing another agent.
    - Skip this step only for an explicit repo self-improvement run.
 
 4. Create an issue branch:
-   - Create one feature branch for the chosen issue after the issue is clearly assigned or otherwise reserved.
+   - Create one feature branch for the chosen issue after the issue is clearly reserved on GitHub through assignment or a visible claim comment.
    - Use one issue per branch and one PR per issue.
 
 5. Implement only that one issue:
