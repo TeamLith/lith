@@ -80,7 +80,8 @@ public final class CoreDataLinkRepository: @unchecked Sendable, LinkRepository {
         [
             NSSortDescriptor(key: #keyPath(ManagedLink.createdAt), ascending: true),
             NSSortDescriptor(key: #keyPath(ManagedLink.fromNoteID), ascending: true),
-            NSSortDescriptor(key: #keyPath(ManagedLink.toNoteID), ascending: true)
+            NSSortDescriptor(key: #keyPath(ManagedLink.toNoteID), ascending: true),
+            NSSortDescriptor(key: #keyPath(ManagedLink.typeRawValue), ascending: true)
         ]
     }
 
