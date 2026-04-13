@@ -55,7 +55,7 @@ This file defines the repo-local workflow for reviewer and coordination agents. 
    - `Conflicts/Duplicates`
    - `Missing bookkeeping`
    - `REPO_MAP.md status`
-   - `Recommended next single task`
+   - `Recommended next single issue`
 
 8. If no issues:
    - Confirm the issue tracker is consistent.
