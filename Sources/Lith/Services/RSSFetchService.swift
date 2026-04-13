@@ -124,7 +124,7 @@ public struct FeedKitRSSFeedParser: RSSFeedParsing, Sendable {
                     feedURL: sourceURL,
                     category: rssFeed.channel?.categories?.compactMap(\.text).compactMap(nonEmpty).first
                 ),
-                items: rssFeed.channel?.items?.compactMap { parsedItem(from: $0) } ?? []
+                items: rssFeed.channel?.items?.compactMap { parsedItem(from: $0, sourceURL: sourceURL) } ?? []
             )
 
         case let .atom(atomFeed):
@@ -134,7 +134,7 @@ public struct FeedKitRSSFeedParser: RSSFeedParsing, Sendable {
                     feedURL: sourceURL,
                     category: atomFeed.categories?.compactMap { nonEmpty($0.attributes?.label) ?? nonEmpty($0.attributes?.term) }.first
                 ),
-                items: atomFeed.entries?.compactMap { parsedItem(from: $0) } ?? []
+                items: atomFeed.entries?.compactMap { parsedItem(from: $0, sourceURL: sourceURL) } ?? []
             )
 
         case let .json(jsonFeed):
@@ -144,13 +144,17 @@ public struct FeedKitRSSFeedParser: RSSFeedParsing, Sendable {
                     feedURL: sourceURL,
                     category: nil
                 ),
-                items: jsonFeed.items?.compactMap { parsedItem(from: $0) } ?? []
+                items: jsonFeed.items?.compactMap { parsedItem(from: $0, sourceURL: sourceURL) } ?? []
             )
         }
     }
 
-    private func parsedItem(from item: FeedKit.RSSFeedItem) -> ParsedRSSItem? {
-        guard let linkURL = firstValidURL(from: [item.link, item.guid?.text]) else {
+    private func parsedItem(from item: FeedKit.RSSFeedItem, sourceURL: URL) -> ParsedRSSItem? {
+        guard let linkURL = firstValidItemURL(
+            relativeCandidates: [item.link],
+            absoluteCandidates: [item.guid?.text],
+            relativeTo: sourceURL
+        ) else {
             return nil
         }
 
@@ -166,9 +170,11 @@ public struct FeedKitRSSFeedParser: RSSFeedParsing, Sendable {
         )
     }
 
-    private func parsedItem(from entry: AtomFeedEntry) -> ParsedRSSItem? {
-        guard let linkURL = firstValidURL(
-            from: preferredAtomLinkCandidates(entry.links) + [entry.id]
+    private func parsedItem(from entry: AtomFeedEntry, sourceURL: URL) -> ParsedRSSItem? {
+        guard let linkURL = firstValidItemURL(
+            relativeCandidates: preferredAtomLinkCandidates(entry.links),
+            absoluteCandidates: [entry.id],
+            relativeTo: sourceURL
         ) else {
             return nil
         }
@@ -185,8 +191,12 @@ public struct FeedKitRSSFeedParser: RSSFeedParsing, Sendable {
         )
     }
 
-    private func parsedItem(from item: JSONFeedItem) -> ParsedRSSItem? {
-        guard let linkURL = firstValidURL(from: [item.url, item.externalURL, item.id]) else {
+    private func parsedItem(from item: JSONFeedItem, sourceURL: URL) -> ParsedRSSItem? {
+        guard let linkURL = firstValidItemURL(
+            relativeCandidates: [item.url, item.externalURL],
+            absoluteCandidates: [item.id],
+            relativeTo: sourceURL
+        ) else {
             return nil
         }
 
@@ -373,12 +383,52 @@ private extension RSSFetchError {
     }
 }
 
-private func firstValidURL(from candidates: [String?]) -> URL? {
-    candidates
+private func firstValidItemURL(
+    relativeCandidates: [String?],
+    absoluteCandidates: [String?],
+    relativeTo sourceURL: URL
+) -> URL? {
+    relativeCandidates
         .compactMap(nonEmpty)
         .lazy
-        .compactMap(URL.init(string:))
+        .compactMap { resolvedWebURL(from: $0, relativeTo: sourceURL) }
         .first
+        ?? absoluteCandidates
+        .compactMap(nonEmpty)
+        .lazy
+        .compactMap(absoluteWebURL(from:))
+        .first
+}
+
+private func resolvedWebURL(from candidate: String, relativeTo sourceURL: URL) -> URL? {
+    if let absoluteURL = absoluteWebURL(from: candidate) {
+        return absoluteURL
+    }
+
+    guard isExplicitRelativeURL(candidate),
+          let resolvedURL = URL(string: candidate, relativeTo: sourceURL)?.absoluteURL,
+          resolvedURL.isWebURL else {
+        return nil
+    }
+
+    return resolvedURL
+}
+
+private func absoluteWebURL(from candidate: String) -> URL? {
+    guard let url = URL(string: candidate)?.absoluteURL,
+          url.isWebURL else {
+        return nil
+    }
+
+    return url
+}
+
+private func isExplicitRelativeURL(_ candidate: String) -> Bool {
+    candidate.hasPrefix("/") ||
+        candidate.hasPrefix("./") ||
+        candidate.hasPrefix("../") ||
+        candidate.hasPrefix("?") ||
+        candidate.hasPrefix("#")
 }
 
 private func nonEmpty(_ string: String?) -> String? {
@@ -387,4 +437,16 @@ private func nonEmpty(_ string: String?) -> String? {
     }
 
     return trimmed
+}
+
+private extension URL {
+    var isWebURL: Bool {
+        guard let scheme = scheme?.lowercased(),
+              let host,
+              !host.isEmpty else {
+            return false
+        }
+
+        return scheme == "http" || scheme == "https"
+    }
 }
