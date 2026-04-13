@@ -1,5 +1,7 @@
 # Lith Build + Release Guide
 
+This guide is for human operators handling signing, secrets, and TestFlight/App Store release steps. Start with `HUMANS.md` for local setup and validation, then use this file for release-specific configuration.
+
 This project is configured so app display name is `Lith` on both iOS and macOS targets.
 
 Workflow file:

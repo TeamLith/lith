@@ -5,6 +5,7 @@ This file is the stable orientation guide for future agent and human sessions. R
 ## Purpose
 
 - Use this file to understand the current project layout, primary entry points, and where to make changes.
+- Use `HUMANS.md` for human setup, validation, and release-owner responsibilities.
 - Use `CONTRIBUTING_AGENTS.md` for task state and handoff details.
 - Update this file only when repository structure, ownership boundaries, or core build workflows materially change.
 
@@ -20,21 +21,29 @@ Lith is split into:
 
 Read only what matches the task:
 
-1. `AGENTS.md`
-2. `REPO_MAP.md`
-3. `CONTRIBUTING_AGENTS.md`
-4. `README.md`
-5. One or more of:
-   - `ARCHITECTURE.md`
-   - `DATA_MODEL.md`
-   - relevant `FEATURE_*.md`
-   - relevant `Docs/*.md`
+- Autonomous agents:
+  1. `AGENTS.md`
+  2. `REPO_MAP.md`
+  3. `CONTRIBUTING_AGENTS.md`
+  4. `README.md`
+  5. One or more of:
+     - `ARCHITECTURE.md`
+     - `DATA_MODEL.md`
+     - relevant `FEATURE_*.md`
+     - relevant `Docs/*.md`
+- Humans:
+  1. `HUMANS.md`
+  2. `README.md`
+  3. `REPO_MAP.md`
+  4. `CONTRIBUTING_AGENTS.md` when coordinating tracked work
+  5. relevant `FEATURE_*.md`, `SYNC_ICLOUD.md`, or `Docs/*.md`
 
 ## High-Value Paths
 
 ### Product and planning
 
 - `README.md`: top-level product summary and contributor workflow.
+- `HUMANS.md`: human operator setup, validation, and release-owner guide.
 - `AGENTS.md`: repo-local default instruction file for autonomous agents.
 - `AGENT_POLICY.md`: expanded autonomous workflow and reporting policy.
 - `REVIEW_POLICY.md`: reviewer and coordination workflow for duplicate detection and tracker hygiene.
@@ -47,6 +56,7 @@ Read only what matches the task:
 - `FEATURE_SEARCH_GRAPH.md`
 - `SYNC_ICLOUD.md`
 - `CONTRIBUTING_AGENTS.md`: task board, pause/resume protocol, prompt pack.
+- `Docs/RELEASING_WITH_GITHUB.md`: human-owned signing, secrets, and TestFlight release workflow.
 
 ### Shared package
 

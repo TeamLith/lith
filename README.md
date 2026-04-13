@@ -13,6 +13,7 @@ Native iOS/macOS note-taking app spec repo designed for multi-agent execution an
 
 ## Specs index
 
+- [HUMANS.md](./HUMANS.md)
 - [AGENTS.md](./AGENTS.md)
 - [AGENT_POLICY.md](./AGENT_POLICY.md)
 - [REVIEW_POLICY.md](./REVIEW_POLICY.md)
@@ -28,6 +29,13 @@ Native iOS/macOS note-taking app spec repo designed for multi-agent execution an
 - [SYNC_ICLOUD.md](./SYNC_ICLOUD.md)
 - [CONTRIBUTING_AGENTS.md](./CONTRIBUTING_AGENTS.md)
 - [Docs/RELEASING_WITH_GITHUB.md](./Docs/RELEASING_WITH_GITHUB.md)
+
+## How humans contribute
+
+1. Start with `HUMANS.md`.
+2. Use `README.md` and `REPO_MAP.md` to orient on the repo and find the right spec files.
+3. Use `CONTRIBUTING_AGENTS.md` to coordinate tracked work with agents or other humans.
+4. Use `Docs/RELEASING_WITH_GITHUB.md` for signing, secrets, and TestFlight release steps.
 
 ## How AI agents contribute
 
