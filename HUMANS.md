@@ -52,7 +52,7 @@ xcodebuild -scheme LithiOS -project LithApps.xcodeproj -configuration Debug -des
 - Review agent branches or commits before merging, especially when version bumps or workflow docs changed.
 - If an agent reports a blocker tied to credentials or signing, resolve that input as a human and then resume the task.
 
-## Triggering A Repo Self-Improvement Run
+## Triggering a Repo Self-Improvement Run
 
 - Ask explicitly for a repo self-improvement run, for example:
   `Run a repo self-improvement pass per AGENTS.md. Audit the workflow against current best practices, use current primary sources, make bounded improvements, and avoid product feature work.`
