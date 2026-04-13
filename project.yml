@@ -34,8 +34,8 @@ targets:
         INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone: UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight
         INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad: UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight
         INFOPLIST_KEY_ITSAppUsesNonExemptEncryption: NO
-        CURRENT_PROJECT_VERSION: 4
-        MARKETING_VERSION: 0.1.3
+        CURRENT_PROJECT_VERSION: 5
+        MARKETING_VERSION: 0.1.4
   LithmacOS:
     type: application
     platform: macOS
@@ -54,8 +54,8 @@ targets:
         INFOPLIST_KEY_LSApplicationCategoryType: public.app-category.productivity
         INFOPLIST_KEY_ITSAppUsesNonExemptEncryption: NO
         CODE_SIGN_ENTITLEMENTS: Apps/LithApp/Sources/macOS/LithmacOS.entitlements
-        CURRENT_PROJECT_VERSION: 4
-        MARKETING_VERSION: 0.1.3
+        CURRENT_PROJECT_VERSION: 5
+        MARKETING_VERSION: 0.1.4
 schemes:
   LithiOS:
     shared: true
