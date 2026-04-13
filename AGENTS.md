@@ -66,7 +66,7 @@ Follow this order before making changes:
   - recommended read order for future sessions
 - If none of those changed, leave `REPO_MAP.md` untouched.
 
-## Task Close-Out
+## Issue Close-Out
 
 - Update the linked GitHub Issue or PR with concise notes, blockers, and validation status when your environment supports it.
 - When a claimed issue is completed, increment the app versions before finishing the work:
