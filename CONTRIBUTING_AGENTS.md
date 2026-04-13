@@ -322,9 +322,9 @@ For reviewer or coordination runs, also use `REVIEW_POLICY.md`.
   - [ ] Create `HUMANS.md` covering setup, local development, testing, project generation, and release flow.
   - [ ] Clarify where humans vs agents should make changes and what requires one-time human setup.
   - [ ] Update links in existing docs so the workflow is discoverable.
-- Status: TODO
-- Agent: unassigned
-- Last updated: 2026-04-13 14:50 IST
+- Status: IN_PROGRESS
+- Agent: codex
+- Last updated: 2026-04-13 17:31:08 IST +0530
 - PR/Commit: n/a
 - Changed files:
   - n/a
