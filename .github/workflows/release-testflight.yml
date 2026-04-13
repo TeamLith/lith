@@ -21,10 +21,15 @@ on:
 permissions:
   contents: read
 
+concurrency:
+  group: release-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
+
 jobs:
   preflight:
     name: Preflight validation
     runs-on: macos-15
+    timeout-minutes: 45
     env:
       LITH_VALIDATION_LOG_DIR: ${{ runner.temp }}/lith-validation-logs
     steps:
@@ -60,6 +65,7 @@ jobs:
     runs-on: macos-15
     needs: preflight
     if: ${{ github.event.inputs.platform == 'both' || github.event.inputs.platform == 'ios' }}
+    timeout-minutes: 90
     env:
       APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
       ASC_KEY_ID: ${{ secrets.APP_STORE_CONNECT_KEY_ID }}
@@ -230,6 +236,7 @@ jobs:
     runs-on: macos-15
     needs: preflight
     if: ${{ github.event.inputs.platform == 'both' || github.event.inputs.platform == 'macos' }}
+    timeout-minutes: 90
     env:
       APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
       ASC_KEY_ID: ${{ secrets.APP_STORE_CONNECT_KEY_ID }}

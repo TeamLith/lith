@@ -26,6 +26,7 @@ Use this file for local setup, day-to-day development, and release steps that re
 3. Prefer changes under `Sources/Lith` unless the work is truly app-shell-specific.
 4. Treat `project.yml` as the source of truth for target structure and regenerate the Xcode project after structural changes.
 5. Run `scripts/validate.sh` before merging, handing work to an agent, or triggering a release. It regenerates the Xcode project and runs the package plus app build validations. CI and release automation additionally fail if regeneration would change committed `LithApps.xcodeproj` files.
+   The GitHub validation workflow also cancels superseded same-ref runs and uses explicit job timeouts so stuck macOS builds fail predictably instead of consuming the full default runner window.
 
 ## Canonical Commands
 
@@ -70,6 +71,6 @@ xcodebuild -scheme LithiOS -project LithApps.xcodeproj -configuration Debug -des
 ## Release Flow
 
 1. Merge approved changes to `main` after the `Validate` GitHub Actions workflow passes.
-2. Trigger the `Release to TestFlight` GitHub Actions workflow. The release workflow reruns preflight validation and regenerates `LithApps.xcodeproj` from `project.yml` before archiving.
+2. Trigger the `Release to TestFlight` GitHub Actions workflow. The release workflow reruns preflight validation, regenerates `LithApps.xcodeproj` from `project.yml` before archiving, and serializes same-ref dispatches to avoid overlapping manual releases from the same branch.
 3. Verify the uploaded build in App Store Connect and assign it to tester groups.
 4. Keep `Docs/RELEASING_WITH_GITHUB.md` as the detailed source for release prerequisites and Apple-side setup.
