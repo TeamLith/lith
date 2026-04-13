@@ -52,6 +52,13 @@ xcodebuild -scheme LithiOS -project LithApps.xcodeproj -configuration Debug -des
 - Review agent branches or commits before merging, especially when version bumps or workflow docs changed.
 - If an agent reports a blocker tied to credentials or signing, resolve that input as a human and then resume the task.
 
+## Supplying Human-Only Inputs
+
+- When an agent asks for one-time setup input, reply with the exact value or decision needed, such as Apple team selection, signing mode, secret owner, workflow approval, or whether a repo-wide process change is acceptable.
+- Humans must supply or approve credentials, signing and provisioning data, App Store Connect or release actions, external service ownership, legal or license judgments, and any new paid tooling.
+- Repo self-improvement work should stay within docs, task tracking, validation, CI, or repo-local skill guidance unless a human explicitly approves broader scope.
+- After supplying the missing input, have the agent resume the same claimed task instead of starting a second overlapping task.
+
 ## Release Flow
 
 1. Merge approved changes to `main` after the `Validate` GitHub Actions workflow passes.
