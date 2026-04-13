@@ -49,7 +49,7 @@ The repository now uses GitHub Issues as the source of truth for active work. Re
 5. Read the relevant feature or sync file for that issue.
 6. Implement code + tests.
 7. Run the canonical validation flow for the changed area, preferring `scripts/validate.sh` when app/workflow wiring changed.
-8. If the issue is completed, bump `MARKETING_VERSION` and `CURRENT_PROJECT_VERSION`, keeping `project.yml` and generated Xcode project settings in sync.
+8. If the completed issue changes shipped app behavior or app/release metadata, bump `MARKETING_VERSION` and `CURRENT_PROJECT_VERSION`, keeping `project.yml` and generated Xcode project settings in sync. Pure docs, workflow, coordination, or other repo self-improvement issues do not need a version bump unless they also change app/release metadata.
 9. Review `REPO_MAP.md` before closing the work and update it only if repo orientation changed.
 10. Include a short file-change summary for human or GitHub review and link the PR back to the issue.
 
