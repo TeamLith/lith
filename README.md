@@ -50,10 +50,11 @@ For the GitHub-native contribution and review flow surfaced in Issues and pull r
 4. Read global context next: `README.md`, `ARCHITECTURE.md`, `DATA_MODEL.md`.
 5. Read the relevant feature or sync file for that issue.
 6. Implement code + tests.
-7. Run the canonical validation flow for the changed area, preferring `scripts/validate.sh` when app/workflow wiring changed.
-8. If the completed issue changes shipped app behavior or app/release metadata, bump `MARKETING_VERSION` and `CURRENT_PROJECT_VERSION`, keeping `project.yml` and generated Xcode project settings in sync. Pure docs, workflow, coordination, or other repo self-improvement issues do not need a version bump unless they also change app/release metadata.
-9. Review `REPO_MAP.md` before closing the work and update it only if repo orientation changed.
-10. Include a short file-change summary for human or GitHub review and link the PR back to the issue.
+7. If the issue changes user-facing behavior, onboarding, settings, workflows, or adds a new feature, update the user-facing documentation in the same scope. Once a GitHub Pages docs site exists, treat that site as the primary user-facing docs surface.
+8. Run the canonical validation flow for the changed area, preferring `scripts/validate.sh` when app/workflow wiring changed.
+9. If the completed issue changes shipped app behavior or app/release metadata, bump `MARKETING_VERSION` and `CURRENT_PROJECT_VERSION`, keeping `project.yml` and generated Xcode project settings in sync. Pure docs, workflow, coordination, or other repo self-improvement issues do not need a version bump unless they also change app/release metadata.
+10. Review `REPO_MAP.md` before closing the work and update it only if repo orientation changed.
+11. Include a short file-change summary for human or GitHub review and link the PR back to the issue.
 
 Agents also support an explicit repo self-improvement run mode when a user asks for a repo self-improvement pass, audit, or equivalent. That mode bypasses normal issue selection, stays bounded to repo-process work such as agent/human instructions, contributor workflow, review/handoff norms, validation/CI/release automation, issue/PR templates, and repo-local skill guidance, and requires current primary sources when best-practice guidance may have changed.
 Meta-improvement tasks still use the same one-issue workflow when they are tracked on GitHub. Use `AGENT_POLICY.md` for the dedicated checklist and `HUMANS.md` for human-only setup or approval inputs.

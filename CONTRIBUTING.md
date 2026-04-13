@@ -17,6 +17,7 @@ Use GitHub-native workflow for tracked work. GitHub Issues are the source of tru
 - If assignment is not available in the current environment, post a claim comment on the issue before creating a branch or editing files.
 - If an open issue has neither an assignee nor a visible claim comment or linked PR, treat it as unclaimed.
 - Use the `Feature Task` issue form for product or technical implementation and `Repo Self-Improvement` for docs, workflow, CI, release, or contributor-process improvements.
+- If the issue changes user-facing behavior or adds a new feature, keep the matching user-facing documentation update in the same issue scope rather than treating docs as an optional later task.
 - Keep one issue scoped to one branch and one pull request.
 - Record blockers, validation notes, and handoff context on the GitHub Issue or linked pull request instead of in branch-local task state.
 
@@ -31,6 +32,7 @@ Use GitHub-native workflow for tracked work. GitHub Issues are the source of tru
 
 - Run the issue-specific commands listed in the specs or `REPO_MAP.md`.
 - Use `scripts/validate.sh` when app wiring, project generation, CI/workflow files, or repo-process files changed.
+- Verify that any user-visible feature, workflow, onboarding, or settings change also updated the user-facing documentation surface in scope.
 - If the change is docs or policy only, verify that every referenced file, command, and path still exists unless the issue explicitly changes executable workflow behavior.
 
 ## Human-Only Decisions
