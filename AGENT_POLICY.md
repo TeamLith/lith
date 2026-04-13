@@ -84,10 +84,11 @@ This file holds the durable repo policy for autonomous implementation runs. `AGE
 
 9. Close issue work:
    - Update the linked issue or PR with concise notes, blockers, validation results, and any migration details when your environment supports GitHub writes.
-   - If the issue is completed, increment app versions before the final implementation commit:
+   - If the completed issue changes shipped app behavior or app/release metadata, increment app versions before the final implementation commit:
      - bump `MARKETING_VERSION`
      - bump `CURRENT_PROJECT_VERSION`
      - keep `project.yml` and generated Xcode project settings aligned
+   - Pure docs, workflow, coordination, or other repo-process issues do not require version bumps unless they also change app or release metadata.
    - Explicit repo self-improvement runs do not require version bumps unless they intentionally change app or release metadata.
 
 10. Commit and push:

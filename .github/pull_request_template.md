@@ -1,11 +1,18 @@
 ## Summary
 
-- Link the issue this PR closes or advances.
+- Note whether this PR is ready for review or should stay draft.
 - Summarize the scoped change in 2-4 bullets.
 
 ## Linked Issue
 
 Closes #
+
+If this PR is only partial progress, replace the closing keyword with a plain issue reference and also link the issue from the Development sidebar.
+
+## Review Focus
+
+- Areas where reviewer attention is most useful:
+- Known risks, non-goals, or deferred follow-up:
 
 ## Validation
 
@@ -18,4 +25,3 @@ Closes #
 - Migration notes:
 - Follow-up work:
 - Human-only setup or approvals:
-

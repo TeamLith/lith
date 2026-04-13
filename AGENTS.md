@@ -69,10 +69,11 @@ Follow this order before making changes:
 ## Issue Close-Out
 
 - Update the linked GitHub Issue or PR with concise notes, blockers, and validation status when your environment supports it.
-- When a claimed issue is completed, increment the app versions before finishing the work:
+- When a claimed issue is completed and it changes shipped app behavior or app/release metadata, increment the app versions before finishing the work:
   - bump `MARKETING_VERSION`
   - bump `CURRENT_PROJECT_VERSION`
   - keep `project.yml` and generated Xcode project settings in sync
+- Pure docs, workflow, coordination, or other repo-process issues do not require an app version bump unless they also change app or release metadata.
 - Repo self-improvement runs do not require an app version bump unless the improvement intentionally changes app or release metadata.
 - If blocked, leave the issue open and record the blocker clearly.
 - Report whether `REPO_MAP.md` was reviewed and whether it was updated.

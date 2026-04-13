@@ -5,7 +5,7 @@ body:
   - type: markdown
     attributes:
       value: |
-        Use this for bounded repo-process improvements only. Do not mix in product feature implementation.
+        Review [`CONTRIBUTING.md`](https://github.com/TeamLith/lith/blob/main/CONTRIBUTING.md) before opening tracked work. Use this for bounded repo-process improvements only. Do not mix in product feature implementation.
   - type: textarea
     id: audit_target
     attributes:
@@ -50,6 +50,14 @@ body:
         - validation notes
     validations:
       required: true
+  - type: textarea
+    id: validation
+    attributes:
+      label: Validation Expectations
+      description: Path checks, scripts, or builds that should run before close-out.
+      placeholder: |
+        - Verify every referenced file/path exists
+        - scripts/validate.sh
   - type: textarea
     id: human_follow_up
     attributes:
