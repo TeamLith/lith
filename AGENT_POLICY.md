@@ -8,6 +8,29 @@ This file holds the durable repo policy for autonomous implementation runs. `AGE
 - Use `REPO_MAP.md` as the stable repo-orientation file.
 - Use `CONTRIBUTING_AGENTS.md` as the task-state file.
 
+## Run Types
+
+### Default Task Run
+
+- This is the normal mode.
+- Auto-pick the first task with `Status: TODO` from `CONTRIBUTING_AGENTS.md`.
+- Claim it, implement it, validate it, and close it out.
+
+### Explicit Repo Self-Improvement Run
+
+- This run type is separate from board-selected meta-improvement tasks.
+- If a repo-workflow or meta-improvement task is already selected from `CONTRIBUTING_AGENTS.md`, treat it as a normal task run and follow the task-board workflow.
+- Only use this explicit mode when the user directly asks for a repo self-improvement run, pass, audit, or equivalent wording outside the normal board selection flow.
+- In this mode, do not auto-pick the first `TODO` task and do not require a selected board task before starting.
+- Keep the run bounded to one or more of:
+  - agent or human operating instructions
+  - validation scripts, CI, or release workflow
+  - project generation workflow
+  - repo structure or task-board hygiene
+  - repo-local skill guidance
+- Do not implement product features during a self-improvement run.
+- If the audit reveals larger follow-up work, add or refine `TODO` tasks instead of silently expanding scope.
+
 ## Execution Rules
 
 1. Sync first:
@@ -22,6 +45,7 @@ This file holds the durable repo policy for autonomous implementation runs. `AGE
 3. Auto-pick next task:
    - In `CONTRIBUTING_AGENTS.md`, find the first task with `Status: TODO`.
    - If none exist, stop and report `No TODO tasks available`.
+   - Skip this step only for an explicit repo self-improvement run.
 
 4. Claim task before coding:
    - Immediately edit that task block:
@@ -31,6 +55,7 @@ This file holds the durable repo policy for autonomous implementation runs. `AGE
      - `Changed files: n/a`
      - clear or update `Notes/Blockers` if needed
    - Commit this claim first with message: `chore(task): claim <task name>`.
+   - Skip this step only for an explicit repo self-improvement run that is intentionally operating outside the task board.
 
 5. Implement only that one claimed task:
    - Read the required input specs listed in the task block.
@@ -66,6 +91,7 @@ This file holds the durable repo policy for autonomous implementation runs. `AGE
      - bump `MARKETING_VERSION`
      - bump `CURRENT_PROJECT_VERSION`
      - keep `project.yml` and generated Xcode project settings aligned
+   - This version-bump rule applies to claimed task-board work. Explicit repo self-improvement runs do not require version bumps unless they intentionally change app or release metadata.
 
 10. Commit and push:
    - Commit implementation with a clear message: `feat(<task-slug>): <what was implemented>`.
@@ -133,6 +159,45 @@ Use this section when the selected task improves the repository workflow itself 
   - why the changes were bounded
   - whether any human follow-up or one-time setup remains
   - why updating existing guidance was sufficient, or why a new skill was justified
+
+## Repo Self-Improvement Workflow
+
+Use this section only for the explicit repo self-improvement run type initiated outside the board.
+Do not use this section for ordinary meta-improvement tasks that were selected from `CONTRIBUTING_AGENTS.md`; those remain standard task runs.
+
+1. Orient:
+   - Read `REPO_MAP.md`, `README.md`, `AGENTS.md`, `AGENT_POLICY.md`, and the specific workflow docs or scripts being audited.
+
+2. Audit bounded surfaces:
+   - Check repo instructions, validation/build workflow, CI/release automation, task-board hygiene, and repo-local skill guidance as relevant to the request.
+
+3. Research unstable recommendations:
+   - When recommendations, tools, or best practices may have changed, consult current primary sources before making durable workflow changes.
+   - Prefer official documentation and primary vendor sources over summaries.
+
+4. Compare and prioritize:
+   - Identify the highest-value gaps that can be fixed safely in one bounded run.
+   - Prefer improving existing source-of-truth files over adding parallel docs.
+
+5. Implement bounded improvements:
+   - Make only low-risk repo-process changes that can be justified and validated within the run.
+   - Do not use this run type to smuggle in product work.
+
+6. Capture follow-up work:
+   - Add or refine `TODO` tasks in `CONTRIBUTING_AGENTS.md` for larger, riskier, or product-adjacent work discovered during the audit.
+   - Do not change status for unrelated tasks.
+
+7. Validate:
+   - Docs or policy only: verify that referenced files, commands, and paths still exist.
+   - Validation, CI, workflow, or project-generation changes: run `scripts/validate.sh`.
+   - Skill guidance changes: verify referenced files, tools, and commands are real and still match the documented workflow.
+
+8. Report:
+   - State that the run was an explicit repo self-improvement run.
+   - Summarize which surfaces were audited.
+   - List the primary sources consulted when recommendations were time-sensitive.
+   - Explain why the changes were bounded.
+   - Call out any human-only follow-up or approvals still needed.
 
 ## Constraints
 

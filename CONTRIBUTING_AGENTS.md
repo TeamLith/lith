@@ -391,7 +391,7 @@ For reviewer or coordination runs, also use `REVIEW_POLICY.md`.
   - [x] Add validation and reporting expectations for meta-improvement runs.
 - Status: DONE
 - Agent: codex
-- Last updated: 2026-04-13 19:48:35 IST +0530
+- Last updated: 2026-04-13 19:58:19 IST +0530
 - PR/Commit: n/a
 - Changed files:
   - CONTRIBUTING_AGENTS.md
@@ -402,7 +402,7 @@ For reviewer or coordination runs, also use `REVIEW_POLICY.md`.
   - project.yml
   - LithApps.xcodeproj/project.pbxproj
 - Notes/Blockers:
-  - Added bounded meta-improvement and skill-maintenance guidance, clarified human-only approval/setup inputs, reviewed `REPO_MAP.md` without updating it, and synced app versions to 0.1.5 (6).
+  - Added bounded meta-improvement and skill-maintenance guidance plus an explicit repo self-improvement run mode that bypasses the normal first-`TODO` flow when requested, clarified human-only approval/setup inputs, reviewed `REPO_MAP.md` without updating it, and synced app versions to 0.1.5 (6).
 
 ## Task: Implement RSS Fetcher
 

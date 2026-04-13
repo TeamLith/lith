@@ -52,7 +52,8 @@ Native iOS/macOS note-taking app spec repo designed for multi-agent execution an
 10. Review `REPO_MAP.md` before closing the task and update it only if repo orientation changed.
 11. Include a short file-change summary for human or GitHub review.
 
-Meta-improvement tasks still use the same one-task workflow. Keep them bounded to repo process, validation, docs, or skill guidance, use `AGENT_POLICY.md` for the dedicated checklist, and use `HUMANS.md` for human-only setup or approval inputs.
+Agents also support an explicit repo self-improvement run mode when a user asks for a repo self-improvement pass, audit, or equivalent. That mode bypasses the normal first `Status: TODO` task auto-pick, stays bounded to repo-process work, and requires current primary sources when best-practice guidance may have changed.
+Meta-improvement tasks still use the same one-task workflow when they are tracked on the board. Use `AGENT_POLICY.md` for the dedicated checklist and `HUMANS.md` for human-only setup or approval inputs.
 
 Reviewer or coordination sessions should start with `AGENTS.md` and then use `REVIEW_POLICY.md`.
 
