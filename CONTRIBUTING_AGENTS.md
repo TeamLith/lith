@@ -276,14 +276,14 @@ For reviewer or coordination runs, also use `REVIEW_POLICY.md`.
   - [ ] Resolve links against existing notes and persist `Link` records.
   - [ ] Expose backlink queries for note detail presentation.
   - [ ] Add parser and persistence tests for create/update scenarios.
-- Status: TODO
-- Agent: unassigned
-- Last updated: 2026-04-12 15:12 IST
+- Status: IN_PROGRESS
+- Agent: codex
+- Last updated: 2026-04-13 14:28:57 IST +0530
 - PR/Commit: n/a
 - Changed files:
   - n/a
 - Notes/Blockers:
-  - Depends on `Wire Note CRUD Flows Into UI`.
+  - n/a
 
 ## Task: Implement RSS Fetcher
 
