@@ -24,6 +24,7 @@ This file holds the durable repo policy for autonomous implementation runs. `AGE
 - In this mode, do not auto-pick the first `TODO` task and do not require a selected board task before starting.
 - Keep the run bounded to one or more of:
   - agent or human operating instructions
+  - contributor workflow, intake, review, or handoff guidance
   - validation scripts, CI, or release workflow
   - project generation workflow
   - repo structure or task-board hygiene
@@ -114,7 +115,8 @@ Use this section when the selected task improves the repository workflow itself 
 
 - Treat repo self-improvement as valid only when the selected task explicitly targets repo workflow, docs, automation, or agent guidance.
 - Keep the run bounded to one or more of:
-  - repo instructions or task-board hygiene
+  - repo instructions, task-board hygiene, or human-agent contribution workflow
+  - contribution intake, review routing, or handoff guidance
   - validation scripts, CI, or project-generation workflow
   - cross-linked docs for humans and agents
   - repo-local skill maintenance for repeated repo-specific workflows
@@ -125,8 +127,9 @@ Use this section when the selected task improves the repository workflow itself 
 1. Audit the current docs, scripts, or workflow files for the exact gap named by the task.
 2. Prefer editing the current source-of-truth file instead of adding parallel guidance elsewhere.
 3. Add cross-links only where discovery is weak; avoid duplicating large blocks of policy text.
-4. Keep changes reversible and low-risk; stop if the task would require secrets, account access, or speculative repo-wide restructuring.
-5. Review `REPO_MAP.md` before close-out and update it only if durable repo orientation changed.
+4. For contributor-workflow audits, prefer standard GitHub-native collaboration surfaces when they reduce ambiguity, but do not add them speculatively without a clear repo-local benefit.
+5. Keep changes reversible and low-risk; stop if the task would require secrets, account access, or speculative repo-wide restructuring.
+6. Review `REPO_MAP.md` before close-out and update it only if durable repo orientation changed.
 
 ### Skill Maintenance
 
@@ -144,6 +147,7 @@ Use this section when the selected task improves the repository workflow itself 
 - Escalate to a human before changing or inventing:
   - secrets, credentials, Apple signing, team, or provisioning values
   - release approvals or App Store Connect state
+  - repository admin settings, branch/ruleset enforcement, or ownership mappings that require access or policy decisions
   - legal or dependency license decisions
   - paid or external service setup or account ownership
   - destructive migrations or ambiguous repo-wide convention changes
@@ -169,7 +173,7 @@ Do not use this section for ordinary meta-improvement tasks that were selected f
    - Read `REPO_MAP.md`, `README.md`, `AGENTS.md`, `AGENT_POLICY.md`, and the specific workflow docs or scripts being audited.
 
 2. Audit bounded surfaces:
-   - Check repo instructions, validation/build workflow, CI/release automation, task-board hygiene, and repo-local skill guidance as relevant to the request.
+   - Check repo instructions, contributor workflow and review/handoff norms, validation/build workflow, CI/release automation, task-board hygiene, and repo-local skill guidance as relevant to the request.
 
 3. Research unstable recommendations:
    - When recommendations, tools, or best practices may have changed, consult current primary sources before making durable workflow changes.
