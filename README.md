@@ -46,7 +46,7 @@ For the GitHub-native contribution and review flow surfaced in Issues and pull r
 
 1. Start with `AGENTS.md`.
 2. Read orientation next: `REPO_MAP.md`.
-3. Work from one GitHub Issue at a time, preferably one explicitly provided or assigned.
+3. Work from one GitHub Issue at a time, preferably one explicitly provided or assigned, and reserve it visibly on GitHub through assignment or a claim comment before coding.
 4. Read global context next: `README.md`, `ARCHITECTURE.md`, `DATA_MODEL.md`.
 5. Read the relevant feature or sync file for that issue.
 6. Implement code + tests.
