@@ -219,6 +219,16 @@ public struct ParsedRSSItem: Hashable, Sendable {
     }
 }
 
+public struct ParsedRSSDocument: Hashable, Sendable {
+    public var feed: ParsedRSSFeed
+    public var items: [ParsedRSSItem]
+
+    public init(feed: ParsedRSSFeed, items: [ParsedRSSItem]) {
+        self.feed = feed
+        self.items = items
+    }
+}
+
 extension RSSFeed {
     public init(
         parsedFeed: ParsedRSSFeed,
