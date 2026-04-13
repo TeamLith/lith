@@ -26,6 +26,8 @@ public final class RSSRefreshViewModel {
 
         do {
             feeds = try await repository.feeds()
+        } catch is CancellationError {
+            return
         } catch {
             loadError = error
         }
@@ -39,6 +41,8 @@ public final class RSSRefreshViewModel {
         do {
             lastRefreshReport = try await fetchService.refreshAllFeeds()
             feeds = try await repository.feeds()
+        } catch is CancellationError {
+            return
         } catch {
             loadError = error
         }

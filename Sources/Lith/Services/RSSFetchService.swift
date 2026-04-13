@@ -249,7 +249,7 @@ public struct RSSFetchService: RSSFetchServiceProtocol, Sendable {
         results.reserveCapacity(feeds.count)
 
         for feed in feeds {
-            results.append(await refresh(feed: feed))
+            results.append(try await refresh(feed: feed))
         }
 
         return RSSRefreshReport(
@@ -259,7 +259,7 @@ public struct RSSFetchService: RSSFetchServiceProtocol, Sendable {
         )
     }
 
-    private func refresh(feed: RSSFeed) async -> RSSFeedRefreshResult {
+    private func refresh(feed: RSSFeed) async throws -> RSSFeedRefreshResult {
         let refreshedAt = Date()
 
         do {
@@ -280,6 +280,8 @@ public struct RSSFetchService: RSSFetchServiceProtocol, Sendable {
                 refreshedAt: refreshedAt,
                 error: nil
             )
+        } catch let cancellationError as CancellationError {
+            throw cancellationError
         } catch {
             let fetchError = mapError(error, for: feed.feedURL)
             log(fetchError, feedID: feed.id, feedTitle: feed.title)
