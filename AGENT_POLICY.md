@@ -55,7 +55,7 @@ This file holds the durable repo policy for autonomous implementation runs. `AGE
    - If your environment cannot claim issues, stop and ask for an issue number or assignment instead of racing another agent.
    - Skip this step only for an explicit repo self-improvement run.
 
-4. Create a task branch:
+4. Create an issue branch:
    - Create one feature branch for the chosen issue after the issue is clearly assigned or otherwise reserved.
    - Use one issue per branch and one PR per issue.
 
