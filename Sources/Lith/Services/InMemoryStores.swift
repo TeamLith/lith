@@ -36,12 +36,22 @@ public actor InMemoryLinkRepository: LinkRepository {
     }
 
     public func replaceLinks(from sourceNoteID: UUID, with links: [Link]) async throws {
-        let existingByKey = Dictionary(
-            uniqueKeysWithValues: (graph[sourceNoteID] ?? []).map { (LinkIdentity(link: $0), $0) }
-        )
+        let existingByKey = (graph[sourceNoteID] ?? []).reduce(into: [LinkIdentity: Link]()) { result, link in
+            let identity = LinkIdentity(link: link)
+            if result[identity] == nil {
+                result[identity] = link
+            }
+        }
 
-        graph[sourceNoteID] = links.map { link in
-            guard let existing = existingByKey[LinkIdentity(link: link)] else {
+        let deduplicatedLinks = links.reduce(into: [LinkIdentity: Link]()) { result, link in
+            let identity = LinkIdentity(link: link)
+            if result[identity] == nil {
+                result[identity] = link
+            }
+        }
+
+        graph[sourceNoteID] = deduplicatedLinks.map { identity, link in
+            guard let existing = existingByKey[identity] else {
                 return link
             }
 
