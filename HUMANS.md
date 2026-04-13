@@ -54,7 +54,7 @@ xcodebuild -scheme LithiOS -project LithApps.xcodeproj -configuration Debug -des
 - Treat `CONTRIBUTING_AGENTS.md` as legacy migration input or historical context, not the live task board.
 - If future legacy task lists ever need to be imported into GitHub Issues, run `python3 scripts/migrate_pending_tasks_to_github_issues.py --create` with `GITHUB_TOKEN` or `GH_TOKEN` set.
 - Review agent branches or commits before merging, especially when version bumps or workflow docs changed.
-- If an agent reports a blocker tied to credentials or signing, resolve that input as a human and then resume the task.
+- If an agent reports a blocker tied to credentials or signing, resolve that input as a human and then resume the same GitHub Issue (or its linked PR).
 
 ## Triggering a Repo Self-Improvement Run
 
