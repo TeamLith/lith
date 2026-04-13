@@ -305,6 +305,83 @@ For reviewer or coordination runs, also use `REVIEW_POLICY.md`.
 - Notes/Blockers:
   - Added Core Data-backed wikilink persistence, view-model backlink presentation, and task-close version sync. REPO_MAP reviewed and updated for new durable wikilink paths.
 
+## Task: Establish Human and Agent Operating Framework
+
+- Input specs:
+  - `README.md`
+  - `REPO_MAP.md`
+  - `AGENTS.md`
+  - `AGENT_POLICY.md`
+  - `Docs/RELEASING_WITH_GITHUB.md`
+- Deliverables:
+  - A root-level `HUMANS.md` for human operators
+  - Updated cross-links in repo docs for human and agent workflows
+  - One-time setup checklist for humans
+- Steps:
+  - [ ] Audit the current human and agent workflows across repo docs.
+  - [ ] Create `HUMANS.md` covering setup, local development, testing, project generation, and release flow.
+  - [ ] Clarify where humans vs agents should make changes and what requires one-time human setup.
+  - [ ] Update links in existing docs so the workflow is discoverable.
+- Status: TODO
+- Agent: unassigned
+- Last updated: 2026-04-13 14:50 IST
+- PR/Commit: n/a
+- Changed files:
+  - n/a
+- Notes/Blockers:
+  - Human setup tasks are allowed when credentials, signing, or machine-local tools are required.
+
+## Task: Align Build and Release Workflow to Current Best Practices
+
+- Input specs:
+  - `README.md`
+  - `ARCHITECTURE.md`
+  - `REPO_MAP.md`
+  - `project.yml`
+  - `Docs/RELEASING_WITH_GITHUB.md`
+- Deliverables:
+  - Internet-researched build/release workflow improvements
+  - Repo changes to match the chosen workflow
+  - Validation notes and rationale for each durable workflow change
+- Steps:
+  - [ ] Research current best practices from primary sources for Swift package + XcodeGen + Apple app workflows.
+  - [ ] Compare the current repo workflow against those practices and identify the highest-value gaps.
+  - [ ] Implement the justified workflow, script, doc, or structure changes.
+  - [ ] Validate builds/tests and document any one-time human setup needed.
+- Status: TODO
+- Agent: unassigned
+- Last updated: 2026-04-13 14:50 IST
+- PR/Commit: n/a
+- Changed files:
+  - n/a
+- Notes/Blockers:
+  - Human may need to provide signing/team configuration, CI secrets, or release credentials.
+
+## Task: Add Repo Self-Improvement Loop and Skill Maintenance
+
+- Input specs:
+  - `AGENTS.md`
+  - `AGENT_POLICY.md`
+  - `REPO_MAP.md`
+  - `README.md`
+- Deliverables:
+  - A defined recurring repo-improvement workflow for future agent runs
+  - Repo-local guidance for when to update or add skills
+  - Human-readable instructions for approving or supplying one-time setup inputs
+- Steps:
+  - [ ] Define a bounded “improve the project itself” checklist agents can execute safely on future runs.
+  - [ ] Add guidance for when to update existing skills vs define new ones.
+  - [ ] Document what agents may change autonomously and what must be escalated to a human.
+  - [ ] Add validation and reporting expectations for meta-improvement runs.
+- Status: TODO
+- Agent: unassigned
+- Last updated: 2026-04-13 14:50 IST
+- PR/Commit: n/a
+- Changed files:
+  - n/a
+- Notes/Blockers:
+  - Keep improvements bounded so agents do not drift into unrelated repo changes.
+
 ## Task: Implement RSS Fetcher
 
 - Input specs:
