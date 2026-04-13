@@ -1,6 +1,6 @@
 # Agent Instructions
 
-This repository uses this file as the default repo-local instruction entry point for autonomous coding agents.
+This repository uses this file as the default repo-local instruction entry point for autonomous coding agents. Human operators should start with `HUMANS.md`.
 
 ## Bootstrap
 

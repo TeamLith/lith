@@ -318,18 +318,25 @@ For reviewer or coordination runs, also use `REVIEW_POLICY.md`.
   - Updated cross-links in repo docs for human and agent workflows
   - One-time setup checklist for humans
 - Steps:
-  - [ ] Audit the current human and agent workflows across repo docs.
-  - [ ] Create `HUMANS.md` covering setup, local development, testing, project generation, and release flow.
-  - [ ] Clarify where humans vs agents should make changes and what requires one-time human setup.
-  - [ ] Update links in existing docs so the workflow is discoverable.
-- Status: IN_PROGRESS
+  - [x] Audit the current human and agent workflows across repo docs.
+  - [x] Create `HUMANS.md` covering setup, local development, testing, project generation, and release flow.
+  - [x] Clarify where humans vs agents should make changes and what requires one-time human setup.
+  - [x] Update links in existing docs so the workflow is discoverable.
+- Status: DONE
 - Agent: codex
-- Last updated: 2026-04-13 17:31:08 IST +0530
+- Last updated: 2026-04-13 17:33:58 IST +0530
 - PR/Commit: n/a
 - Changed files:
-  - n/a
+  - CONTRIBUTING_AGENTS.md
+  - HUMANS.md
+  - README.md
+  - AGENTS.md
+  - REPO_MAP.md
+  - Docs/RELEASING_WITH_GITHUB.md
+  - project.yml
+  - LithApps.xcodeproj/project.pbxproj
 - Notes/Blockers:
-  - Human setup tasks are allowed when credentials, signing, or machine-local tools are required.
+  - Added a dedicated human operator guide, cross-linked human and agent entry points, reviewed and updated REPO_MAP for the new durable workflow path, and synced app version metadata to 0.1.3 (4).
 
 ## Task: Align Build and Release Workflow to Current Best Practices
 
