@@ -428,13 +428,13 @@ For reviewer or coordination runs, also use `REVIEW_POLICY.md`.
   - Justified improvements to contribution intake, review, handoff, or ownership-routing guidance
   - Clear rationale for any collaboration surface intentionally not adopted
 - Steps:
-  - [ ] Compare the current collaboration workflow against current primary-source GitHub guidance.
-  - [ ] Identify the highest-value missing or unclear contribution/review surfaces.
-  - [ ] Implement only low-risk repo-local changes that improve contribution quality or review routing.
-  - [ ] Document any human-only follow-up, admin settings, or ownership decisions still required.
-- Status: TODO
-- Agent: unassigned
-- Last updated: 2026-04-13 20:35 IST
+- [ ] Compare the current collaboration workflow against current primary-source GitHub guidance.
+- [ ] Identify the highest-value missing or unclear contribution/review surfaces.
+- [ ] Implement only low-risk repo-local changes that improve contribution quality or review routing.
+- [ ] Document any human-only follow-up, admin settings, or ownership decisions still required.
+- Status: IN_PROGRESS
+- Agent: codex
+- Last updated: 2026-04-13 21:44:54 IST +0530
 - PR/Commit: n/a
 - Changed files:
   - n/a
