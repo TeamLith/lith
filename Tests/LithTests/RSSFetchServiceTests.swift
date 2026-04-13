@@ -37,6 +37,53 @@ struct RSSFetchServiceTests {
         #expect(item.publishedAt != nil)
     }
 
+    @Test("FeedKit parser resolves relative RSS item links against the feed URL")
+    func feedKitParserResolvesRelativeRSSItemLinks() throws {
+        let parser = FeedKitRSSFeedParser()
+        let feedURL = URL(string: "https://example.com/feeds/engineering.xml")!
+        let xml = """
+        <?xml version="1.0" encoding="UTF-8"?>
+        <rss version="2.0">
+          <channel>
+            <title>Engineering Weekly</title>
+            <item>
+              <title>Swift 6.2</title>
+              <link>/posts/swift-6-2</link>
+              <description>Release notes</description>
+            </item>
+          </channel>
+        </rss>
+        """
+
+        let parsed = try parser.parse(data: Data(xml.utf8), sourceURL: feedURL)
+        let item = try #require(parsed.items.first)
+
+        #expect(item.linkURL == URL(string: "https://example.com/posts/swift-6-2")!)
+    }
+
+    @Test("FeedKit parser rejects opaque RSS GUIDs when no item link is present")
+    func feedKitParserRejectsOpaqueRSSGUIDFallbacks() throws {
+        let parser = FeedKitRSSFeedParser()
+        let feedURL = URL(string: "https://example.com/feed.xml")!
+        let xml = """
+        <?xml version="1.0" encoding="UTF-8"?>
+        <rss version="2.0">
+          <channel>
+            <title>Engineering Weekly</title>
+            <item>
+              <title>Swift 6.2</title>
+              <guid isPermaLink="false">abc123</guid>
+              <description>Release notes</description>
+            </item>
+          </channel>
+        </rss>
+        """
+
+        let parsed = try parser.parse(data: Data(xml.utf8), sourceURL: feedURL)
+
+        #expect(parsed.items.isEmpty)
+    }
+
     @Test("refreshAllFeeds stores parsed items and stamps lastFetchedAt")
     func refreshAllFeedsStoresItemsAndUpdatesFeedMetadata() async throws {
         let repository = InMemoryRSSRepository()
