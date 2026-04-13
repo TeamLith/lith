@@ -60,6 +60,13 @@ xcodebuild -scheme LithiOS -project LithApps.xcodeproj -configuration Debug -des
 - Expect the agent to keep the run bounded, cite or summarize current primary-source guidance when recommendations are time-sensitive, and add follow-up `TODO` tasks for larger work instead of expanding scope silently.
 - Review the resulting branch or diff like any other process change, especially if it alters validation, release workflow, or contributor instructions.
 
+## Supplying Human-Only Inputs
+
+- When an agent asks for one-time setup input, reply with the exact value or decision needed, such as Apple team selection, signing mode, secret owner, workflow approval, or whether a repo-wide process change is acceptable.
+- Humans must supply or approve credentials, signing and provisioning data, App Store Connect or release actions, external service ownership, legal or license judgments, and any new paid tooling.
+- Repo self-improvement work should stay within docs, task tracking, validation, CI, or repo-local skill guidance unless a human explicitly approves broader scope.
+- After supplying the missing input, have the agent resume the same claimed task instead of starting a second overlapping task.
+
 ## Release Flow
 
 1. Merge approved changes to `main` after the `Validate` GitHub Actions workflow passes.

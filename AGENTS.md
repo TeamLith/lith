@@ -35,6 +35,14 @@ Follow this order before making changes:
 - Do not edit task state for tasks you did not work on.
 - Do not implement unrelated tasks.
 
+## Repo Self-Improvement Runs
+
+- Only perform repo-process, workflow, or documentation improvements when that work is either the selected task in `CONTRIBUTING_AGENTS.md` or an explicitly requested repo self-improvement run.
+- Keep these runs bounded to agent instructions, task tracking, validation workflow, release/process docs, or clearly justified repo-local skill guidance.
+- Update existing guidance before inventing new files, parallel docs, or new repo structure.
+- Escalate to a human for secrets, signing, legal/license choices, paid services, or one-time setup inputs an agent cannot discover safely.
+- Use `AGENT_POLICY.md` for the detailed checklist on meta-improvement runs, skill maintenance, validation, and reporting.
+
 ## Git Workflow
 
 - If the worktree is clean, sync from `main` and create a branch for exactly one task.

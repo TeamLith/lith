@@ -402,7 +402,7 @@ For reviewer or coordination runs, also use `REVIEW_POLICY.md`.
   - project.yml
   - LithApps.xcodeproj/project.pbxproj
 - Notes/Blockers:
-  - Added an explicit repo self-improvement run mode that bypasses the normal first-`TODO` flow when requested, requires current primary-source research for unstable recommendations, stays bounded to repo-process work, reviewed `REPO_MAP.md` without updating it, and synced app versions to 0.1.5 (6).
+  - Added bounded meta-improvement and skill-maintenance guidance plus an explicit repo self-improvement run mode that bypasses the normal first-`TODO` flow when requested, clarified human-only approval/setup inputs, reviewed `REPO_MAP.md` without updating it, and synced app versions to 0.1.5 (6).
 
 ## Task: Implement RSS Fetcher
 
