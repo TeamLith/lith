@@ -23,7 +23,7 @@ Follow this order before making changes:
   use the task board flow below and pick the first task with `Status: TODO`.
 - Repo self-improvement run:
   if the user explicitly asks for a repo self-improvement run, pass, or audit, do not auto-pick a `TODO`. Follow the dedicated self-improvement workflow in `AGENT_POLICY.md` instead.
-- Self-improvement runs must stay bounded to repo workflow, validation, CI, release process, docs, or repo-local skill guidance. They must not drift into product feature implementation.
+- Self-improvement runs must stay bounded to repo workflow, contributor workflow, review/handoff process, validation, CI, release process, docs, or repo-local skill guidance. They must not drift into product feature implementation.
 - When recommendations or best practices may have changed, use current primary sources instead of relying on static memory.
 
 ## Task Workflow
@@ -38,7 +38,7 @@ Follow this order before making changes:
 ## Repo Self-Improvement Runs
 
 - Only perform repo-process, workflow, or documentation improvements when that work is either the selected task in `CONTRIBUTING_AGENTS.md` or an explicitly requested repo self-improvement run.
-- Keep these runs bounded to agent instructions, task tracking, validation workflow, release/process docs, or clearly justified repo-local skill guidance.
+- Keep these runs bounded to agent instructions, human contribution guidance, task tracking, review/handoff workflow, contribution intake/review guidance, validation workflow, release/process docs, or clearly justified repo-local skill guidance.
 - Update existing guidance before inventing new files, parallel docs, or new repo structure.
 - Escalate to a human for secrets, signing, legal/license choices, paid services, or one-time setup inputs an agent cannot discover safely.
 - Use `AGENT_POLICY.md` for the detailed checklist on meta-improvement runs, skill maintenance, validation, and reporting.

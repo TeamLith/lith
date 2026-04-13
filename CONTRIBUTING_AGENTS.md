@@ -404,6 +404,32 @@ For reviewer or coordination runs, also use `REVIEW_POLICY.md`.
 - Notes/Blockers:
   - Added bounded meta-improvement and skill-maintenance guidance plus an explicit repo self-improvement run mode that bypasses the normal first-`TODO` flow when requested, clarified human-only approval/setup inputs, reviewed `REPO_MAP.md` without updating it, and synced app versions to 0.1.5 (6).
 
+## Task: Audit Contributor Collaboration Workflow
+
+- Input specs:
+  - `README.md`
+  - `AGENTS.md`
+  - `AGENT_POLICY.md`
+  - `HUMANS.md`
+  - `REVIEW_POLICY.md`
+- Deliverables:
+  - Current-source audit of contributor and agent collaboration workflow
+  - Justified improvements to contribution intake, review, handoff, or ownership-routing guidance
+  - Clear rationale for any collaboration surface intentionally not adopted
+- Steps:
+  - [ ] Compare the current collaboration workflow against current primary-source GitHub guidance.
+  - [ ] Identify the highest-value missing or unclear contribution/review surfaces.
+  - [ ] Implement only low-risk repo-local changes that improve contribution quality or review routing.
+  - [ ] Document any human-only follow-up, admin settings, or ownership decisions still required.
+- Status: TODO
+- Agent: unassigned
+- Last updated: 2026-04-13 20:35 IST
+- PR/Commit: n/a
+- Changed files:
+  - n/a
+- Notes/Blockers:
+  - Keep bounded to contributor experience and repo workflow. Do not implement product features or rely on repo-admin settings without human approval.
+
 ## Task: Implement RSS Fetcher
 
 - Input specs:

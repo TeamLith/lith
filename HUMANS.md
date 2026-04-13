@@ -57,7 +57,7 @@ xcodebuild -scheme LithiOS -project LithApps.xcodeproj -configuration Debug -des
 
 - Ask explicitly for a repo self-improvement run, for example:
   `Run a repo self-improvement pass per AGENTS.md. Audit the workflow against current best practices, use current primary sources, make bounded improvements, and avoid product feature work.`
-- This run type is separate from the normal first-`TODO` task flow and is intended for improving repo instructions, validation, CI, release process, and repo-local skill guidance.
+- This run type is separate from the normal first-`TODO` task flow and is intended for improving repo instructions, contribution workflow, review/handoff process, validation, CI, release process, and repo-local skill guidance.
 - Expect the agent to keep the run bounded, cite or summarize current primary-source guidance when recommendations are time-sensitive, and add follow-up `TODO` tasks for larger work instead of expanding scope silently.
 - Review the resulting branch or diff like any other process change, especially if it alters validation, release workflow, or contributor instructions.
 
