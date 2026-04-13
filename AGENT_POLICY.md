@@ -65,6 +65,7 @@ This file holds the durable repo policy for autonomous implementation runs. `AGE
 5. Implement only that one issue:
    - Read the required input specs listed in the issue body.
    - Make minimal, correct code and tests for the stated deliverables.
+   - If the issue changes user-facing behavior, setup, settings, workflows, or adds a new feature, update the user-facing documentation in the same issue. Once the repo has a GitHub Pages docs site, treat that site as the primary user-facing docs surface.
    - Do not implement unrelated tasks.
 
 6. Avoid duplication:
@@ -87,6 +88,7 @@ This file holds the durable repo policy for autonomous implementation runs. `AGE
 
 9. Close issue work:
    - Update the linked issue or PR with concise notes, blockers, validation results, and any migration details when your environment supports GitHub writes.
+   - Do not treat user-facing documentation updates as optional follow-up when the shipped behavior changed; complete the matching docs update in the same issue unless the issue explicitly says otherwise.
    - If the completed issue changes shipped app behavior or app/release metadata, increment app versions before the final implementation commit:
      - bump `MARKETING_VERSION`
      - bump `CURRENT_PROJECT_VERSION`
@@ -101,6 +103,7 @@ This file holds the durable repo policy for autonomous implementation runs. `AGE
 11. Final report format:
    - Issue worked
    - What changed
+   - User-facing documentation updated, or why no update was needed
    - Tests run and results
    - Whether `REPO_MAP.md` was reviewed
    - Whether `REPO_MAP.md` was updated, and why or why not

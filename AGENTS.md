@@ -55,6 +55,7 @@ Follow this order before making changes:
 
 - Run relevant tests and build commands for the changed area before closing the task.
 - Prefer the canonical commands listed in `REPO_MAP.md`.
+- When an issue changes user-facing behavior, onboarding, settings, workflows, or adds a new feature, update the user-facing documentation in the same issue before close-out. Once a GitHub Pages docs site exists, treat that site as the primary user-facing docs surface to keep in sync.
 
 ## Repo Map Maintenance
 
@@ -71,6 +72,7 @@ Follow this order before making changes:
 ## Issue Close-Out
 
 - Update the linked GitHub Issue or PR with concise notes, blockers, and validation status when your environment supports it.
+- If the completed issue changes shipped user behavior or introduces a new user-facing capability, include the corresponding user-documentation update in the same scope instead of deferring it silently.
 - When a claimed issue is completed and it changes shipped app behavior or app/release metadata, increment the app versions before finishing the work:
   - bump `MARKETING_VERSION`
   - bump `CURRENT_PROJECT_VERSION`
