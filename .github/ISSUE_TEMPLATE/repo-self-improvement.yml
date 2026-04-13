@@ -1,0 +1,57 @@
+name: Repo Self-Improvement
+description: Improve contributor workflow, automation, docs, or repo operations without product feature work.
+title: "[Repo] "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Use this for bounded repo-process improvements only. Do not mix in product feature implementation.
+  - type: textarea
+    id: audit_target
+    attributes:
+      label: Audit Target
+      description: What surface should be audited or improved?
+      placeholder: agent workflow, issue templates, CI, release process, review/handoff guidance
+    validations:
+      required: true
+  - type: textarea
+    id: current_problem
+    attributes:
+      label: Current Problem
+      description: What is unclear, risky, or inefficient today?
+    validations:
+      required: true
+  - type: textarea
+    id: bounded_scope
+    attributes:
+      label: Bounded Scope
+      description: What is in scope, and what must stay out of scope?
+      placeholder: |
+        In scope:
+        - docs and issue templates
+        Out of scope:
+        - product feature implementation
+    validations:
+      required: true
+  - type: textarea
+    id: primary_sources
+    attributes:
+      label: Primary Sources To Check
+      description: Vendor or official docs that should be consulted if recommendations may have changed.
+      placeholder: GitHub Docs, Apple docs, XcodeGen docs
+  - type: textarea
+    id: deliverables
+    attributes:
+      label: Deliverables
+      description: Expected outputs from the self-improvement run.
+      placeholder: |
+        - Updated AGENTS.md guidance
+        - PR template
+        - validation notes
+    validations:
+      required: true
+  - type: textarea
+    id: human_follow_up
+    attributes:
+      label: Human-Only Follow-Up
+      description: Admin settings, approvals, or credentials that may still be required.

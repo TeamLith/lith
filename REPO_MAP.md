@@ -6,7 +6,8 @@ This file is the stable orientation guide for future agent and human sessions. R
 
 - Use this file to understand the current project layout, primary entry points, and where to make changes.
 - Use `HUMANS.md` for human setup, validation, and release-owner responsibilities.
-- Use `CONTRIBUTING_AGENTS.md` for task state and handoff details.
+- Use GitHub Issues for active task state and handoff details.
+- Use `CONTRIBUTING_AGENTS.md` only as legacy task inventory, migration record, and historical archive.
 - Update this file only when repository structure, ownership boundaries, or core build workflows materially change.
 
 ## Project Shape
@@ -24,7 +25,7 @@ Read only what matches the task:
 - Autonomous agents:
   1. `AGENTS.md`
   2. `REPO_MAP.md`
-  3. `CONTRIBUTING_AGENTS.md`
+  3. selected GitHub Issue
   4. `README.md`
   5. One or more of:
      - `ARCHITECTURE.md`
@@ -35,7 +36,7 @@ Read only what matches the task:
   1. `HUMANS.md`
   2. `README.md`
   3. `REPO_MAP.md`
-  4. `CONTRIBUTING_AGENTS.md` when coordinating tracked work
+  4. relevant GitHub Issue or Project board when coordinating tracked work
   5. relevant `FEATURE_*.md`, `SYNC_ICLOUD.md`, or `Docs/*.md`
 
 ## High-Value Paths
@@ -55,11 +56,14 @@ Read only what matches the task:
 - `FEATURE_SIRI_INTELLIGENCE.md`
 - `FEATURE_SEARCH_GRAPH.md`
 - `SYNC_ICLOUD.md`
-- `CONTRIBUTING_AGENTS.md`: task board, pause/resume protocol, prompt pack.
+- `CONTRIBUTING_AGENTS.md`: legacy task inventory, migration source, pause/resume history, and prompt-pack archive.
 - `Docs/RELEASING_WITH_GITHUB.md`: human-owned signing, secrets, and TestFlight release workflow.
+- `.github/ISSUE_TEMPLATE`: GitHub Issue intake forms for feature work and repo-process work.
+- `.github/pull_request_template.md`: default PR checklist and issue-linking guide.
 - `.github/workflows/validate.yml`: pull request and `main` validation workflow for package tests and app builds.
 - `.github/workflows/release-testflight.yml`: manual TestFlight release workflow with preflight validation.
 - `scripts/validate.sh`: shared local/CI validation entry point that regenerates `LithApps.xcodeproj` and runs canonical build/test commands.
+- `scripts/migrate_pending_tasks_to_github_issues.py`: dry-run or token-backed migration helper that converts legacy TODO tasks into GitHub Issues.
 
 ### Shared package
 
@@ -106,7 +110,8 @@ Read only what matches the task:
 - Prefer adding UI state logic to `Sources/Lith/UI` and keeping SwiftUI views in `Apps/LithApp/Sources`.
 - Treat `project.yml` as authoritative for target structure. If `LithApps.xcodeproj` and source layout diverge, regenerate the project.
 - Use `scripts/validate.sh` as the default validation path when build, project-generation, CI, or release workflow files change.
-- Keep `CONTRIBUTING_AGENTS.md` updated for task progress, but keep long-lived repo structure knowledge here.
+- Use GitHub Issues and assignment as the source of truth for active task ownership and parallel work coordination.
+- Keep `CONTRIBUTING_AGENTS.md` only as migration/archive material until the legacy backlog is imported.
 - Keep durable workflow rules in `AGENTS.md` and `AGENT_POLICY.md`, not in copy-pasted prompts.
 
 ## Fast Routing Guide

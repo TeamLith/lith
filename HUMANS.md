@@ -7,7 +7,7 @@ Use this file for local setup, day-to-day development, and release steps that re
 1. Read `README.md` for the product summary and spec index.
 2. Read `REPO_MAP.md` for repository layout, entry points, and canonical build/test commands.
 3. Read only the feature or sync specs that match the work you are doing.
-4. Use `CONTRIBUTING_AGENTS.md` when coordinating with agents or claiming a tracked task.
+4. Use GitHub Issues as the active work queue and assignment surface when coordinating with agents or other humans.
 5. Use `Docs/RELEASING_WITH_GITHUB.md` for TestFlight and App Store release setup.
 
 ## One-Time Setup Checklist
@@ -22,7 +22,7 @@ Use this file for local setup, day-to-day development, and release steps that re
 ## Daily Development Workflow
 
 1. Start with `README.md`, `REPO_MAP.md`, and the relevant spec documents.
-2. If the work is tracked, keep exactly one task current in `CONTRIBUTING_AGENTS.md`.
+2. If the work is tracked, keep exactly one GitHub Issue current per branch or agent run.
 3. Prefer changes under `Sources/Lith` unless the work is truly app-shell-specific.
 4. Treat `project.yml` as the source of truth for target structure and regenerate the Xcode project after structural changes.
 5. Run `scripts/validate.sh` before merging, handing work to an agent, or triggering a release. It regenerates the Xcode project and runs the package plus app build validations. CI and release automation additionally fail if regeneration would change committed `LithApps.xcodeproj` files.
@@ -49,7 +49,10 @@ xcodebuild -scheme LithiOS -project LithApps.xcodeproj -configuration Debug -des
 ## Working With Agents
 
 - Point implementation agents at `AGENTS.md` and ask them to follow the repo task workflow.
-- Use `CONTRIBUTING_AGENTS.md` as the shared task board and pause/resume log.
+- For parallel agent runs, create or assign one GitHub Issue per unit of work before starting the agents.
+- Use GitHub Issue assignment as the lock and GitHub Projects or labels as the board view.
+- Treat `CONTRIBUTING_AGENTS.md` as legacy migration input or historical context, not the live task board.
+- If future legacy task lists ever need to be imported into GitHub Issues, run `python3 scripts/migrate_pending_tasks_to_github_issues.py --create` with `GITHUB_TOKEN` or `GH_TOKEN` set.
 - Review agent branches or commits before merging, especially when version bumps or workflow docs changed.
 - If an agent reports a blocker tied to credentials or signing, resolve that input as a human and then resume the task.
 
@@ -57,7 +60,7 @@ xcodebuild -scheme LithiOS -project LithApps.xcodeproj -configuration Debug -des
 
 - Ask explicitly for a repo self-improvement run, for example:
   `Run a repo self-improvement pass per AGENTS.md. Audit the workflow against current best practices, use current primary sources, make bounded improvements, and avoid product feature work.`
-- This run type is separate from the normal first-`TODO` task flow and is intended for improving repo instructions, contribution workflow, review/handoff process, validation, CI, release process, and repo-local skill guidance.
+- This run type is separate from the normal issue flow and is intended for improving repo instructions, issue/PR workflow, contribution workflow, review/handoff process, validation, CI, release process, and repo-local skill guidance.
 - Expect the agent to keep the run bounded, cite or summarize current primary-source guidance when recommendations are time-sensitive, and add follow-up `TODO` tasks for larger work instead of expanding scope silently.
 - Review the resulting branch or diff like any other process change, especially if it alters validation, release workflow, or contributor instructions.
 
@@ -65,8 +68,8 @@ xcodebuild -scheme LithiOS -project LithApps.xcodeproj -configuration Debug -des
 
 - When an agent asks for one-time setup input, reply with the exact value or decision needed, such as Apple team selection, signing mode, secret owner, workflow approval, or whether a repo-wide process change is acceptable.
 - Humans must supply or approve credentials, signing and provisioning data, App Store Connect or release actions, external service ownership, legal or license judgments, and any new paid tooling.
-- Repo self-improvement work should stay within docs, task tracking, validation, CI, or repo-local skill guidance unless a human explicitly approves broader scope.
-- After supplying the missing input, have the agent resume the same claimed task instead of starting a second overlapping task.
+- Repo self-improvement work should stay within docs, issue/PR workflow, task tracking, validation, CI, or repo-local skill guidance unless a human explicitly approves broader scope.
+- After supplying the missing input, have the agent resume the same GitHub Issue instead of starting a second overlapping run.
 
 ## Release Flow
 

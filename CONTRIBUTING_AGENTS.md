@@ -1,10 +1,19 @@
 # Contributing for Agents and Humans
 
-This file is the task control plane for multi-agent execution and human review.
+This file is a legacy task inventory and migration source. GitHub Issues are now the source of truth for active work, assignment, and parallel execution.
 
 For repo-local agent instructions, start with `AGENTS.md`.
-For stable repository orientation, read `REPO_MAP.md` before using this task board.
+For stable repository orientation, read `REPO_MAP.md`.
 For reviewer or coordination runs, also use `REVIEW_POLICY.md`.
+
+## Migration Status
+
+- Active and future work should be created and tracked as GitHub Issues.
+- The legacy TODO backlog below was imported into GitHub Issues `#21` through `#36` on 2026-04-13.
+- The per-task `Status` values below are archive snapshots from the Markdown board, not the live source of truth.
+- Use `python3 scripts/migrate_pending_tasks_to_github_issues.py --create` with `GITHUB_TOKEN` or `GH_TOKEN` set only for future one-off legacy imports.
+- Do not treat branch-local edits to this file as a coordination lock.
+- Keep this file as historical context, migration record, and prompt-pack archive unless a later cleanup intentionally archives it further.
 
 ## 1. Global checklist
 
@@ -44,7 +53,7 @@ For reviewer or coordination runs, also use `REVIEW_POLICY.md`.
   - <only if needed>
 ```
 
-## 3. Active task board
+## 3. Legacy task inventory
 
 ## Task: Implement Basic Note Entity
 
@@ -406,6 +415,8 @@ For reviewer or coordination runs, also use `REVIEW_POLICY.md`.
 
 ## Task: Audit Contributor Collaboration Workflow
 
+- GitHub Issue: `#21`
+
 - Input specs:
   - `README.md`
   - `AGENTS.md`
@@ -432,6 +443,8 @@ For reviewer or coordination runs, also use `REVIEW_POLICY.md`.
 
 ## Task: Implement RSS Fetcher
 
+- GitHub Issue: `#22`
+
 - Input specs:
   - `FEATURE_RSS_INBOX.md`
   - `ARCHITECTURE.md`
@@ -453,6 +466,8 @@ For reviewer or coordination runs, also use `REVIEW_POLICY.md`.
   - Depends on `Implement RSS Data Layer`.
 
 ## Task: Implement RSS Inbox UI
+
+- GitHub Issue: `#23`
 
 - Input specs:
   - `FEATURE_RSS_INBOX.md`
@@ -477,6 +492,8 @@ For reviewer or coordination runs, also use `REVIEW_POLICY.md`.
 
 ## Task: Implement Search UI
 
+- GitHub Issue: `#24`
+
 - Input specs:
   - `FEATURE_SEARCH_GRAPH.md`
   - `ARCHITECTURE.md`
@@ -498,6 +515,8 @@ For reviewer or coordination runs, also use `REVIEW_POLICY.md`.
   - Depends on `Implement Search API`.
 
 ## Task: Implement Graph Data Builder
+
+- GitHub Issue: `#25`
 
 - Input specs:
   - `FEATURE_SEARCH_GRAPH.md`
@@ -521,6 +540,8 @@ For reviewer or coordination runs, also use `REVIEW_POLICY.md`.
 
 ## Task: Implement Graph View
 
+- GitHub Issue: `#26`
+
 - Input specs:
   - `FEATURE_SEARCH_GRAPH.md`
   - `ARCHITECTURE.md`
@@ -542,6 +563,8 @@ For reviewer or coordination runs, also use `REVIEW_POLICY.md`.
   - Depends on `Implement Graph Data Builder`.
 
 ## Task: Implement CloudKit Schema
+
+- GitHub Issue: `#27`
 
 - Input specs:
   - `SYNC_ICLOUD.md`
@@ -565,6 +588,8 @@ For reviewer or coordination runs, also use `REVIEW_POLICY.md`.
 
 ## Task: Implement Sync Engine
 
+- GitHub Issue: `#28`
+
 - Input specs:
   - `SYNC_ICLOUD.md`
   - `ARCHITECTURE.md`
@@ -586,6 +611,8 @@ For reviewer or coordination runs, also use `REVIEW_POLICY.md`.
   - Depends on `Implement CloudKit Schema`.
 
 ## Task: Implement iCloud Settings UI
+
+- GitHub Issue: `#29`
 
 - Input specs:
   - `SYNC_ICLOUD.md`
@@ -609,6 +636,8 @@ For reviewer or coordination runs, also use `REVIEW_POLICY.md`.
 
 ## Task: Implement Audio Recording Infrastructure
 
+- GitHub Issue: `#30`
+
 - Input specs:
   - `FEATURE_AUDIO_NOTES.md`
   - `DATA_MODEL.md` (`AudioNote`)
@@ -630,6 +659,8 @@ For reviewer or coordination runs, also use `REVIEW_POLICY.md`.
   - Depends on `Wire Note CRUD Flows Into UI`.
 
 ## Task: Implement Transcription Service
+
+- GitHub Issue: `#31`
 
 - Input specs:
   - `FEATURE_AUDIO_NOTES.md`
@@ -653,6 +684,8 @@ For reviewer or coordination runs, also use `REVIEW_POLICY.md`.
 
 ## Task: Implement Audio UI
 
+- GitHub Issue: `#32`
+
 - Input specs:
   - `FEATURE_AUDIO_NOTES.md`
   - `ARCHITECTURE.md`
@@ -674,6 +707,8 @@ For reviewer or coordination runs, also use `REVIEW_POLICY.md`.
   - Depends on `Implement Transcription Service`.
 
 ## Task: Implement Basic App Intent for Create Note
+
+- GitHub Issue: `#33`
 
 - Input specs:
   - `FEATURE_SIRI_INTELLIGENCE.md`
@@ -698,6 +733,8 @@ For reviewer or coordination runs, also use `REVIEW_POLICY.md`.
 
 ## Task: Implement Transcript Action Item Extractor
 
+- GitHub Issue: `#34`
+
 - Input specs:
   - `FEATURE_SIRI_INTELLIGENCE.md`
   - `DATA_MODEL.md` (`ActionItem`)
@@ -719,6 +756,8 @@ For reviewer or coordination runs, also use `REVIEW_POLICY.md`.
   - Depends on `Implement Transcription Service`.
 
 ## Task: Implement Action Item UI
+
+- GitHub Issue: `#35`
 
 - Input specs:
   - `FEATURE_SIRI_INTELLIGENCE.md`
@@ -742,6 +781,8 @@ For reviewer or coordination runs, also use `REVIEW_POLICY.md`.
 
 ## Task: Add Critical Flow Test Coverage
 
+- GitHub Issue: `#36`
+
 - Input specs:
   - `ARCHITECTURE.md`
   - Relevant feature specs for completed flows
@@ -762,9 +803,10 @@ For reviewer or coordination runs, also use `REVIEW_POLICY.md`.
 - Notes/Blockers:
   - Run after the corresponding product flows exist.
 
-## 4. Pause/resume protocol (token-safe)
+## 4. Legacy pause/resume protocol (token-safe)
 
-- Before stopping, every agent must update:
+- Prefer GitHub Issues and PR comments for pause/resume state.
+- If a legacy task has not yet been migrated and work must be paused, update:
   - `Status`
   - `Last updated`
   - `Changed files`
@@ -775,11 +817,15 @@ For reviewer or coordination runs, also use `REVIEW_POLICY.md`.
 ## 5. GitHub collaboration protocol
 
 - Work model:
-  - one task -> one branch -> one PR
+  - one GitHub Issue -> one assignee -> one branch -> one PR
+- Source of truth:
+  - GitHub Issue assignment is the lock for active work.
+  - GitHub Projects, labels, and milestones are the preferred board/status surfaces.
+  - This file is only a migration source for legacy tasks and should not be used as the live lock.
 - Branch naming:
-  - `feat/<task-slug>` or `fix/<task-slug>`
+  - `feat/<issue-slug>` or `fix/<issue-slug>`
 - PR requirements:
-  - link task section in this file
+  - link the GitHub Issue
   - include test evidence
   - include migration notes (if schema changed)
 - Human review checklist:
@@ -798,11 +844,13 @@ Use this bundle for each coding session:
 4. `ARCHITECTURE.md`
 5. `DATA_MODEL.md`
 6. Relevant feature/sync spec
-7. Relevant task section from this file
+7. Relevant GitHub Issue
+8. Relevant legacy task section from this file only when migrating an unmigrated task
 
 Prompt pattern:
 
-> You are implementing `<Task Name>` from `CONTRIBUTING_AGENTS.md`.
-> Use these specs: `AGENTS.md`, `REPO_MAP.md`, `README.md`, `ARCHITECTURE.md`, `DATA_MODEL.md`, `<FEATURE_FILE>.md`, and the task block.
+> You are implementing GitHub Issue `#<number>: <Issue Title>`.
+> Use these specs: `AGENTS.md`, `REPO_MAP.md`, `README.md`, `ARCHITECTURE.md`, `DATA_MODEL.md`, `<FEATURE_FILE>.md`, and the issue body.
+> If this issue was seeded from the legacy backlog, also use the matching task block in `CONTRIBUTING_AGENTS.md`.
 > Produce code and tests for a Swift/SwiftUI + Core Data project.
-> Update task status/checklist, review whether `REPO_MAP.md` needs changes, and include changed-file summary.
+> Review whether `REPO_MAP.md` needs changes, include changed-file summary, and link the PR back to the issue.

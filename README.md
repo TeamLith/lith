@@ -2,6 +2,8 @@
 
 Native iOS/macOS note-taking app spec repo designed for multi-agent execution and human collaboration. The product is local-first with optional iCloud sync, starts with text notes and wiki-links, adds RSS approve-to-save workflows, then audio transcription and Siri-assisted action extraction, with Obsidian-like graph/search navigation.
 
+The repository now uses GitHub Issues as the source of truth for active work. Repo-local Markdown task lists remain only as archival context plus a record of the legacy backlog that was migrated to GitHub.
+
 ## Tech constraints
 
 - UI: Swift + SwiftUI
@@ -34,7 +36,7 @@ Native iOS/macOS note-taking app spec repo designed for multi-agent execution an
 
 1. Start with `HUMANS.md`.
 2. Use `README.md` and `REPO_MAP.md` to orient on the repo and find the right spec files.
-3. Use `CONTRIBUTING_AGENTS.md` to coordinate tracked work with agents or other humans.
+3. Use GitHub Issues and, if desired, a GitHub Project board to coordinate tracked work with agents or other humans.
 4. Run `scripts/validate.sh` before merging or handing work off.
 5. Use `Docs/RELEASING_WITH_GITHUB.md` for signing, secrets, and TestFlight release steps.
 
@@ -42,23 +44,22 @@ Native iOS/macOS note-taking app spec repo designed for multi-agent execution an
 
 1. Start with `AGENTS.md`.
 2. Read orientation next: `REPO_MAP.md`.
-3. Pick one task block from `CONTRIBUTING_AGENTS.md`.
+3. Work from one GitHub Issue at a time, preferably one explicitly provided or assigned.
 4. Read global context next: `README.md`, `ARCHITECTURE.md`, `DATA_MODEL.md`.
-5. Read the relevant feature or sync file for that task.
+5. Read the relevant feature or sync file for that issue.
 6. Implement code + tests.
 7. Run the canonical validation flow for the changed area, preferring `scripts/validate.sh` when app/workflow wiring changed.
-8. Update checklist status, `Agent`, and `Last updated` in `CONTRIBUTING_AGENTS.md`.
-9. If the task is completed, bump `MARKETING_VERSION` and `CURRENT_PROJECT_VERSION`, keeping `project.yml` and generated Xcode project settings in sync.
-10. Review `REPO_MAP.md` before closing the task and update it only if repo orientation changed.
-11. Include a short file-change summary for human or GitHub review.
+8. If the issue is completed, bump `MARKETING_VERSION` and `CURRENT_PROJECT_VERSION`, keeping `project.yml` and generated Xcode project settings in sync.
+9. Review `REPO_MAP.md` before closing the work and update it only if repo orientation changed.
+10. Include a short file-change summary for human or GitHub review and link the PR back to the issue.
 
-Agents also support an explicit repo self-improvement run mode when a user asks for a repo self-improvement pass, audit, or equivalent. That mode bypasses the normal first `Status: TODO` task auto-pick, stays bounded to repo-process work such as agent/human instructions, contributor workflow, review/handoff norms, validation/CI/release automation, and repo-local skill guidance, and requires current primary sources when best-practice guidance may have changed.
-Meta-improvement tasks still use the same one-task workflow when they are tracked on the board. Use `AGENT_POLICY.md` for the dedicated checklist and `HUMANS.md` for human-only setup or approval inputs.
+Agents also support an explicit repo self-improvement run mode when a user asks for a repo self-improvement pass, audit, or equivalent. That mode bypasses normal issue selection, stays bounded to repo-process work such as agent/human instructions, contributor workflow, review/handoff norms, validation/CI/release automation, issue/PR templates, and repo-local skill guidance, and requires current primary sources when best-practice guidance may have changed.
+Meta-improvement tasks still use the same one-issue workflow when they are tracked on GitHub. Use `AGENT_POLICY.md` for the dedicated checklist and `HUMANS.md` for human-only setup or approval inputs.
 
 Reviewer or coordination sessions should start with `AGENTS.md` and then use `REVIEW_POLICY.md`.
 
 ## Pause and resume workflow
 
-- Before pausing: update task status (`TODO`/`IN_PROGRESS`/`DONE`) and leave next actions.
-- On resume: start from the last `IN_PROGRESS` item in `CONTRIBUTING_AGENTS.md`.
-- For handoff in low-token sessions: prioritize status + blockers + exact changed files.
+- Before pausing: update the GitHub Issue or linked PR with status, blockers, and next actions.
+- On resume: continue from the assigned or linked GitHub Issue rather than scanning a branch-local task board.
+- For handoff in low-token sessions: prioritize issue number, blockers, linked PR, and exact changed files.

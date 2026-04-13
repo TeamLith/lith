@@ -1,0 +1,64 @@
+name: Feature Task
+description: Track one implementation-ready product or technical task.
+title: "[Task] "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Keep one issue scoped to one branch and one PR.
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem / Goal
+      description: What should be implemented or improved?
+      placeholder: Describe the user-visible or technical goal.
+    validations:
+      required: true
+  - type: textarea
+    id: input_specs
+    attributes:
+      label: Input Specs
+      description: List the repo docs or specs that define the work.
+      placeholder: |
+        - FEATURE_TEXT_NOTES.md
+        - ARCHITECTURE.md
+    validations:
+      required: true
+  - type: textarea
+    id: deliverables
+    attributes:
+      label: Deliverables
+      description: What outputs are expected?
+      placeholder: |
+        - UI screen
+        - Tests
+    validations:
+      required: true
+  - type: textarea
+    id: implementation_steps
+    attributes:
+      label: Suggested Steps
+      description: Optional decomposition into concrete subtasks.
+      placeholder: |
+        - [ ] Step 1
+        - [ ] Step 2
+        - [ ] Step 3
+  - type: input
+    id: dependencies
+    attributes:
+      label: Dependencies
+      description: Other issue numbers, specs, or prerequisites.
+      placeholder: "#123, project.yml update, FEATURE_SEARCH_GRAPH.md"
+  - type: textarea
+    id: validation
+    attributes:
+      label: Validation Expectations
+      description: Builds, tests, or manual checks required before close-out.
+      placeholder: |
+        - swift test
+        - scripts/validate.sh
+  - type: textarea
+    id: notes
+    attributes:
+      label: Notes / Blockers
+      description: Constraints, decisions, or known risks.
