@@ -27,14 +27,19 @@ public final class CoreDataLinkRepository: @unchecked Sendable, LinkRepository {
             let existingByKey = Dictionary(
                 uniqueKeysWithValues: existingLinks.map { (ManagedLinkIdentity(link: $0), $0) }
             )
-            let incomingKeys = Set(links.map(ManagedLinkIdentity.init))
 
-            for managedLink in existingLinks where !incomingKeys.contains(ManagedLinkIdentity(link: managedLink)) {
+            let deduplicatedLinks = links.reduce(into: [ManagedLinkIdentity: Link]()) { result, link in
+                let identity = ManagedLinkIdentity(link: link)
+                if result[identity] == nil {
+                    result[identity] = link
+                }
+            }
+
+            for managedLink in existingLinks where !deduplicatedLinks.keys.contains(ManagedLinkIdentity(link: managedLink)) {
                 self.context.delete(managedLink)
             }
 
-            for link in links {
-                let identity = ManagedLinkIdentity(link: link)
+            for (identity, link) in deduplicatedLinks {
                 let managedLink = existingByKey[identity] ?? ManagedLink(context: self.context)
                 let preservedID = existingByKey[identity]?.id ?? link.id
                 let preservedCreatedAt = existingByKey[identity]?.createdAt ?? link.createdAt
