@@ -389,9 +389,9 @@ For reviewer or coordination runs, also use `REVIEW_POLICY.md`.
   - [ ] Add guidance for when to update existing skills vs define new ones.
   - [ ] Document what agents may change autonomously and what must be escalated to a human.
   - [ ] Add validation and reporting expectations for meta-improvement runs.
-- Status: TODO
-- Agent: unassigned
-- Last updated: 2026-04-13 14:50 IST
+- Status: IN_PROGRESS
+- Agent: codex
+- Last updated: 2026-04-13 19:45:05 IST +0530
 - PR/Commit: n/a
 - Changed files:
   - n/a
