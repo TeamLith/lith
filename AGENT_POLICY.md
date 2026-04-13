@@ -18,8 +18,10 @@ This file holds the durable repo policy for autonomous implementation runs. `AGE
 
 ### Explicit Repo Self-Improvement Run
 
-- Only use this mode when the user explicitly asks for a repo self-improvement run, pass, audit, or equivalent wording.
-- In this mode, do not auto-pick the first `TODO` task and do not block on the product task queue.
+- This run type is separate from board-selected meta-improvement tasks.
+- If a repo-workflow or meta-improvement task is already selected from `CONTRIBUTING_AGENTS.md`, treat it as a normal task run and follow the task-board workflow.
+- Only use this explicit mode when the user directly asks for a repo self-improvement run, pass, audit, or equivalent wording outside the normal board selection flow.
+- In this mode, do not auto-pick the first `TODO` task and do not require a selected board task before starting.
 - Keep the run bounded to one or more of:
   - agent or human operating instructions
   - validation scripts, CI, or release workflow
@@ -160,7 +162,8 @@ Use this section when the selected task improves the repository workflow itself 
 
 ## Repo Self-Improvement Workflow
 
-Use this section only for the explicit self-improvement run type.
+Use this section only for the explicit repo self-improvement run type initiated outside the board.
+Do not use this section for ordinary meta-improvement tasks that were selected from `CONTRIBUTING_AGENTS.md`; those remain standard task runs.
 
 1. Orient:
    - Read `REPO_MAP.md`, `README.md`, `AGENTS.md`, `AGENT_POLICY.md`, and the specific workflow docs or scripts being audited.
