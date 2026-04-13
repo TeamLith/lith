@@ -385,18 +385,24 @@ For reviewer or coordination runs, also use `REVIEW_POLICY.md`.
   - Repo-local guidance for when to update or add skills
   - Human-readable instructions for approving or supplying one-time setup inputs
 - Steps:
-  - [ ] Define a bounded “improve the project itself” checklist agents can execute safely on future runs.
-  - [ ] Add guidance for when to update existing skills vs define new ones.
-  - [ ] Document what agents may change autonomously and what must be escalated to a human.
-  - [ ] Add validation and reporting expectations for meta-improvement runs.
-- Status: IN_PROGRESS
+  - [x] Define a bounded “improve the project itself” checklist agents can execute safely on future runs.
+  - [x] Add guidance for when to update existing skills vs define new ones.
+  - [x] Document what agents may change autonomously and what must be escalated to a human.
+  - [x] Add validation and reporting expectations for meta-improvement runs.
+- Status: DONE
 - Agent: codex
-- Last updated: 2026-04-13 19:45:05 IST +0530
+- Last updated: 2026-04-13 19:48:35 IST +0530
 - PR/Commit: n/a
 - Changed files:
-  - n/a
+  - CONTRIBUTING_AGENTS.md
+  - AGENTS.md
+  - AGENT_POLICY.md
+  - README.md
+  - HUMANS.md
+  - project.yml
+  - LithApps.xcodeproj/project.pbxproj
 - Notes/Blockers:
-  - Keep improvements bounded so agents do not drift into unrelated repo changes.
+  - Added bounded meta-improvement and skill-maintenance guidance, clarified human-only approval/setup inputs, reviewed `REPO_MAP.md` without updating it, and synced app versions to 0.1.5 (6).
 
 ## Task: Implement RSS Fetcher
 

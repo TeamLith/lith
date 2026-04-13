@@ -80,6 +80,60 @@ This file holds the durable repo policy for autonomous implementation runs. `AGE
    - Any blockers
    - Exact files changed
 
+## Meta-Improvement Tasks
+
+Use this section when the selected task improves the repository workflow itself rather than product behavior.
+
+### Allowed Scope
+
+- Treat repo self-improvement as valid only when the selected task explicitly targets repo workflow, docs, automation, or agent guidance.
+- Keep the run bounded to one or more of:
+  - repo instructions or task-board hygiene
+  - validation scripts, CI, or project-generation workflow
+  - cross-linked docs for humans and agents
+  - repo-local skill maintenance for repeated repo-specific workflows
+- Do not mix product feature implementation into a meta-improvement task.
+
+### Bounded Checklist
+
+1. Audit the current docs, scripts, or workflow files for the exact gap named by the task.
+2. Prefer editing the current source-of-truth file instead of adding parallel guidance elsewhere.
+3. Add cross-links only where discovery is weak; avoid duplicating large blocks of policy text.
+4. Keep changes reversible and low-risk; stop if the task would require secrets, account access, or speculative repo-wide restructuring.
+5. Review `REPO_MAP.md` before close-out and update it only if durable repo orientation changed.
+
+### Skill Maintenance
+
+- Update an existing skill or instruction when the workflow already exists and only its steps, tools, constraints, or references changed.
+- Add a new repo-local skill only when all of the following are true:
+  - the workflow is repeated across tasks
+  - it is repo-specific or too detailed for `AGENTS.md` and `AGENT_POLICY.md`
+  - it has clear trigger conditions, inputs, outputs, and validation steps
+  - the repo already has, or the task explicitly defines, an approved place to store that skill
+- Do not create speculative skills for one-off work or to paper over missing product or process decisions.
+
+### Human Escalation Boundary
+
+- Agents may autonomously change repo docs, task metadata, validation scripts, CI or workflow files, and repo-local skills when the task explicitly calls for it and the change can be validated locally.
+- Escalate to a human before changing or inventing:
+  - secrets, credentials, Apple signing, team, or provisioning values
+  - release approvals or App Store Connect state
+  - legal or dependency license decisions
+  - paid or external service setup or account ownership
+  - destructive migrations or ambiguous repo-wide convention changes
+  - one-time setup inputs that cannot be inferred safely
+
+### Validation and Reporting
+
+- Validate the exact surface changed:
+  - docs or policy only: check that every referenced file, command, and path still exists, then report that no executable validation applied
+  - `project.yml`, generated project files, validation scripts, or CI workflow changes: run `scripts/validate.sh`
+  - new or updated repo-local skills: exercise the referenced commands or workflows where feasible and verify the skill points at real files
+- Final reports for meta-improvement runs must also state:
+  - why the changes were bounded
+  - whether any human follow-up or one-time setup remains
+  - why updating existing guidance was sufficient, or why a new skill was justified
+
 ## Constraints
 
 - Never claim more than one task.
