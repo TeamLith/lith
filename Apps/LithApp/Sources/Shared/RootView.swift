@@ -105,6 +105,7 @@ struct RootView: View {
                 } content: {
                     NoteListView(
                         repository: dependencies.noteRepository,
+                        wikiLinkService: dependencies.wikiLinkService,
                         viewModel: noteListViewModel,
                         selectedNoteID: $selectedNoteID
                     )
@@ -113,6 +114,7 @@ struct RootView: View {
                     if let selectedNoteID {
                         NoteDetailView(
                             repository: dependencies.noteRepository,
+                            wikiLinkService: dependencies.wikiLinkService,
                             noteID: selectedNoteID
                         ) {
                             await noteListViewModel.loadNotes()
@@ -160,6 +162,7 @@ private struct ShellDetailView: View {
         if section == .notes {
             NoteListView(
                 repository: dependencies.noteRepository,
+                wikiLinkService: dependencies.wikiLinkService,
                 viewModel: noteListViewModel
             )
         } else {

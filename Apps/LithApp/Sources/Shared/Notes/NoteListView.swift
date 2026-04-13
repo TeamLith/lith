@@ -11,6 +11,7 @@ import Lith
 @available(iOS 17, macOS 14, *)
 struct NoteListView: View {
     let repository: NoteRepository
+    let wikiLinkService: WikiLinkServiceProtocol
     @Bindable var viewModel: NoteListViewModel
 
 #if os(macOS)
@@ -18,16 +19,19 @@ struct NoteListView: View {
 
     init(
         repository: NoteRepository,
+        wikiLinkService: WikiLinkServiceProtocol,
         viewModel: NoteListViewModel,
         selectedNoteID: Binding<UUID?>
     ) {
         self.repository = repository
+        self.wikiLinkService = wikiLinkService
         self.viewModel = viewModel
         self._selectedNoteID = selectedNoteID
     }
 #else
-    init(repository: NoteRepository, viewModel: NoteListViewModel) {
+    init(repository: NoteRepository, wikiLinkService: WikiLinkServiceProtocol, viewModel: NoteListViewModel) {
         self.repository = repository
+        self.wikiLinkService = wikiLinkService
         self.viewModel = viewModel
     }
 #endif
@@ -119,7 +123,7 @@ struct NoteListView: View {
             .contextMenu { noteActions(for: note) }
 #else
         NavigationLink {
-            NoteDetailView(repository: repository, noteID: note.id) {
+            NoteDetailView(repository: repository, wikiLinkService: wikiLinkService, noteID: note.id) {
                 await viewModel.loadNotes()
             }
         } label: {
@@ -225,8 +229,11 @@ struct NoteListView: View {
 
 #if DEBUG
 @MainActor
-private func makeInMemoryRepository(notes: [Note] = []) -> some NoteRepository {
-    InMemoryNoteRepository(seed: notes)
+private func makeInMemoryDependencies(notes: [Note] = []) -> (repository: InMemoryNoteRepository, wikiLinkService: WikiLinkService) {
+    let repository = InMemoryNoteRepository(seed: notes)
+    let linkRepository = InMemoryLinkRepository()
+    let wikiLinkService = WikiLinkService(noteRepository: repository, linkRepository: linkRepository)
+    return (repository, wikiLinkService)
 }
 
 private let sampleNotes: [Note] = [
@@ -254,22 +261,24 @@ private let sampleNotes: [Note] = [
 #if os(iOS)
 @available(iOS 17, macOS 14, *)
 #Preview("Populated notes list (iOS)") {
-    let repository = makeInMemoryRepository(notes: sampleNotes)
+    let dependencies = makeInMemoryDependencies(notes: sampleNotes)
     NavigationStack {
         NoteListView(
-            repository: repository,
-            viewModel: NoteListViewModel(repository: repository)
+            repository: dependencies.repository,
+            wikiLinkService: dependencies.wikiLinkService,
+            viewModel: NoteListViewModel(repository: dependencies.repository)
         )
     }
 }
 
 @available(iOS 17, macOS 14, *)
 #Preview("Empty notes list (iOS)") {
-    let repository = makeInMemoryRepository()
+    let dependencies = makeInMemoryDependencies()
     NavigationStack {
         NoteListView(
-            repository: repository,
-            viewModel: NoteListViewModel(repository: repository)
+            repository: dependencies.repository,
+            wikiLinkService: dependencies.wikiLinkService,
+            viewModel: NoteListViewModel(repository: dependencies.repository)
         )
     }
 }
@@ -279,16 +288,21 @@ private let sampleNotes: [Note] = [
 @available(iOS 17, macOS 14, *)
 #Preview("Populated notes list (macOS)") {
     @Previewable @State var selectedNoteID: UUID? = nil
-    let repository = makeInMemoryRepository(notes: sampleNotes)
+    let dependencies = makeInMemoryDependencies(notes: sampleNotes)
     NavigationSplitView {
         NoteListView(
-            repository: repository,
-            viewModel: NoteListViewModel(repository: repository),
+            repository: dependencies.repository,
+            wikiLinkService: dependencies.wikiLinkService,
+            viewModel: NoteListViewModel(repository: dependencies.repository),
             selectedNoteID: $selectedNoteID
         )
     } detail: {
         if let selectedNoteID {
-            NoteDetailView(repository: repository, noteID: selectedNoteID)
+            NoteDetailView(
+                repository: dependencies.repository,
+                wikiLinkService: dependencies.wikiLinkService,
+                noteID: selectedNoteID
+            )
         } else {
             Text("Select a note")
         }
@@ -299,11 +313,12 @@ private let sampleNotes: [Note] = [
 @available(iOS 17, macOS 14, *)
 #Preview("Empty notes list (macOS)") {
     @Previewable @State var selectedNoteID: UUID? = nil
-    let repository = makeInMemoryRepository()
+    let dependencies = makeInMemoryDependencies()
     NavigationSplitView {
         NoteListView(
-            repository: repository,
-            viewModel: NoteListViewModel(repository: repository),
+            repository: dependencies.repository,
+            wikiLinkService: dependencies.wikiLinkService,
+            viewModel: NoteListViewModel(repository: dependencies.repository),
             selectedNoteID: $selectedNoteID
         )
     } detail: {

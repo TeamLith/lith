@@ -12,11 +12,18 @@ struct NoteDetailView: View {
 
     init(
         repository: NoteRepository,
+        wikiLinkService: WikiLinkServiceProtocol,
         noteID: UUID,
         onNoteChanged: @escaping @MainActor () async -> Void = {}
     ) {
         self.onNoteChanged = onNoteChanged
-        self._viewModel = State(initialValue: NoteDetailViewModel(noteID: noteID, repository: repository))
+        self._viewModel = State(
+            initialValue: NoteDetailViewModel(
+                noteID: noteID,
+                repository: repository,
+                wikiLinkService: wikiLinkService
+            )
+        )
     }
 
     var body: some View {
@@ -88,6 +95,10 @@ struct NoteDetailView: View {
                     saveErrorBanner(saveError)
                 }
 
+                if !viewModel.backlinks.isEmpty {
+                    backlinksSection
+                }
+
                 Spacer()
             }
             .padding()
@@ -157,6 +168,30 @@ struct NoteDetailView: View {
             .foregroundStyle(.red)
     }
 
+    private var backlinksSection: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            Label("Backlinks", systemImage: "link")
+                .font(.headline)
+
+            ForEach(viewModel.backlinks) { note in
+                VStack(alignment: .leading, spacing: 4) {
+                    Text(note.title.isEmpty ? "Untitled" : note.title)
+                        .font(.subheadline.weight(.medium))
+
+                    if !note.bodyMarkdown.isEmpty {
+                        Text(note.bodyMarkdown)
+                            .font(.footnote)
+                            .foregroundStyle(.secondary)
+                            .lineLimit(2)
+                    }
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(12)
+                .background(.thinMaterial, in: RoundedRectangle(cornerRadius: 12, style: .continuous))
+            }
+        }
+    }
+
     @ToolbarContentBuilder
     private var toolbarContent: some ToolbarContent {
         ToolbarItem(placement: .primaryAction) {
@@ -203,14 +238,17 @@ struct NoteDetailView: View {
 
 #if DEBUG
 @MainActor
-private func makePreviewRepository() -> some NoteRepository {
+private func makePreviewDependencies() -> (repository: InMemoryNoteRepository, wikiLinkService: WikiLinkService) {
     let note = Note(
         id: UUID(uuidString: "11111111-1111-1111-1111-111111111111") ?? UUID(),
         title: "SwiftUI Notes",
         bodyMarkdown: "## Introduction\nSwiftUI is a **declarative** framework.\n\n- Easy\n- Concise\n- Cross-platform",
         isPinned: true
     )
-    return InMemoryNoteRepository(seed: [note])
+    let repository = InMemoryNoteRepository(seed: [note])
+    let linkRepository = InMemoryLinkRepository()
+    let wikiLinkService = WikiLinkService(noteRepository: repository, linkRepository: linkRepository)
+    return (repository, wikiLinkService)
 }
 
 @MainActor
@@ -218,9 +256,13 @@ private let previewNoteID = UUID(uuidString: "11111111-1111-1111-1111-1111111111
 
 @available(iOS 17, macOS 14, *)
 #Preview("Populated note") {
-    let repository = makePreviewRepository()
+    let dependencies = makePreviewDependencies()
     NavigationStack {
-        NoteDetailView(repository: repository, noteID: previewNoteID)
+        NoteDetailView(
+            repository: dependencies.repository,
+            wikiLinkService: dependencies.wikiLinkService,
+            noteID: previewNoteID
+        )
     }
 }
 
@@ -232,9 +274,11 @@ private let previewNoteID = UUID(uuidString: "11111111-1111-1111-1111-1111111111
         bodyMarkdown: ""
     )
     let repository = InMemoryNoteRepository(seed: [note])
+    let linkRepository = InMemoryLinkRepository()
     NavigationStack {
         NoteDetailView(
             repository: repository,
+            wikiLinkService: WikiLinkService(noteRepository: repository, linkRepository: linkRepository),
             noteID: UUID(uuidString: "22222222-2222-2222-2222-222222222222") ?? UUID()
         )
     }

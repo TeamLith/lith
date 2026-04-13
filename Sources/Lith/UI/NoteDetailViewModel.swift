@@ -10,6 +10,7 @@ public final class NoteDetailViewModel {
     public var title = ""
     public var bodyMarkdown = ""
     public var isPinned = false
+    public private(set) var backlinks: [Note] = []
 
     public private(set) var isArchived = false
     public private(set) var isTrashed = false
@@ -19,6 +20,7 @@ public final class NoteDetailViewModel {
     public private(set) var saveError: Error?
 
     private let repository: NoteRepository
+    private let wikiLinkService: WikiLinkServiceProtocol
     private let autosaveDelayNanoseconds: UInt64
 
     private var existingNote: Note?
@@ -27,10 +29,12 @@ public final class NoteDetailViewModel {
     public init(
         noteID: UUID,
         repository: NoteRepository,
+        wikiLinkService: WikiLinkServiceProtocol,
         autosaveDelayNanoseconds: UInt64 = 500_000_000
     ) {
         self.noteID = noteID
         self.repository = repository
+        self.wikiLinkService = wikiLinkService
         self.autosaveDelayNanoseconds = autosaveDelayNanoseconds
     }
 
@@ -46,6 +50,7 @@ public final class NoteDetailViewModel {
 
             apply(note)
             existingNote = note
+            backlinks = try await wikiLinkService.backlinks(to: noteID)
             saveError = nil
         } catch {
             loadError = error
@@ -86,6 +91,8 @@ public final class NoteDetailViewModel {
 
         do {
             try await repository.upsert(note)
+            _ = try await wikiLinkService.refreshLinks(for: note.id)
+            backlinks = try await wikiLinkService.backlinks(to: note.id)
             existingNote = note
             updatedAt = note.updatedAt
             saveError = nil

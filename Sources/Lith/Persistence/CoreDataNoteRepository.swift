@@ -229,7 +229,9 @@ enum CoreDataNoteRepositoryError: Error {
 private enum ModelCache {
     static let model: NSManagedObjectModel = {
         let model = NSManagedObjectModel()
-        model.entities = [LithPersistentStore.makeNoteEntity()] + LithPersistentStore.makeRSSEntities()
+        model.entities = [LithPersistentStore.makeNoteEntity()]
+            + LithPersistentStore.makeRSSEntities()
+            + LithPersistentStore.makeLinkEntities()
         return model
     }()
 }

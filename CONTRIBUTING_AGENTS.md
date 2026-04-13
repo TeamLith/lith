@@ -272,18 +272,38 @@ For reviewer or coordination runs, also use `REVIEW_POLICY.md`.
   - Wikilink parsing and resolution pipeline
   - Link persistence/backlink query support
 - Steps:
-  - [ ] Parse `[[...]]` references from note markdown.
-  - [ ] Resolve links against existing notes and persist `Link` records.
-  - [ ] Expose backlink queries for note detail presentation.
-  - [ ] Add parser and persistence tests for create/update scenarios.
-- Status: IN_PROGRESS
+  - [x] Parse `[[...]]` references from note markdown.
+  - [x] Resolve links against existing notes and persist `Link` records.
+  - [x] Expose backlink queries for note detail presentation.
+  - [x] Add parser and persistence tests for create/update scenarios.
+- Status: DONE
 - Agent: codex
-- Last updated: 2026-04-13 14:28:57 IST +0530
+- Last updated: 2026-04-13 14:37:06 IST +0530
 - PR/Commit: n/a
 - Changed files:
-  - n/a
+  - CONTRIBUTING_AGENTS.md
+  - REPO_MAP.md
+  - project.yml
+  - LithApps.xcodeproj/project.pbxproj
+  - Sources/Lith/AppDependencyContainer.swift
+  - Sources/Lith/Core/Contracts.swift
+  - Sources/Lith/Core/Models.swift
+  - Sources/Lith/Persistence/CoreDataLinkRepository.swift
+  - Sources/Lith/Persistence/CoreDataNoteRepository.swift
+  - Sources/Lith/Services/InMemoryStores.swift
+  - Sources/Lith/Services/WikiLinkParser.swift
+  - Sources/Lith/Services/WikiLinkService.swift
+  - Sources/Lith/UI/NoteDetailViewModel.swift
+  - Apps/LithApp/Sources/Shared/RootView.swift
+  - Apps/LithApp/Sources/Shared/Notes/NoteListView.swift
+  - Apps/LithApp/Sources/Shared/Notes/NoteDetailView.swift
+  - Tests/LithTests/AppDependencyContainerTests.swift
+  - Tests/LithTests/CoreBehaviorTests.swift
+  - Tests/LithTests/LinkRepositoryTests.swift
+  - Tests/LithTests/NoteDetailViewModelTests.swift
+  - Tests/LithTests/WikiLinkServiceTests.swift
 - Notes/Blockers:
-  - n/a
+  - Added Core Data-backed wikilink persistence, view-model backlink presentation, and task-close version sync. REPO_MAP reviewed and updated for new durable wikilink paths.
 
 ## Task: Implement RSS Fetcher
 

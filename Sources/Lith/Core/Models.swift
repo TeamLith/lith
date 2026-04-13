@@ -82,12 +82,20 @@ public struct Link: Identifiable, Codable, Hashable, Sendable {
     public let fromNoteID: UUID
     public let toNoteID: UUID
     public let type: LinkType
+    public let createdAt: Date
 
-    public init(id: UUID = UUID(), fromNoteID: UUID, toNoteID: UUID, type: LinkType) {
+    public init(
+        id: UUID = UUID(),
+        fromNoteID: UUID,
+        toNoteID: UUID,
+        type: LinkType,
+        createdAt: Date = Date()
+    ) {
         self.id = id
         self.fromNoteID = fromNoteID
         self.toNoteID = toNoteID
         self.type = type
+        self.createdAt = createdAt
     }
 }
 

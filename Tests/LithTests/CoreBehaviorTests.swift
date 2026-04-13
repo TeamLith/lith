@@ -18,6 +18,17 @@ import Testing
     #expect(links.first?.toNoteID == b.id)
 }
 
+@Test func wikiLinkParserDeduplicatesTargetsAndIgnoresSelfReferences() {
+    let parser = WikiLinkParser()
+    let a = Note(id: UUID(), title: "A", bodyMarkdown: "See [[B]], [[ B ]], [[A]], and [[Missing]]")
+    let b = Note(id: UUID(), title: "B", bodyMarkdown: "")
+
+    let links = parser.links(for: a, allNotes: [a, b])
+
+    #expect(links.count == 1)
+    #expect(links.first?.toNoteID == b.id)
+}
+
 @Test func searchSupportsAndOrNot() async throws {
     let repo = InMemoryNoteRepository(seed: [
         Note(title: "SwiftUI Guide", bodyMarkdown: "CloudKit and Notes", tags: ["ios"]),

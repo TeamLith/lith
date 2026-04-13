@@ -29,14 +29,45 @@ public actor InMemoryNoteRepository: NoteRepository {
 public actor InMemoryLinkRepository: LinkRepository {
     private var graph: [UUID: [Link]] = [:]
 
-    public init() {}
+    public init(seed: [Link] = []) {
+        for link in seed {
+            graph[link.fromNoteID, default: []].append(link)
+        }
+    }
 
     public func replaceLinks(from sourceNoteID: UUID, with links: [Link]) async throws {
-        graph[sourceNoteID] = links
+        let existingByKey = Dictionary(
+            uniqueKeysWithValues: (graph[sourceNoteID] ?? []).map { (LinkIdentity(link: $0), $0) }
+        )
+
+        graph[sourceNoteID] = links.map { link in
+            guard let existing = existingByKey[LinkIdentity(link: link)] else {
+                return link
+            }
+
+            return Link(
+                id: existing.id,
+                fromNoteID: link.fromNoteID,
+                toNoteID: link.toNoteID,
+                type: link.type,
+                createdAt: existing.createdAt
+            )
+        }
     }
 
     public func links() async throws -> [Link] {
-        graph.values.flatMap { $0 }
+        graph.values.flatMap { $0 }.sorted(by: linkSort)
+    }
+
+    public func links(from sourceNoteID: UUID) async throws -> [Link] {
+        (graph[sourceNoteID] ?? []).sorted(by: linkSort)
+    }
+
+    public func backlinks(to targetNoteID: UUID) async throws -> [Link] {
+        graph.values
+            .flatMap { $0 }
+            .filter { $0.toNoteID == targetNoteID }
+            .sorted(by: linkSort)
     }
 }
 
@@ -178,4 +209,32 @@ func rssItemSort(lhs: RSSItem, rhs: RSSItem) -> Bool {
     default:
         return lhs.title.localizedCaseInsensitiveCompare(rhs.title) == .orderedAscending
     }
+}
+
+private struct LinkIdentity: Hashable {
+    let fromNoteID: UUID
+    let toNoteID: UUID
+    let type: LinkType
+
+    init(link: Link) {
+        self.fromNoteID = link.fromNoteID
+        self.toNoteID = link.toNoteID
+        self.type = link.type
+    }
+}
+
+private func linkSort(lhs: Link, rhs: Link) -> Bool {
+    if lhs.createdAt != rhs.createdAt {
+        return lhs.createdAt < rhs.createdAt
+    }
+
+    if lhs.fromNoteID != rhs.fromNoteID {
+        return lhs.fromNoteID.uuidString < rhs.fromNoteID.uuidString
+    }
+
+    if lhs.toNoteID != rhs.toNoteID {
+        return lhs.toNoteID.uuidString < rhs.toNoteID.uuidString
+    }
+
+    return lhs.type.rawValue < rhs.type.rawValue
 }
