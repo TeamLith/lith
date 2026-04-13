@@ -63,7 +63,6 @@ Read only what matches the task:
 - `Docs/RELEASING_WITH_GITHUB.md`: human-owned signing, secrets, and TestFlight release workflow.
 - `.github/ISSUE_TEMPLATE`: GitHub Issue intake forms for feature work and repo-process work.
 - `.github/pull_request_template.md`: default PR checklist and issue-linking guide.
-- `.github/workflows/validate.yml`: pull request and `main` validation workflow for package tests and app builds.
 - `.github/workflows/release-testflight.yml`: manual TestFlight release workflow with preflight validation.
 - `scripts/validate.sh`: shared local/CI validation entry point that regenerates `LithApps.xcodeproj` and runs canonical build/test commands.
 - `scripts/migrate_pending_tasks_to_github_issues.py`: dry-run or token-backed migration helper that converts legacy TODO tasks into GitHub Issues.
