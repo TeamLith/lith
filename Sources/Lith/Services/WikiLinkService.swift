@@ -30,12 +30,26 @@ public struct WikiLinkService: WikiLinkServiceProtocol, Sendable {
 
     public func backlinks(to noteID: UUID) async throws -> [Note] {
         let backlinks = try await linkRepository.backlinks(to: noteID)
-        let notesByID = Dictionary(uniqueKeysWithValues: try await noteRepository.allNotes().map { ($0.id, $0) })
+        let sourceNoteIDs = Set(backlinks.map(\.fromNoteID))
+        var notes: [Note] = []
+        notes.reserveCapacity(sourceNoteIDs.count)
 
-        return backlinks
-            .compactMap { notesByID[$0.fromNoteID] }
-            .sorted {
-                $0.title.localizedCaseInsensitiveCompare($1.title) == .orderedAscending
+        try await withThrowingTaskGroup(of: Note?.self) { group in
+            for sourceNoteID in sourceNoteIDs {
+                group.addTask {
+                    try await noteRepository.note(id: sourceNoteID)
+                }
             }
+
+            for try await note in group {
+                if let note {
+                    notes.append(note)
+                }
+            }
+        }
+
+        return notes.sorted {
+            $0.title.localizedCaseInsensitiveCompare($1.title) == .orderedAscending
+        }
     }
 }
