@@ -22,9 +22,43 @@ permissions:
   contents: read
 
 jobs:
+  preflight:
+    name: Preflight validation
+    runs-on: macos-15
+    env:
+      LITH_VALIDATION_LOG_DIR: ${{ runner.temp }}/lith-validation-logs
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Install XcodeGen
+        run: |
+          set -euo pipefail
+          if ! brew list --versions xcodegen >/dev/null 2>&1; then
+            brew install xcodegen
+          fi
+
+      - name: Show tool versions
+        run: |
+          swift --version
+          xcodebuild -version
+          xcodegen --version
+
+      - name: Run validation
+        run: scripts/validate.sh --log-dir "$LITH_VALIDATION_LOG_DIR" --fail-on-generated-diff
+
+      - name: Upload validation logs
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: lith-release-preflight-logs
+          path: ${{ env.LITH_VALIDATION_LOG_DIR }}
+          retention-days: 7
+
   release_ios:
     name: Release (ios)
     runs-on: macos-15
+    needs: preflight
     if: ${{ github.event.inputs.platform == 'both' || github.event.inputs.platform == 'ios' }}
     env:
       APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
@@ -38,6 +72,24 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v5
+
+      - name: Install XcodeGen
+        run: |
+          set -euo pipefail
+          if ! brew list --versions xcodegen >/dev/null 2>&1; then
+            brew install xcodegen
+          fi
+
+      - name: Regenerate Xcode project
+        run: |
+          set -euo pipefail
+          xcodegen generate --use-cache
+          project_status="$(git status --short -- LithApps.xcodeproj)"
+          if [ -n "$project_status" ]; then
+            echo "LithApps.xcodeproj is out of sync with project.yml." >&2
+            printf '%s\n' "$project_status" >&2
+            exit 1
+          fi
 
       - name: Validate required secrets
         run: |
@@ -119,6 +171,7 @@ jobs:
           </plist>
           PLIST
 
+          set +e
           xcodebuild \
             -exportArchive \
             -archivePath "$ARCHIVE_PATH" \
@@ -127,7 +180,13 @@ jobs:
             -allowProvisioningUpdates \
             -authenticationKeyPath "$ASC_KEY_PATH" \
             -authenticationKeyID "$ASC_KEY_ID" \
-            -authenticationKeyIssuerID "$ASC_ISSUER_ID"
+            -authenticationKeyIssuerID "$ASC_ISSUER_ID" 2>&1 | tee "$RUNNER_TEMP/export-${ARCHIVE_NAME}.log"
+          status=${PIPESTATUS[0]}
+          set -e
+          if [ "$status" -ne 0 ]; then
+            echo "Export failed with status $status. See $RUNNER_TEMP/export-${ARCHIVE_NAME}.log" >&2
+            exit "$status"
+          fi
 
           asset_path="$(find "$export_dir" -maxdepth 1 -name "$ASSET_GLOB" -print -quit)"
           if [ -z "$asset_path" ]; then
@@ -155,9 +214,21 @@ jobs:
             -apiIssuer "$ASC_ISSUER_ID" \
             -v informational
 
+      - name: Upload release logs
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: Lith-iOS-release-logs
+          path: |
+            ${{ runner.temp }}/archive-LithiOS.log
+            ${{ runner.temp }}/export-LithiOS.log
+          if-no-files-found: ignore
+          retention-days: 7
+
   release_macos:
     name: Release (macos)
     runs-on: macos-15
+    needs: preflight
     if: ${{ github.event.inputs.platform == 'both' || github.event.inputs.platform == 'macos' }}
     env:
       APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
@@ -171,6 +242,24 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v5
+
+      - name: Install XcodeGen
+        run: |
+          set -euo pipefail
+          if ! brew list --versions xcodegen >/dev/null 2>&1; then
+            brew install xcodegen
+          fi
+
+      - name: Regenerate Xcode project
+        run: |
+          set -euo pipefail
+          xcodegen generate --use-cache
+          project_status="$(git status --short -- LithApps.xcodeproj)"
+          if [ -n "$project_status" ]; then
+            echo "LithApps.xcodeproj is out of sync with project.yml." >&2
+            printf '%s\n' "$project_status" >&2
+            exit 1
+          fi
 
       - name: Validate required secrets
         run: |
@@ -252,6 +341,7 @@ jobs:
           </plist>
           PLIST
 
+          set +e
           xcodebuild \
             -exportArchive \
             -archivePath "$ARCHIVE_PATH" \
@@ -260,7 +350,13 @@ jobs:
             -allowProvisioningUpdates \
             -authenticationKeyPath "$ASC_KEY_PATH" \
             -authenticationKeyID "$ASC_KEY_ID" \
-            -authenticationKeyIssuerID "$ASC_ISSUER_ID"
+            -authenticationKeyIssuerID "$ASC_ISSUER_ID" 2>&1 | tee "$RUNNER_TEMP/export-${ARCHIVE_NAME}.log"
+          status=${PIPESTATUS[0]}
+          set -e
+          if [ "$status" -ne 0 ]; then
+            echo "Export failed with status $status. See $RUNNER_TEMP/export-${ARCHIVE_NAME}.log" >&2
+            exit "$status"
+          fi
 
           asset_path="$(find "$export_dir" -maxdepth 1 -name "$ASSET_GLOB" -print -quit)"
           if [ -z "$asset_path" ]; then
@@ -287,3 +383,14 @@ jobs:
             -apiKey "$ASC_KEY_ID" \
             -apiIssuer "$ASC_ISSUER_ID" \
             -v informational
+
+      - name: Upload release logs
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: Lith-macOS-release-logs
+          path: |
+            ${{ runner.temp }}/archive-LithmacOS.log
+            ${{ runner.temp }}/export-LithmacOS.log
+          if-no-files-found: ignore
+          retention-days: 7

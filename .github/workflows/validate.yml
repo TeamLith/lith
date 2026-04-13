@@ -1,0 +1,43 @@
+name: Validate
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: macos-15
+    env:
+      LITH_VALIDATION_LOG_DIR: ${{ runner.temp }}/lith-validation-logs
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Install XcodeGen
+        run: |
+          set -euo pipefail
+          if ! brew list --versions xcodegen >/dev/null 2>&1; then
+            brew install xcodegen
+          fi
+
+      - name: Show tool versions
+        run: |
+          swift --version
+          xcodebuild -version
+          xcodegen --version
+
+      - name: Run validation
+        run: scripts/validate.sh --log-dir "$LITH_VALIDATION_LOG_DIR" --fail-on-generated-diff
+
+      - name: Upload validation logs
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: lith-validation-logs
+          path: ${{ env.LITH_VALIDATION_LOG_DIR }}
+          retention-days: 7

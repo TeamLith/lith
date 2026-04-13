@@ -35,7 +35,8 @@ Native iOS/macOS note-taking app spec repo designed for multi-agent execution an
 1. Start with `HUMANS.md`.
 2. Use `README.md` and `REPO_MAP.md` to orient on the repo and find the right spec files.
 3. Use `CONTRIBUTING_AGENTS.md` to coordinate tracked work with agents or other humans.
-4. Use `Docs/RELEASING_WITH_GITHUB.md` for signing, secrets, and TestFlight release steps.
+4. Run `scripts/validate.sh` before merging or handing work off.
+5. Use `Docs/RELEASING_WITH_GITHUB.md` for signing, secrets, and TestFlight release steps.
 
 ## How AI agents contribute
 
@@ -45,10 +46,11 @@ Native iOS/macOS note-taking app spec repo designed for multi-agent execution an
 4. Read global context next: `README.md`, `ARCHITECTURE.md`, `DATA_MODEL.md`.
 5. Read the relevant feature or sync file for that task.
 6. Implement code + tests.
-7. Update checklist status, `Agent`, and `Last updated` in `CONTRIBUTING_AGENTS.md`.
-8. If the task is completed, bump `MARKETING_VERSION` and `CURRENT_PROJECT_VERSION`, keeping `project.yml` and generated Xcode project settings in sync.
-9. Review `REPO_MAP.md` before closing the task and update it only if repo orientation changed.
-10. Include a short file-change summary for human or GitHub review.
+7. Run the canonical validation flow for the changed area, preferring `scripts/validate.sh` when app/workflow wiring changed.
+8. Update checklist status, `Agent`, and `Last updated` in `CONTRIBUTING_AGENTS.md`.
+9. If the task is completed, bump `MARKETING_VERSION` and `CURRENT_PROJECT_VERSION`, keeping `project.yml` and generated Xcode project settings in sync.
+10. Review `REPO_MAP.md` before closing the task and update it only if repo orientation changed.
+11. Include a short file-change summary for human or GitHub review.
 
 Reviewer or coordination sessions should start with `AGENTS.md` and then use `REVIEW_POLICY.md`.
 

@@ -57,6 +57,9 @@ Read only what matches the task:
 - `SYNC_ICLOUD.md`
 - `CONTRIBUTING_AGENTS.md`: task board, pause/resume protocol, prompt pack.
 - `Docs/RELEASING_WITH_GITHUB.md`: human-owned signing, secrets, and TestFlight release workflow.
+- `.github/workflows/validate.yml`: pull request and `main` validation workflow for package tests and app builds.
+- `.github/workflows/release-testflight.yml`: manual TestFlight release workflow with preflight validation.
+- `scripts/validate.sh`: shared local/CI validation entry point that regenerates `LithApps.xcodeproj` and runs canonical build/test commands.
 
 ### Shared package
 
@@ -88,6 +91,7 @@ Read only what matches the task:
 
 ## Build and Validation Shortcuts
 
+- Shared validation entry point: `scripts/validate.sh`
 - Package build: `swift build`
 - Package tests: `swift test`
 - macOS app build:
@@ -101,6 +105,7 @@ Read only what matches the task:
 - Prefer changing shared logic under `Sources/Lith` unless the work is truly app-shell-specific.
 - Prefer adding UI state logic to `Sources/Lith/UI` and keeping SwiftUI views in `Apps/LithApp/Sources`.
 - Treat `project.yml` as authoritative for target structure. If `LithApps.xcodeproj` and source layout diverge, regenerate the project.
+- Use `scripts/validate.sh` as the default validation path when build, project-generation, CI, or release workflow files change.
 - Keep `CONTRIBUTING_AGENTS.md` updated for task progress, but keep long-lived repo structure knowledge here.
 - Keep durable workflow rules in `AGENTS.md` and `AGENT_POLICY.md`, not in copy-pasted prompts.
 

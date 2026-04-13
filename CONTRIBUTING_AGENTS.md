@@ -351,18 +351,27 @@ For reviewer or coordination runs, also use `REVIEW_POLICY.md`.
   - Repo changes to match the chosen workflow
   - Validation notes and rationale for each durable workflow change
 - Steps:
-  - [ ] Research current best practices from primary sources for Swift package + XcodeGen + Apple app workflows.
-  - [ ] Compare the current repo workflow against those practices and identify the highest-value gaps.
-  - [ ] Implement the justified workflow, script, doc, or structure changes.
-  - [ ] Validate builds/tests and document any one-time human setup needed.
-- Status: IN_PROGRESS
+  - [x] Research current best practices from primary sources for Swift package + XcodeGen + Apple app workflows.
+  - [x] Compare the current repo workflow against those practices and identify the highest-value gaps.
+  - [x] Implement the justified workflow, script, doc, or structure changes.
+  - [x] Validate builds/tests and document any one-time human setup needed.
+- Status: DONE
 - Agent: codex
-- Last updated: 2026-04-13 19:24:32 IST +0530
+- Last updated: 2026-04-13 19:34:49 IST +0530
 - PR/Commit: n/a
 - Changed files:
-  - n/a
+  - CONTRIBUTING_AGENTS.md
+  - .github/workflows/release-testflight.yml
+  - .github/workflows/validate.yml
+  - Docs/RELEASING_WITH_GITHUB.md
+  - HUMANS.md
+  - LithApps.xcodeproj/project.pbxproj
+  - README.md
+  - REPO_MAP.md
+  - project.yml
+  - scripts/validate.sh
 - Notes/Blockers:
-  - Research in progress. Human may still need to provide signing/team configuration, CI secrets, or release credentials.
+  - Added a shared validation script, a pull request/main validation workflow, and release preflight validation with XcodeGen regeneration from `project.yml`. REPO_MAP reviewed and updated for the new durable workflow paths. Human still owns signing/team configuration and App Store Connect secrets.
 
 ## Task: Add Repo Self-Improvement Loop and Skill Maintenance
 

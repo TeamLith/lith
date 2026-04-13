@@ -7,6 +7,7 @@ This project is configured so app display name is `Lith` on both iOS and macOS t
 Workflow file:
 
 - `.github/workflows/release-testflight.yml`
+- `.github/workflows/validate.yml`
 
 Run from GitHub:
 
@@ -75,14 +76,24 @@ In **GitHub -> Settings -> Secrets and variables -> Actions**, add:
 
 ## 5) Release flow (repeatable)
 
-1. Merge changes to `main`.
+1. Merge changes to `main` only after the `Validate` workflow passes.
 2. Trigger `Release to TestFlight` workflow.
-3. Wait for successful job(s).
+3. Wait for the `Preflight validation` job and the selected release job(s) to succeed.
 4. Open App Store Connect -> TestFlight and assign builds to tester groups.
 
-The workflow uploads `.ipa`/`.pkg` artifacts to the GitHub run as well.
+The release workflow regenerates `LithApps.xcodeproj` from `project.yml` before archiving, uploads `.ipa`/`.pkg` artifacts for successful runs, and uploads validation or archive/export logs when a run fails.
 
-## 6) Local device testing flow (Mac + iPhone)
+## 6) Validation workflow
+
+Before a manual release, the repo now uses a shared validation path:
+
+1. Local validation: run `scripts/validate.sh`.
+2. CI validation: the `Validate` workflow runs on pull requests and pushes to `main`.
+3. Release validation: the `Release to TestFlight` workflow blocks on the same validation script before archiving and fails if regenerating `LithApps.xcodeproj` would introduce uncommitted generated changes.
+
+This keeps Swift package checks, XcodeGen project generation, and iOS/macOS app builds aligned across local work, CI, and release automation.
+
+## 7) Local device testing flow (Mac + iPhone)
 
 Mac:
 
