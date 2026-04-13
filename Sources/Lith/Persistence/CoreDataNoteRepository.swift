@@ -88,6 +88,8 @@ enum LithPersistentStore {
         } else {
             description.type = NSSQLiteStoreType
             description.url = defaultStoreURL()
+            description.shouldMigrateStoreAutomatically = true
+            description.shouldInferMappingModelAutomatically = true
         }
         description.shouldAddStoreAsynchronously = false
         container.persistentStoreDescriptions = [description]
