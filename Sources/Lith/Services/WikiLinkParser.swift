@@ -23,7 +23,12 @@ public struct WikiLinkParser: Sendable {
     }
 
     public func links(for source: Note, allNotes: [Note]) -> [Link] {
-        let index = Dictionary(uniqueKeysWithValues: allNotes.map { ($0.title.lowercased(), $0.id) })
+        let index = allNotes.reduce(into: [String: UUID]()) { partialResult, note in
+            let normalizedTitle = note.title.lowercased()
+            if partialResult[normalizedTitle] == nil {
+                partialResult[normalizedTitle] = note.id
+            }
+        }
         var seenTargets: Set<UUID> = []
 
         return targets(in: source.bodyMarkdown).compactMap { target in
