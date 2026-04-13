@@ -78,7 +78,7 @@ In **GitHub -> Settings -> Secrets and variables -> Actions**, add:
 
 1. Merge changes to `main` only after the `Validate` workflow passes.
 2. Trigger `Release to TestFlight` workflow.
-3. Wait for the `Preflight validation` job and the selected release job(s) to succeed.
+3. Wait for the `Preflight validation` job and the selected release job(s) to succeed. The workflow now serializes same-ref release runs so two manual dispatches do not archive/upload from the same branch at the same time.
 4. Open App Store Connect -> TestFlight and assign builds to tester groups.
 
 The release workflow regenerates `LithApps.xcodeproj` from `project.yml` before archiving, uploads `.ipa`/`.pkg` artifacts for successful runs, and uploads validation or archive/export logs when a run fails.
@@ -88,8 +88,8 @@ The release workflow regenerates `LithApps.xcodeproj` from `project.yml` before 
 Before a manual release, the repo now uses a shared validation path:
 
 1. Local validation: run `scripts/validate.sh`.
-2. CI validation: the `Validate` workflow runs on pull requests and pushes to `main`.
-3. Release validation: the `Release to TestFlight` workflow blocks on the same validation script before archiving and fails if regenerating `LithApps.xcodeproj` would introduce uncommitted generated changes.
+2. CI validation: the `Validate` workflow runs on pull requests and pushes to `main`, cancels superseded same-ref runs, and uses an explicit job timeout so stalled macOS jobs do not consume the default six-hour window.
+3. Release validation: the `Release to TestFlight` workflow blocks on the same validation script before archiving, serializes same-ref dispatches, and fails if regenerating `LithApps.xcodeproj` would introduce uncommitted generated changes.
 
 This keeps Swift package checks, XcodeGen project generation, and iOS/macOS app builds aligned across local work, CI, and release automation.
 

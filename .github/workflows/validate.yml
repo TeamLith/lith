@@ -9,9 +9,14 @@ on:
 permissions:
   contents: read
 
+concurrency:
+  group: validate-${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
 jobs:
   validate:
     runs-on: macos-15
+    timeout-minutes: 45
     env:
       LITH_VALIDATION_LOG_DIR: ${{ runner.temp }}/lith-validation-logs
     steps:
