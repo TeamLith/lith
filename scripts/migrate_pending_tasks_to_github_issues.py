@@ -76,9 +76,30 @@ def parse_tasks(text: str) -> List[Task]:
     return tasks
 
 
-def build_issue_body(task: Task) -> str:
+def resolve_source_mode(input_path: str, requested_mode: str) -> str:
+    if requested_mode != "auto":
+        return requested_mode
+    if input_path != "-" and Path(input_path).name == "CONTRIBUTING_AGENTS.md":
+        return "legacy-migration"
+    return "task-intake"
+
+
+def read_input_text(input_path: str) -> str:
+    if input_path == "-":
+        return sys.stdin.read()
+    return Path(input_path).read_text()
+
+
+def build_issue_body(task: Task, source_mode: str, source_path: str) -> str:
     body: List[str] = []
-    body.append("Imported from the legacy `CONTRIBUTING_AGENTS.md` backlog during the GitHub Issues migration.")
+    if source_mode == "legacy-migration":
+        body.append("Imported from the legacy `CONTRIBUTING_AGENTS.md` backlog during the GitHub Issues migration.")
+    else:
+        body.append("Created from the repo `## Task:` template during an explicit task-intake run.")
+    body.append("")
+
+    body.append("## Problem / Goal")
+    body.append(f"- {task.title}")
     body.append("")
 
     if task.input_specs:
@@ -101,9 +122,24 @@ def build_issue_body(task: Task) -> str:
         body.extend(f"- {item}" for item in task.notes)
         body.append("")
 
-    body.append("## Migration")
-    body.append("- Source: `CONTRIBUTING_AGENTS.md`")
-    body.append("- Legacy status at import time: `TODO`")
+    if source_mode == "legacy-migration":
+        body.append("## Migration")
+        body.append("- Source: `CONTRIBUTING_AGENTS.md`")
+        body.append("- Legacy status at import time: `TODO`")
+    else:
+        body.append("## User-Facing Documentation Impact")
+        body.append("- Update matching user-facing docs in the same issue if behavior changes; otherwise note that no user-facing docs update was needed.")
+        body.append("")
+        body.append("## Validation Expectations")
+        body.append("- Run the relevant commands from `REPO_MAP.md` for the changed area.")
+        body.append("- Use `scripts/validate.sh` when app wiring, project generation, CI/workflow files, or repo-process files change.")
+        body.append("")
+        body.append("## Task Intake")
+        body.append("- Source template: repo `## Task:` markdown block")
+        if source_path == "-":
+            body.append("- Submitted from: stdin")
+        else:
+            body.append(f"- Submitted from: `{source_path}`")
     return "\n".join(body).rstrip() + "\n"
 
 
@@ -142,21 +178,32 @@ def create_issue(owner: str, repo: str, title: str, body: str, token: str) -> in
 
 def main() -> int:
     parser = argparse.ArgumentParser(
-        description="Export or create GitHub Issues from TODO tasks in CONTRIBUTING_AGENTS.md."
+        description="Export or create GitHub Issues from markdown task blocks that use the repo ## Task template."
     )
-    parser.add_argument("--input", default="CONTRIBUTING_AGENTS.md", help="Path to the legacy task file.")
+    parser.add_argument(
+        "--input",
+        default="CONTRIBUTING_AGENTS.md",
+        help="Path to markdown containing repo ## Task blocks, or - to read from stdin.",
+    )
     parser.add_argument("--owner", default="TeamLith", help="GitHub owner or organization.")
     parser.add_argument("--repo", default="lith", help="GitHub repository name.")
     parser.add_argument("--create", action="store_true", help="Create issues via the GitHub REST API.")
+    parser.add_argument(
+        "--source-mode",
+        choices=["auto", "legacy-migration", "task-intake"],
+        default="auto",
+        help="How the task input should be labeled in generated issue bodies.",
+    )
     parser.add_argument(
         "--manifest",
         help="Optional path to write the parsed issue payloads as JSON.",
     )
     args = parser.parse_args()
 
-    text = Path(args.input).read_text()
+    text = read_input_text(args.input)
+    source_mode = resolve_source_mode(args.input, args.source_mode)
     tasks = [task for task in parse_tasks(text) if task.status == "TODO"]
-    payloads = [{"title": task.title, "body": build_issue_body(task)} for task in tasks]
+    payloads = [{"title": task.title, "body": build_issue_body(task, source_mode, args.input)} for task in tasks]
 
     if args.manifest:
         Path(args.manifest).write_text(json.dumps(payloads, indent=2) + "\n")

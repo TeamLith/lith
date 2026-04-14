@@ -59,6 +59,8 @@ For the GitHub-native contribution and review flow surfaced in Issues and pull r
 Agents also support an explicit repo self-improvement run mode when a user asks for a repo self-improvement pass, audit, or equivalent. That mode bypasses normal issue selection, stays bounded to repo-process work such as agent/human instructions, contributor workflow, review/handoff norms, validation/CI/release automation, issue/PR templates, and repo-local skill guidance, and requires current primary sources when best-practice guidance may have changed.
 Meta-improvement tasks still use the same one-issue workflow when they are tracked on GitHub. Use `AGENT_POLICY.md` for the dedicated checklist and `HUMANS.md` for human-only setup or approval inputs.
 
+Agents also support an explicit task intake run mode when a user asks to add new tracked `TODO` items in the repo `## Task:` format. That mode converts one or more task blocks into GitHub Issues without starting implementation, keeps `CONTRIBUTING_AGENTS.md` archive-only, and uses the existing markdown-to-issue helper to create or preview the resulting issue payloads.
+
 Reviewer or coordination sessions should start with `AGENTS.md` and then use `REVIEW_POLICY.md`.
 
 ## Pause and resume workflow

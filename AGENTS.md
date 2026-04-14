@@ -7,9 +7,9 @@ This repository uses this file as the default repo-local instruction entry point
 Follow this order before making changes:
 
 1. Read `REPO_MAP.md`.
-2. Read the selected GitHub Issue or issue body supplied for the run.
+2. Read the selected GitHub Issue, supplied issue body, or task-intake input for the run.
 3. Read `README.md`, `ARCHITECTURE.md`, and `DATA_MODEL.md`.
-4. Read only the feature or sync specs required by the selected issue.
+4. Read only the feature or sync specs required by the selected issue or supplied task-intake input.
 5. Read `CONTRIBUTING_AGENTS.md` only when migrating legacy tasks or checking archived task history.
 
 ## Role Selection
@@ -22,8 +22,11 @@ Follow this order before making changes:
 
 - Default implementation run:
   use the GitHub issue flow below and work one issue at a time.
+- Task intake run:
+  if the user explicitly asks to add new tracked `TODO` items or convert one or more repo `## Task:` blocks into GitHub Issues, do not implement the tasks in that run. Create or prepare one GitHub Issue per task instead.
 - Repo self-improvement run:
   if the user explicitly asks for a repo self-improvement run, pass, or audit, do not auto-pick a `TODO`. Follow the dedicated self-improvement workflow in `AGENT_POLICY.md` instead.
+- Task intake runs must keep GitHub Issues as the live source of truth. Do not append new active tasks to `CONTRIBUTING_AGENTS.md`.
 - Self-improvement runs must stay bounded to repo workflow, contributor workflow, review/handoff process, validation, CI, release process, docs, or repo-local skill guidance. They must not drift into product feature implementation.
 - When recommendations or best practices may have changed, use current primary sources instead of relying on static memory.
 
@@ -44,6 +47,15 @@ Follow this order before making changes:
 - Update existing guidance before inventing new files, parallel docs, or new repo structure.
 - Escalate to a human for secrets, signing, legal/license choices, paid services, or one-time setup inputs an agent cannot discover safely.
 - Use `AGENT_POLICY.md` for the detailed checklist on meta-improvement runs, skill maintenance, validation, and reporting.
+
+## Task Intake Runs
+
+- Use this run only when the user explicitly asks to add tracked work rather than implement it immediately.
+- Accept one or more task blocks in the repo `## Task:` format from `CONTRIBUTING_AGENTS.md`, but keep them in standalone markdown or the user prompt instead of appending new live tasks to that archive file.
+- Create one GitHub Issue per task and stop after intake unless the user explicitly asks for implementation in a separate run.
+- Prefer direct GitHub issue creation when writes are available. If issue creation is unavailable, generate the issue payload or manifest and report the blocker clearly.
+- Use `scripts/migrate_pending_tasks_to_github_issues.py` with a standalone markdown file or stdin for structured imports.
+- Creating the issues updates the GitHub Issues tracker; any GitHub Projects routing remains governed by existing human-owned configuration or repo automation.
 
 ## Git Workflow
 

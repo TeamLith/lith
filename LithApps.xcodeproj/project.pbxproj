@@ -181,8 +181,6 @@
 			attributes = {
 				BuildIndependentTargetsInParallel = YES;
 				LastUpgradeCheck = 1430;
-				TargetAttributes = {
-				};
 			};
 			buildConfigurationList = 290624B7849562F1E6866E38 /* Build configuration list for PBXProject "LithApps" */;
 			developmentRegion = en;
@@ -400,8 +398,11 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = Apps/LithApp/Sources/macOS/LithmacOS.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 7;
+				DEVELOPMENT_TEAM = 3KG4D4R466;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = Lith;
 				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
@@ -412,6 +413,7 @@
 				);
 				MARKETING_VERSION = 0.1.6;
 				PRODUCT_BUNDLE_IDENTIFIER = me.lith.macos;
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = macosx;
 			};
 			name = Release;
@@ -421,8 +423,11 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = Apps/LithApp/Sources/macOS/LithmacOS.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 7;
+				DEVELOPMENT_TEAM = 3KG4D4R466;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = Lith;
 				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
@@ -433,6 +438,7 @@
 				);
 				MARKETING_VERSION = 0.1.6;
 				PRODUCT_BUNDLE_IDENTIFIER = me.lith.macos;
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = macosx;
 			};
 			name = Debug;

@@ -30,6 +30,8 @@ For reviewer or coordination runs, also use `REVIEW_POLICY.md`.
 
 ## 2. Task template (copy for each new task)
 
+Use this template in a standalone markdown snippet or file for explicit task-intake runs that create GitHub Issues. Do not append new live tasks below; this file remains archival and migration-only context.
+
 ```md
 ## Task: <Task name>
 

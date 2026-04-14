@@ -21,6 +21,17 @@ This file holds the durable repo policy for autonomous implementation runs. `AGE
 - If assignment is unavailable but issue comments are writable, post a claim comment before implementation.
 - If the environment can do neither, do not auto-pick from the shared backlog in parallel mode.
 
+### Explicit Task Intake Run
+
+- This run type is separate from both normal issue execution and repo self-improvement audits.
+- Only use it when the user explicitly asks to add tracked `TODO` items, convert repo `## Task:` blocks into GitHub Issues, or otherwise capture new scoped work without starting implementation.
+- In this mode, do not implement product or repo-process changes beyond the intake work itself.
+- Accept one or more tasks in the repo `## Task:` template from `CONTRIBUTING_AGENTS.md` or equivalent supplied text.
+- Do not append new live tasks to `CONTRIBUTING_AGENTS.md`; keep that file archival and use standalone markdown snippets or files as intake input.
+- Create one GitHub Issue per task, and skip exact-title duplicates when the issue already exists.
+- If GitHub writes are unavailable, emit the exact issue payloads or a manifest and stop instead of silently dropping the requested tasks.
+- Creating issues updates the GitHub Issues tracker. Any GitHub Projects placement remains human-owned configuration or separate automation.
+
 ### Explicit Repo Self-Improvement Run
 
 - This run type is separate from board-selected meta-improvement tasks.
@@ -56,7 +67,7 @@ This file holds the durable repo policy for autonomous implementation runs. `AGE
    - If your environment can assign issues, assign an unassigned issue before coding.
    - If assignment is unavailable but issue comments are writable, post a claim comment before branch creation or file edits.
    - If your environment can do neither, stop and ask for an issue number or assignment instead of racing another agent.
-   - Skip this step only for an explicit repo self-improvement run.
+   - Skip this step only for an explicit repo self-improvement run or an explicit task intake run.
 
 4. Create an issue branch:
    - Create one feature branch for the chosen issue after the issue is clearly reserved on GitHub through assignment or a visible claim comment.
@@ -209,6 +220,42 @@ Do not use this section for ordinary meta-improvement issues that were already c
    - List the primary sources consulted when recommendations were time-sensitive.
    - Explain why the changes were bounded.
    - Call out any human-only follow-up or approvals still needed.
+
+## Task Intake Workflow
+
+Use this section only for the explicit task intake run initiated outside the board.
+Do not use this section when the work is already tracked on GitHub; those remain standard issue runs.
+
+1. Orient:
+   - Read `REPO_MAP.md`, `README.md`, `AGENTS.md`, and the supplied task text or markdown file.
+   - Use the repo `## Task:` template from `CONTRIBUTING_AGENTS.md` as the intake shape when needed.
+
+2. Validate task shape:
+   - Confirm each requested task is scoped to one issue.
+   - Confirm the task includes input specs, deliverables, and concrete steps.
+   - If required details are missing, ask the human or create a clearly marked draft-style issue body rather than inventing hidden scope.
+
+3. Keep archival boundaries intact:
+   - Do not append new live tasks to `CONTRIBUTING_AGENTS.md`.
+   - Use a standalone markdown file, stdin, or the user prompt as the intake source.
+
+4. Create issues:
+   - Create one GitHub Issue per task when writes are available.
+   - Reuse `scripts/migrate_pending_tasks_to_github_issues.py` for structured intake from task-template markdown.
+   - Skip exact-title duplicates and report the existing issue number when found.
+
+5. Stop after intake:
+   - Do not start implementation of the newly created issues in the same run unless the user explicitly asks for that as a separate step.
+
+6. Validate:
+   - For script-assisted intake, run a dry-run parse or manifest export first when practical.
+   - If the intake tooling changed, run targeted syntax checks and a smoke test against sample task input.
+
+7. Report:
+   - State that the run was an explicit task intake run.
+   - List the task source used for intake.
+   - Report which issues were created or skipped as duplicates.
+   - State whether GitHub writes succeeded directly or whether a manifest/payload handoff was produced instead.
 
 ## Constraints
 

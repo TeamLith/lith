@@ -58,6 +58,14 @@ xcodebuild -scheme LithiOS -project LithApps.xcodeproj -configuration Debug -des
 - Review agent branches or commits before merging, especially when version bumps or workflow docs changed.
 - If an agent reports a blocker tied to credentials or signing, resolve that input as a human and then resume the same GitHub Issue (or its linked PR).
 
+## Triggering a Task Intake Run
+
+- Ask explicitly for a task intake run when you want the agent to create new tracked work instead of implementing it right away, for example:
+  `Run a task intake pass per AGENTS.md. Convert these repo ## Task blocks into GitHub Issues, keep CONTRIBUTING_AGENTS.md archival, and stop after the issues are created.`
+- Provide one or more tasks in the repo `## Task:` template, either inline in the prompt or in a standalone markdown file.
+- Expect one GitHub Issue per task, duplicate-title detection, and no implementation in the same run unless you explicitly request a follow-up issue run.
+- If GitHub writes are unavailable, expect the agent to return a manifest or exact issue payloads rather than silently dropping the new tasks.
+
 ## Triggering a Repo Self-Improvement Run
 
 - Ask explicitly for a repo self-improvement run, for example:

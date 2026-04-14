@@ -26,7 +26,7 @@ Read only what matches the task:
 - Autonomous agents:
   1. `AGENTS.md`
   2. `REPO_MAP.md`
-  3. selected GitHub Issue
+  3. selected GitHub Issue or supplied task-intake markdown
   4. `README.md`
   5. One or more of:
      - `ARCHITECTURE.md`
@@ -65,7 +65,7 @@ Read only what matches the task:
 - `.github/pull_request_template.md`: default PR checklist and issue-linking guide.
 - `.github/workflows/release-testflight.yml`: manual TestFlight release workflow with preflight validation.
 - `scripts/validate.sh`: shared local/CI validation entry point that regenerates `LithApps.xcodeproj` and runs canonical build/test commands.
-- `scripts/migrate_pending_tasks_to_github_issues.py`: dry-run or token-backed migration helper that converts legacy TODO tasks into GitHub Issues.
+- `scripts/migrate_pending_tasks_to_github_issues.py`: dry-run or token-backed helper that converts repo `## Task:` markdown blocks into GitHub Issues, including legacy TODO imports from `CONTRIBUTING_AGENTS.md`.
 
 ### Shared package
 
