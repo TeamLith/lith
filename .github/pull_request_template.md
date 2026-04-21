@@ -14,6 +14,10 @@ If this PR is only partial progress, replace the closing keyword with a plain is
 - Areas where reviewer attention is most useful:
 - Known risks, non-goals, or deferred follow-up:
 
+## Documentation
+
+- [ ] User-facing docs in `Docs/site` were updated, or no user-facing docs change was needed
+
 ## Validation
 
 - [ ] `swift test`

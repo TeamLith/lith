@@ -38,9 +38,9 @@ body:
     id: user_docs_impact
     attributes:
       label: User-Facing Documentation Impact
-      description: If this changes user-visible behavior, onboarding, settings, or adds a feature, describe which user-facing docs must be updated in the same issue.
+      description: If this changes user-visible behavior, onboarding, settings, or adds a feature, describe which page under `Docs/site` must be updated in the same issue.
       placeholder: |
-        - Update GitHub Pages user docs for note creation flow
+        - Update `Docs/site/notes-and-links.md` for a note creation flow change
         - No user-facing docs change; internal refactor only
     validations:
       required: true
@@ -74,7 +74,7 @@ body:
       description: Builds, tests, doc checks, or manual checks required before close-out. Use `scripts/validate.sh` when app wiring or repo workflow changes.
       placeholder: |
         - swift test
-        - update matching user-facing documentation if behavior changed
+        - update the matching page under `Docs/site` if behavior changed
         - scripts/validate.sh
   - type: textarea
     id: notes

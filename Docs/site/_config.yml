@@ -1,0 +1,13 @@
+title: Lith User Guide
+description: User-facing documentation for Lith, a local-first notes app for iOS and macOS.
+theme: just-the-docs
+
+url: https://teamlith.github.io
+
+search_enabled: true
+heading_anchors: true
+aux_links:
+  Lith on GitHub: https://github.com/TeamLith/lith
+aux_links_new_tab: true
+
+footer_content: "Lith is a local-first note-taking app for iOS and macOS."

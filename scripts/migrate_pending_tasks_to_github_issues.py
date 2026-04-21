@@ -128,7 +128,7 @@ def build_issue_body(task: Task, source_mode: str, source_path: str) -> str:
         body.append("- Legacy status at import time: `TODO`")
     else:
         body.append("## User-Facing Documentation Impact")
-        body.append("- Update matching user-facing docs in the same issue if behavior changes; otherwise note that no user-facing docs update was needed.")
+        body.append("- Update the matching page under `Docs/site` in the same issue if behavior changes; otherwise note that no user-facing docs update was needed.")
         body.append("")
         body.append("## Validation Expectations")
         body.append("- Run the relevant commands from `REPO_MAP.md` for the changed area.")
