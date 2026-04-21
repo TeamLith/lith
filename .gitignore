@@ -7,3 +7,9 @@ DerivedData/
 .swiftpm/xcode/package.xcworkspace/contents.xcworkspacedata
 .netrc
 ai-sessions/
+Docs/site/.bundle/
+Docs/site/.jekyll-cache/
+Docs/site/.jekyll-metadata
+Docs/site/.sass-cache/
+Docs/site/_site/
+Docs/site/vendor/

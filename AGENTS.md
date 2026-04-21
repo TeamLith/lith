@@ -67,7 +67,7 @@ Follow this order before making changes:
 
 - Run relevant tests and build commands for the changed area before closing the task.
 - Prefer the canonical commands listed in `REPO_MAP.md`.
-- When an issue changes user-facing behavior, onboarding, settings, workflows, or adds a new feature, update the user-facing documentation in the same issue before close-out. Once a GitHub Pages docs site exists, treat that site as the primary user-facing docs surface to keep in sync.
+- When an issue changes user-facing behavior, onboarding, settings, workflows, or adds a new feature, update the matching page under `Docs/site` in the same issue before close-out. Treat that folder as the source of truth for the GitHub Pages user guide.
 
 ## Repo Map Maintenance
 

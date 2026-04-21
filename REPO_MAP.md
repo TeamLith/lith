@@ -17,7 +17,7 @@ Lith is split into:
 
 - A Swift package named `Lith` for shared domain, persistence, services, graph logic, and view models.
 - Xcode app targets for iOS and macOS under `Apps/LithApp`.
-- Markdown specs and roadmap documents at the repository root and under `Docs`.
+- Markdown specs, roadmap documents, and the GitHub Pages user guide under `Docs`.
 
 ## Read Order
 
@@ -61,8 +61,10 @@ Read only what matches the task:
 - `SYNC_ICLOUD.md`
 - `CONTRIBUTING_AGENTS.md`: legacy task inventory, migration source, pause/resume history, and prompt-pack archive.
 - `Docs/RELEASING_WITH_GITHUB.md`: human-owned signing, secrets, and TestFlight release workflow.
+- `Docs/site`: source of truth for the user-facing GitHub Pages documentation built with Just the Docs.
 - `.github/ISSUE_TEMPLATE`: GitHub Issue intake forms for feature work and repo-process work.
 - `.github/pull_request_template.md`: default PR checklist and issue-linking guide.
+- `.github/workflows/pages.yml`: GitHub Pages build and deploy workflow for `Docs/site`.
 - `.github/workflows/release-testflight.yml`: manual TestFlight release workflow with preflight validation.
 - `scripts/validate.sh`: shared local/CI validation entry point that regenerates `LithApps.xcodeproj` and runs canonical build/test commands.
 - `scripts/migrate_pending_tasks_to_github_issues.py`: dry-run or token-backed helper that converts repo `## Task:` markdown blocks into GitHub Issues, including legacy TODO imports from `CONTRIBUTING_AGENTS.md`.
@@ -98,6 +100,8 @@ Read only what matches the task:
 ## Build and Validation Shortcuts
 
 - Shared validation entry point: `scripts/validate.sh`
+- User docs local preview (Ruby 3.3):
+  `cd Docs/site && bundle install && bundle exec jekyll serve`
 - Package build: `swift build`
 - Package tests: `swift test`
 - macOS app build:
@@ -115,6 +119,7 @@ Read only what matches the task:
 - Use GitHub Issues and assignment as the source of truth for active task ownership and parallel work coordination.
 - Keep `CONTRIBUTING_AGENTS.md` only as migration/archive material until the legacy backlog is imported.
 - Keep durable workflow rules in `AGENTS.md` and `AGENT_POLICY.md`, not in copy-pasted prompts.
+- Treat `Docs/site` as the user-facing docs source of truth; keep root specs and roadmap docs contributor-facing.
 
 ## Fast Routing Guide
 
@@ -128,6 +133,8 @@ Read only what matches the task:
   start with `FEATURE_RSS_INBOX.md`, `Sources/Lith/Services/RSSConversionService.swift`, and `Sources/Lith/Persistence/CoreDataRSSRepository.swift`.
 - Sync:
   start with `SYNC_ICLOUD.md`, `Sources/Lith/AppDependencyContainer.swift`, and `Sources/Lith/Sync`.
+- User docs or Pages publishing:
+  start with `Docs/site`, `.github/workflows/pages.yml`, and `CONTRIBUTING.md`.
 
 ## Maintenance Rule
 

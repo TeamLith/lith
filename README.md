@@ -4,6 +4,7 @@ Native iOS/macOS note-taking app spec repo designed for multi-agent execution an
 
 The repository now uses GitHub Issues as the source of truth for active work. Repo-local Markdown task lists remain only as archival context plus a record of the legacy backlog that was migrated to GitHub.
 For the GitHub-native contribution and review flow surfaced in Issues and pull requests, start with `CONTRIBUTING.md`.
+User-facing documentation now lives in [`Docs/site`](./Docs/site/index.md) and is intended to publish through GitHub Pages once the repository Pages source is enabled for GitHub Actions.
 
 ## Tech constraints
 
@@ -25,6 +26,7 @@ For the GitHub-native contribution and review flow surfaced in Issues and pull r
 - [REPO_MAP.md](./REPO_MAP.md)
 - [ARCHITECTURE.md](./ARCHITECTURE.md)
 - [DATA_MODEL.md](./DATA_MODEL.md)
+- [Docs/site/index.md](./Docs/site/index.md)
 - [FEATURE_TEXT_NOTES.md](./FEATURE_TEXT_NOTES.md)
 - [FEATURE_RSS_INBOX.md](./FEATURE_RSS_INBOX.md)
 - [FEATURE_AUDIO_NOTES.md](./FEATURE_AUDIO_NOTES.md)
@@ -39,8 +41,9 @@ For the GitHub-native contribution and review flow surfaced in Issues and pull r
 1. Start with `CONTRIBUTING.md` for the issue and PR workflow, then use `HUMANS.md` for setup and release-owned steps.
 2. Use `README.md` and `REPO_MAP.md` to orient on the repo and find the right spec files.
 3. Use GitHub Issues and, if desired, a GitHub Project board to coordinate tracked work with agents or other humans.
-4. Run `scripts/validate.sh` before merging or handing work off.
-5. Use `Docs/RELEASING_WITH_GITHUB.md` for signing, secrets, and TestFlight release steps.
+4. Update matching user-facing docs in `Docs/site` whenever behavior, onboarding, settings, or feature scope changes.
+5. Run `scripts/validate.sh` before merging or handing work off.
+6. Use `Docs/RELEASING_WITH_GITHUB.md` for signing, secrets, and TestFlight release steps.
 
 ## How AI agents contribute
 
@@ -50,7 +53,7 @@ For the GitHub-native contribution and review flow surfaced in Issues and pull r
 4. Read global context next: `README.md`, `ARCHITECTURE.md`, `DATA_MODEL.md`.
 5. Read the relevant feature or sync file for that issue.
 6. Implement code + tests.
-7. If the issue changes user-facing behavior, onboarding, settings, workflows, or adds a new feature, update the user-facing documentation in the same scope. Once a GitHub Pages docs site exists, treat that site as the primary user-facing docs surface.
+7. If the issue changes user-facing behavior, onboarding, settings, workflows, or adds a new feature, update the matching user-facing page under `Docs/site` in the same scope.
 8. Run the canonical validation flow for the changed area, preferring `scripts/validate.sh` when app/workflow wiring changed.
 9. If the completed issue changes shipped app behavior or app/release metadata, bump `MARKETING_VERSION` and `CURRENT_PROJECT_VERSION`, keeping `project.yml` and generated Xcode project settings in sync. Pure docs, workflow, coordination, or other repo self-improvement issues do not need a version bump unless they also change app/release metadata.
 10. Review `REPO_MAP.md` before closing the work and update it only if repo orientation changed.
