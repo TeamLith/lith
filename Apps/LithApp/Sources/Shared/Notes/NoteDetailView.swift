@@ -1,4 +1,5 @@
 import SwiftUI
+import UniformTypeIdentifiers
 import Lith
 
 @available(iOS 17, macOS 14, *)
@@ -8,6 +9,9 @@ struct NoteDetailView: View {
     @Environment(\.dismiss) private var dismiss
 
     @State private var isEditing = false
+    @State private var exporting = false
+    @State private var exportDocument: MarkdownFile?
+    @State private var exportError: String?
     @State private var viewModel: NoteDetailViewModel
 
     init(
@@ -63,6 +67,14 @@ struct NoteDetailView: View {
             viewModel.scheduleAutosave()
         }
         .toolbar { toolbarContent }
+        .fileExporter(isPresented: $exporting, document: exportDocument,
+                      contentType: UTType(filenameExtension: "md") ?? .plainText,
+                      defaultFilename: viewModel.title.isEmpty ? "Untitled" : viewModel.title.replacingOccurrences(of: "/", with: "-")) { result in
+            if case let .failure(error) = result { exportError = error.localizedDescription }
+        }
+        .alert("Could Not Export", isPresented: Binding(get: { exportError != nil }, set: { if !$0 { exportError = nil } })) {
+            Button("OK") { exportError = nil }
+        } message: { Text(exportError ?? "") }
     }
 
     private var content: some View {
@@ -86,9 +98,7 @@ struct NoteDetailView: View {
                         .foregroundStyle(.secondary)
                         .italic()
                 } else {
-                    Text(LocalizedStringKey(viewModel.bodyMarkdown))
-                        .textSelection(.enabled)
-                        .frame(maxWidth: .infinity, alignment: .leading)
+                    MarkdownPreview(markdown: viewModel.bodyMarkdown)
                 }
 
                 if let saveError = viewModel.saveError {
@@ -208,6 +218,21 @@ struct NoteDetailView: View {
 
         ToolbarItem(placement: .secondaryAction) {
             Menu("Actions") {
+                Button("Export Markdown", systemImage: "square.and.arrow.up") {
+                    do {
+                        exportDocument = MarkdownFile(data: try MarkdownNoteService().export(title: viewModel.title, body: viewModel.bodyMarkdown))
+                        exporting = true
+                    } catch { exportError = error.localizedDescription }
+                }
+                if viewModel.isArchived || viewModel.isTrashed {
+                    Button("Restore", systemImage: "arrow.uturn.backward") {
+                        Task {
+                            guard await viewModel.restore() != nil else { return }
+                            await onNoteChanged()
+                            dismiss()
+                        }
+                    }
+                }
                 Button {
                     Task {
                         guard await viewModel.archive() != nil else {

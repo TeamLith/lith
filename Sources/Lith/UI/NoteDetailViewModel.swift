@@ -117,6 +117,13 @@ public final class NoteDetailViewModel {
         return await saveNow()
     }
 
+    @discardableResult
+    public func restore() async -> Note? {
+        isArchived = false
+        isTrashed = false
+        return await saveNow()
+    }
+
     private func apply(_ note: Note) {
         title = note.title
         bodyMarkdown = note.bodyMarkdown

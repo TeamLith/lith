@@ -19,7 +19,7 @@ struct CreateNoteIntent: AppIntent {
     @MainActor
     func perform() async throws -> some IntentResult & ProvidesDialog {
         let dependencies = try AppDependencyContainer(mode: .live)
-        let note = try await NoteCaptureService(repository: dependencies.noteRepository)
+        let note = try await NoteCaptureService(repository: dependencies.noteRepository, wikiLinkService: dependencies.wikiLinkService)
             .createNote(title: title, content: text)
         return .result(dialog: "Created \(note.title) in Lith.")
     }
