@@ -23,8 +23,12 @@ Search matches titles, body text, tags, and stored metadata. Basic `AND`, `OR`, 
 
 Graph data is built from your saved notes and links. Global mode includes all active notes, including unlinked notes. Local mode starts from one note and follows both incoming and outgoing links up to the selected number of hops. Zero hops includes only the selected note. Archived and trashed notes are excluded, along with links to missing or hidden notes.
 
-The interactive graph screen is still in progress.
+From Search, select **Graph** in the toolbar to explore your notes on a stable circular layout. Select a node to open its note. Drag the graph to pan, pinch to zoom, or use the zoom buttons. **Reset view** restores the initial position and zoom.
+
+Choose a note in the Graph picker for local mode, then adjust **Link depth** (0–5). Choose **All notes** to return to the global graph. The center is highlighted. Changing the mode resets the viewport. Returning from a note refreshes the graph.
+
+Turn on **Show accessible note list** for a linear list of notes and link counts, with the same note navigation. Nodes also have VoiceOver labels. The graph uses no automatic motion or layout animations, including when Reduce Motion is enabled.
 
 ## Availability
 
-Search runs locally on your stored notes. Interactive graph navigation is still in progress.
+Search and graph run locally on your stored notes. Graph edges represent saved links; arrows are not shown in the visual layout.
