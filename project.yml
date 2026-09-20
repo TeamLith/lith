@@ -34,8 +34,8 @@ targets:
         INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone: UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight
         INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad: UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight
         INFOPLIST_KEY_ITSAppUsesNonExemptEncryption: NO
-        CURRENT_PROJECT_VERSION: 25
-        MARKETING_VERSION: 0.1.24
+        CURRENT_PROJECT_VERSION: 26
+        MARKETING_VERSION: 0.2.0
         INFOPLIST_KEY_NSMicrophoneUsageDescription: Record audio attached to your notes.
         INFOPLIST_KEY_NSSpeechRecognitionUsageDescription: Transcribe your recordings on this device.
   LithmacOS:
@@ -58,14 +58,47 @@ targets:
         INFOPLIST_KEY_NSMicrophoneUsageDescription: Record audio attached to your notes.
         INFOPLIST_KEY_NSSpeechRecognitionUsageDescription: Transcribe your recordings on this device.
         CODE_SIGN_ENTITLEMENTS: Apps/LithApp/Sources/macOS/LithmacOS.entitlements
-        CURRENT_PROJECT_VERSION: 25
-        MARKETING_VERSION: 0.1.24
+        CODE_SIGN_IDENTITY: Apple Development
+        CODE_SIGN_STYLE: Automatic
+        DEVELOPMENT_TEAM: 3KG4D4R466
+        PROVISIONING_PROFILE_SPECIFIER: ""
+        CURRENT_PROJECT_VERSION: 26
+        MARKETING_VERSION: 0.2.0
+  LithiOSUITests:
+    type: bundle.ui-testing
+    platform: iOS
+    sources:
+      - Apps/LithApp/UITests
+    dependencies:
+      - target: LithiOS
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: me.lith.ios.uitests
+        GENERATE_INFOPLIST_FILE: YES
+        TEST_TARGET_NAME: LithiOS
+  LithmacOSUITests:
+    type: bundle.ui-testing
+    platform: macOS
+    sources:
+      - Apps/LithApp/UITests
+    dependencies:
+      - target: LithmacOS
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: me.lith.macos.uitests
+        GENERATE_INFOPLIST_FILE: YES
+        TEST_TARGET_NAME: LithmacOS
 schemes:
   LithiOS:
     shared: true
     build:
       targets:
         LithiOS: all
+        LithiOSUITests: [test]
+    test:
+      config: Debug
+      targets:
+        - LithiOSUITests
     run:
       config: Debug
     archive:
@@ -75,6 +108,11 @@ schemes:
     build:
       targets:
         LithmacOS: all
+        LithmacOSUITests: [test]
+    test:
+      config: Debug
+      targets:
+        - LithmacOSUITests
     run:
       config: Debug
     archive:

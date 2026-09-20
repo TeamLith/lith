@@ -136,14 +136,14 @@ public final class CoreDataNoteRepository: @unchecked Sendable, NoteRepository {
 }
 
 enum LithPersistentStore {
-    static func makeContainer(inMemory: Bool = false) throws -> NSPersistentContainer {
+    static func makeContainer(inMemory: Bool = false, storeURL: URL? = nil) throws -> NSPersistentContainer {
         let container = NSPersistentContainer(name: "Lith", managedObjectModel: managedObjectModel())
         let description = NSPersistentStoreDescription()
         if inMemory {
             description.type = NSInMemoryStoreType
         } else {
             description.type = NSSQLiteStoreType
-            description.url = defaultStoreURL()
+            description.url = storeURL ?? defaultStoreURL()
             description.shouldMigrateStoreAutomatically = true
             description.shouldInferMappingModelAutomatically = true
         }

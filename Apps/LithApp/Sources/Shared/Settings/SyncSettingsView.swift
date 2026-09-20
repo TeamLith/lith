@@ -7,7 +7,7 @@ struct SyncSettingsView: View {
     var body: some View {
         Form {
             Section("iCloud Sync") {
-                Toggle("Enable iCloud Sync", isOn: Binding(get: { viewModel.isEnabled }, set: viewModel.setEnabled))
+                Toggle("Enable iCloud Sync", isOn: Binding(get: { viewModel.isEnabled }, set: { viewModel.setEnabled($0) }))
                     .disabled(!viewModel.isAvailable)
                 if let reason = viewModel.unavailableReason {
                     Label(reason, systemImage: "icloud.slash").foregroundStyle(.secondary)

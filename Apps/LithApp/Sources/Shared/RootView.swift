@@ -172,6 +172,7 @@ struct RootView: View {
     private var appSidebar: some View {
         List(AppSection.allCases, selection: $selectedSection) { section in
             Label(section.title, systemImage: section.systemImage)
+                .accessibilityIdentifier("navigation-\(section.rawValue)")
                 .tag(section)
         }
         .navigationTitle("Lith")

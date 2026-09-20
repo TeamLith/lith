@@ -43,9 +43,13 @@ struct NoteDetailViewModelTests {
         vm.bodyMarkdown = "After"
         vm.scheduleAutosave()
 
-        try await Task.sleep(nanoseconds: 120_000_000)
-
-        let stored = try await repo.note(id: note.id)
+        let clock = ContinuousClock()
+        let deadline = clock.now.advanced(by: .seconds(3))
+        var stored = try await repo.note(id: note.id)
+        while (stored?.title != "Updated" || stored?.bodyMarkdown != "After"), clock.now < deadline {
+            try await Task.sleep(for: .milliseconds(10))
+            stored = try await repo.note(id: note.id)
+        }
         #expect(stored?.title == "Updated")
         #expect(stored?.bodyMarkdown == "After")
         #expect(try await linkRepository.links(from: note.id).isEmpty)

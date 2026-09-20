@@ -30,8 +30,6 @@ jobs:
     name: Preflight validation
     runs-on: macos-15
     timeout-minutes: 45
-    env:
-      LITH_VALIDATION_LOG_DIR: ${{ runner.temp }}/lith-validation-logs
     steps:
       - name: Checkout
         uses: actions/checkout@v5
@@ -50,6 +48,8 @@ jobs:
           xcodegen --version
 
       - name: Run validation
+        env:
+          LITH_VALIDATION_LOG_DIR: ${{ runner.temp }}/lith-validation-logs
         run: scripts/validate.sh --log-dir "$LITH_VALIDATION_LOG_DIR" --fail-on-generated-diff
 
       - name: Upload validation logs
@@ -57,7 +57,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: lith-release-preflight-logs
-          path: ${{ env.LITH_VALIDATION_LOG_DIR }}
+          path: ${{ runner.temp }}/lith-validation-logs
           retention-days: 7
 
   release_ios:
@@ -89,7 +89,7 @@ jobs:
       - name: Regenerate Xcode project
         run: |
           set -euo pipefail
-          xcodegen generate --use-cache
+          python3 scripts/generate-project.py
           project_status="$(git status --short -- LithApps.xcodeproj)"
           if [ -n "$project_status" ]; then
             echo "LithApps.xcodeproj is out of sync with project.yml." >&2
@@ -260,7 +260,7 @@ jobs:
       - name: Regenerate Xcode project
         run: |
           set -euo pipefail
-          xcodegen generate --use-cache
+          python3 scripts/generate-project.py
           project_status="$(git status --short -- LithApps.xcodeproj)"
           if [ -n "$project_status" ]; then
             echo "LithApps.xcodeproj is out of sync with project.yml." >&2

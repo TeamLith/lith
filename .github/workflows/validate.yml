@@ -18,8 +18,6 @@ jobs:
     name: Validate
     runs-on: macos-15
     timeout-minutes: 45
-    env:
-      LITH_VALIDATION_LOG_DIR: ${{ runner.temp }}/lith-validation-logs
     steps:
       - name: Checkout
         uses: actions/checkout@v5
@@ -38,6 +36,8 @@ jobs:
           xcodegen --version
 
       - name: Run validation
+        env:
+          LITH_VALIDATION_LOG_DIR: ${{ runner.temp }}/lith-validation-logs
         run: scripts/validate.sh --log-dir "$LITH_VALIDATION_LOG_DIR" --fail-on-generated-diff
 
       - name: Upload validation logs
@@ -45,5 +45,5 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: lith-validation-logs
-          path: ${{ env.LITH_VALIDATION_LOG_DIR }}
+          path: ${{ runner.temp }}/lith-validation-logs
           retention-days: 7

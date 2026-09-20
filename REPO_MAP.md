@@ -67,7 +67,9 @@ Read only what matches the task:
 - `.github/workflows/validate.yml`: canonical PR and `main` validation workflow that runs `scripts/validate.sh`.
 - `.github/workflows/pages.yml`: GitHub Pages build and deploy workflow for `Docs/site`.
 - `.github/workflows/release-testflight.yml`: manual TestFlight release workflow with preflight validation.
-- `scripts/validate.sh`: shared local/CI validation entry point that regenerates `LithApps.xcodeproj` and runs canonical build/test commands.
+- `scripts/validate.sh`: canonical full-Xcode or `--package-only` CLT validation; optional `--ui-tests` executes app navigation tests.
+- `scripts/generate-project.py`: XcodeGen wrapper that normalizes the local package identity so project files do not depend on the checkout directory.
+- `Docs/TestStrategy.md`: test matrix, isolation requirements, execution commands, and explicit device/account gaps.
 - `scripts/migrate_pending_tasks_to_github_issues.py`: dry-run or token-backed helper that converts repo `## Task:` markdown blocks into GitHub Issues, including legacy TODO imports from `CONTRIBUTING_AGENTS.md`.
 
 ### Shared package
@@ -93,6 +95,7 @@ Read only what matches the task:
 - `project.yml`: source of truth for generating the Xcode project with XcodeGen.
 - `LithApps.xcodeproj`: generated project artifact. Regenerate after structural source changes.
 - `Apps/LithApp/Sources/Shared/RootView.swift`: top-level app shell used by both platforms.
+- `Apps/LithApp/Sources/Shared/AppLaunchView.swift`: launch wrapper with Debug-only in-memory fixtures for `--ui-testing`.
 - `Apps/LithApp/Sources/Shared/Notes`: SwiftUI note list/detail screens shared across app targets.
 - `Apps/LithApp/Sources/Shared/Settings`: iCloud settings, status, retry controls, and retained conflict review.
 - `Apps/LithApp/Sources/Shared/Audio`: recording, playback, and transcript controls embedded in note details.
@@ -105,11 +108,16 @@ Read only what matches the task:
 
 ### Tests
 
-- `Tests/LithTests`: package tests covering repositories, services, dependency setup, and view models.
+- `Tests/LithTests`: package tests covering repositories, services, dependency setup, view models, SQLite upgrades, and integrated note/RSS/search flows.
+- `Apps/LithApp/UITests`: XCTest navigation tests shared by the iOS and macOS UI-test targets.
+- `Tests/Tooling`: project-generation reproducibility tests.
 
 ## Build and Validation Shortcuts
 
 - Shared validation entry point: `scripts/validate.sh`
+- CLT package tests and macOS source typecheck: `scripts/validate.sh --package-only`
+- UI tests (full Xcode and installed simulator): `LITH_IOS_TEST_DESTINATION='platform=iOS Simulator,name=iPhone 16' scripts/validate.sh --ui-tests`
+- Generator regression: `python3 -m unittest discover -s Tests/Tooling -v`
 - User docs local preview (Ruby 3.3):
   `cd Docs/site && bundle install && bundle exec jekyll serve`
 - Package build: `swift build`
@@ -118,7 +126,7 @@ Read only what matches the task:
   `xcodebuild -scheme LithmacOS -project LithApps.xcodeproj -configuration Debug -destination 'platform=macOS' build`
 - iOS app build:
   `xcodebuild -scheme LithiOS -project LithApps.xcodeproj -configuration Debug -destination 'generic/platform=iOS Simulator' build`
-- Regenerate Xcode project after target/source layout changes: `xcodegen generate`
+- Regenerate Xcode project after target/source layout changes: `python3 scripts/generate-project.py`
 
 ## Known Conventions
 

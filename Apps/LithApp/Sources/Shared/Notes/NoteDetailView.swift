@@ -156,6 +156,7 @@ struct NoteDetailView: View {
     private var editorContent: some View {
         VStack(alignment: .leading, spacing: 16) {
             TextField("Untitled", text: $viewModel.title, axis: .vertical)
+                .accessibilityIdentifier("note-title-editor")
                 .textFieldStyle(.roundedBorder)
                 .font(.title2.weight(.semibold))
 
@@ -165,6 +166,7 @@ struct NoteDetailView: View {
             .toggleStyle(.switch)
 
             TextEditor(text: $viewModel.bodyMarkdown)
+                .accessibilityIdentifier("note-body-editor")
                 .font(.body.monospaced())
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
                 .padding(8)

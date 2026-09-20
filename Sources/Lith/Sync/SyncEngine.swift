@@ -367,7 +367,7 @@ public final class SyncEngine {
         let account = try await retry { try await self.transport.accountID() }
         guard account == checkpoint.accountID else { throw SyncEngineError.accountChanged }
     }
-    private func retry<T>(_ operation: () async throws -> T) async throws -> T {
+    private func retry<T: Sendable>(_ operation: @MainActor () async throws -> T) async throws -> T {
         for attempt in 0..<3 {
             try ensureEnabled()
             do { return try await operation() }

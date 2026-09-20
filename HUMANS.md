@@ -15,7 +15,7 @@ Use this file for local setup, day-to-day development, and release steps that re
 
 - Install a current Xcode release with the bundled Swift toolchain and Command Line Tools enabled.
 - Install XcodeGen so `project.yml` can regenerate `LithApps.xcodeproj`.
-- Clone the repository and confirm you can run `swift build` and `swift test`.
+- Clone the repository and run `scripts/validate.sh --package-only`. This also supports standalone Command Line Tools; full app builds and UI tests require Xcode.
 - Open `Lith.xcworkspace` or `LithApps.xcodeproj` in Xcode for app work.
 - Select your Apple Developer Team for both app targets before local device or archive builds.
 - Complete the Apple and GitHub credential setup in `Docs/RELEASING_WITH_GITHUB.md` before attempting TestFlight uploads.
@@ -26,19 +26,25 @@ Use this file for local setup, day-to-day development, and release steps that re
 2. If the work is tracked, keep exactly one GitHub Issue current per branch or agent run.
 3. Prefer changes under `Sources/Lith` unless the work is truly app-shell-specific.
 4. Treat `project.yml` as the source of truth for target structure and regenerate the Xcode project after structural changes.
-5. Run `scripts/validate.sh` before merging, handing work to an agent, or triggering a release. It regenerates the Xcode project and runs the package plus app build validations. CI and release automation additionally fail if regeneration would change committed `LithApps.xcodeproj` files.
+5. Run `scripts/validate.sh` before merging, handing work to an agent, or triggering a release. It deterministically regenerates the Xcode project and runs package checks plus unsigned app builds. With Command Line Tools only, use `scripts/validate.sh --package-only` for package tests and macOS source typechecking. CI and release automation additionally fail if regeneration would change committed `LithApps.xcodeproj` files.
    The GitHub validation workflow also cancels superseded same-ref runs and uses explicit job timeouts so stuck macOS builds fail predictably instead of consuming the full default runner window.
 
 ## Canonical Commands
 
 ```bash
 scripts/validate.sh
-xcodegen generate
+scripts/validate.sh --package-only
+python3 scripts/generate-project.py
+python3 -m unittest discover -s Tests/Tooling -v
 swift build
 swift test
 xcodebuild -scheme LithmacOS -project LithApps.xcodeproj -configuration Debug -destination 'platform=macOS' build
 xcodebuild -scheme LithiOS -project LithApps.xcodeproj -configuration Debug -destination 'generic/platform=iOS Simulator' build
 ```
+
+Project generation must use `python3 scripts/generate-project.py`; raw XcodeGen derives the local-package identity from the checkout directory and can produce spurious differences. The wrapper normalizes that identity to `Lith`. Existing signing values are explicitly represented in `project.yml`; never invent or silently replace team settings during generation.
+
+For UI automation, use `LITH_IOS_TEST_DESTINATION='platform=iOS Simulator,name=iPhone 16' scripts/validate.sh --ui-tests` with a simulator actually installed on your machine. The Debug-only `--ui-testing` launch path uses seeded in-memory data. See `Docs/TestStrategy.md` for the test matrix, desktop permissions, and remaining device/account checks.
 
 ## Humans vs Agents
 
