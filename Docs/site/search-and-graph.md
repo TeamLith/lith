@@ -9,8 +9,15 @@ Lith is meant to make stored knowledge easier to find, revisit, and connect.
 
 ## Search
 
-- Search note content, tags, and selected metadata.
-- Jump from a query to the underlying note quickly.
+Open **Search & Graph** and type in the search field. Results include the title, a body snippet, source, last-updated date, and tags. Select a result to read or edit the note; results refresh after you return.
+
+- Leave the query empty to browse all active notes, newest updated first. Archived and trashed notes are excluded.
+- Choose a source: Manual, RSS, Audio, or All sources.
+- Enter comma-separated tags to match notes with any of those tags.
+- Turn on the date filter to include notes updated from the selected start day through the end day, in your current time zone.
+- Use **Clear search and filters** to start again.
+
+Search matches titles, body text, tags, and stored metadata. Basic `AND`, `OR`, and `NOT` expressions are supported. A failed search shows a retry button. An invalid date range shows an explanation instead of running the search.
 
 ## Graph
 
@@ -19,4 +26,4 @@ Lith is meant to make stored knowledge easier to find, revisit, and connect.
 
 ## Availability
 
-Search and graph experiences are designed to stay deterministic and local-first. Depending on your build, some views may still be in progress.
+Search runs locally on your stored notes. Interactive graph navigation is still in progress.

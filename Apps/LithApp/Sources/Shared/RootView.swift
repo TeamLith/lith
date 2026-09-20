@@ -175,13 +175,17 @@ private struct ShellDetailView: View {
                 wikiLinkService: dependencies.wikiLinkService,
                 viewModel: noteListViewModel
             )
+        } else if section == .search {
+            SearchView(dependencies: dependencies)
         } else if section == .rss {
             RSSRefreshPanel(viewModel: rssRefreshViewModel)
         } else {
             placeholderBody
         }
 #else
-        if section == .rss {
+        if section == .search {
+            NavigationStack { SearchView(dependencies: dependencies) }
+        } else if section == .rss {
             RSSRefreshPanel(viewModel: rssRefreshViewModel)
         } else {
             placeholderBody
