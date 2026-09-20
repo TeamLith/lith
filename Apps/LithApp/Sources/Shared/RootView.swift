@@ -176,6 +176,8 @@ private struct ShellDetailView: View {
                 wikiLinkService: dependencies.wikiLinkService,
                 viewModel: noteListViewModel
             )
+        } else if section == .search {
+            SearchView(dependencies: dependencies)
         } else if section == .rss {
             RSSInboxView(viewModel: rssInboxViewModel, dependencies: dependencies) {
                 await noteListViewModel.loadNotes()
@@ -184,7 +186,9 @@ private struct ShellDetailView: View {
             placeholderBody
         }
 #else
-        if section == .rss {
+        if section == .search {
+            NavigationStack { SearchView(dependencies: dependencies) }
+        } else if section == .rss {
             RSSInboxView(viewModel: rssInboxViewModel, dependencies: dependencies) {
                 await noteListViewModel.loadNotes()
             }
