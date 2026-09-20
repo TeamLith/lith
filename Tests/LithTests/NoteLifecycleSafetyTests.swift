@@ -115,6 +115,24 @@ struct NoteLifecycleSafetyTests {
         await #expect(throws: ActionItemReviewError.self) { try await dependencies.actionItemRepository.upsert(action) }
     }
 
+    @Test("Interrupted file staging restores audio when the note deletion did not commit")
+    func recoverStaging() async throws {
+        let dependencies = try AppDependencyContainer(mode: .inMemory)
+        let root = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
+        defer { try? FileManager.default.removeItem(at: root) }
+        let files = AudioFileStore(root: root)
+        let note = Note(title: "Keep", bodyMarkdown: "")
+        let repository = CoreDataNoteRepository(container: dependencies.persistentContainer, files: files)
+        try await repository.upsert(note)
+        let url = try files.prepare(noteID: note.id, recordingID: UUID())
+        try Data("audio".utf8).write(to: url)
+        let staged = root.appendingPathComponent(".deleting-" + note.id.uuidString.lowercased())
+        try FileManager.default.moveItem(at: url.deletingLastPathComponent(), to: staged)
+        #expect(try await repository.note(id: note.id) == note)
+        #expect(try Data(contentsOf: url) == Data("audio".utf8))
+        #expect(!FileManager.default.fileExists(atPath: staged.path))
+    }
+
     @Test("Action update cannot recreate an individually deleted action")
     func staleAction() async throws {
         let dependencies = try AppDependencyContainer(mode: .inMemory)

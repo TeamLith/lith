@@ -18,7 +18,7 @@ Use the **Notes**, **Archive**, and **Trash** picker above the list. Pinned note
 - **Archive** hides a note from the active list without deleting it.
 - **Move to Trash** keeps a recoverable copy in Trash.
 - In Archive or Trash, use **Restore** from the note’s menu (or swipe actions on iPhone/iPad) to return it to Notes. Its content, tags, source metadata, pin, and creation date remain intact.
-- **Delete Permanently** is available only in Trash and asks for confirmation. It cannot be undone.
+- **Delete Permanently** is available only in Trash and asks for confirmation. It removes the note, associated actions, links, recording metadata, and local audio files. Active recording and transcription work is stopped before deletion. It cannot be undone.
 
 ## Import and export Markdown
 
@@ -28,10 +28,12 @@ In a note, choose **Actions → Export Markdown** and select a destination in th
 
 Existing files are handled by the native save dialog, including its overwrite confirmation.
 
+Edits are flushed when you leave the note or background the app. If another window or sync changed/deleted the note, Lith keeps your unsaved text visible and reports a conflict instead of restoring deleted content or silently overwriting the other change. Copy the unsaved text, then reopen the note to reconcile it.
+
 ## Wikilinks and backlinks
 
 - Connect notes using `[[wikilinks]]`.
-- Use backlinks to rediscover related notes. Markdown imports and Siri-created or appended notes update these links too.
+- Use backlinks to rediscover related notes. Markdown imports and Siri-created or appended notes update these links too. Creating or renaming a target rechecks earlier links to its title; archiving, trashing, and restoring notes refresh their visible connections.
 - Let links turn isolated notes into a connected knowledge graph over time.
 
 ## Best fit

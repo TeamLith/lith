@@ -20,7 +20,7 @@ struct NoteListView: View {
     let wikiLinkService: WikiLinkServiceProtocol
     @Bindable var viewModel: NoteListViewModel
     @State private var importing = false
-    @State private var importError: String?
+    @State private var operationError: String?
     @State private var pendingDeletion: Note?
     @State private var creatingNote = false
 #if os(iOS)
@@ -96,12 +96,12 @@ struct NoteListView: View {
 #elseif os(iOS)
                         if let imported { openInEditor = false; openedNote = imported }
 #endif
-                    } catch { importError = error.localizedDescription }
+                    } catch { operationError = error.localizedDescription }
                 }
             }
-            .alert("Could Not Import", isPresented: Binding(get: { importError != nil }, set: { if !$0 { importError = nil } })) {
-                Button("OK") { importError = nil }
-            } message: { Text(importError ?? "") }
+            .alert("Could Not Complete Action", isPresented: Binding(get: { operationError != nil }, set: { if !$0 { operationError = nil } })) {
+                Button("OK") { operationError = nil }
+            } message: { Text(operationError ?? "") }
             .confirmationDialog("Delete this note permanently?", isPresented: Binding(get: { pendingDeletion != nil }, set: { if !$0 { pendingDeletion = nil } })) {
                 Button("Delete Permanently", role: .destructive) {
                     if let id = pendingDeletion?.id { Task { await delete(noteID: id) } }
@@ -290,12 +290,14 @@ struct NoteListView: View {
     }
 
     private func delete(noteID: UUID) async {
-        await viewModel.delete(noteID: noteID)
+        defer { audioServices?.finishNoteDeletion(noteID: noteID) }
+        do {
+            try await audioServices?.prepareForNoteDeletion(noteID: noteID)
+            await viewModel.delete(noteID: noteID)
 #if os(macOS)
-        if selectedNoteID == noteID {
-            selectedNoteID = nil
-        }
+            if viewModel.loadError == nil, selectedNoteID == noteID { selectedNoteID = nil }
 #endif
+        } catch { operationError = error.localizedDescription }
     }
 }
 
