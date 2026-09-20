@@ -89,7 +89,7 @@ jobs:
       - name: Regenerate Xcode project
         run: |
           set -euo pipefail
-          xcodegen generate --use-cache
+          python3 scripts/generate-project.py
           project_status="$(git status --short -- LithApps.xcodeproj)"
           if [ -n "$project_status" ]; then
             echo "LithApps.xcodeproj is out of sync with project.yml." >&2
@@ -260,7 +260,7 @@ jobs:
       - name: Regenerate Xcode project
         run: |
           set -euo pipefail
-          xcodegen generate --use-cache
+          python3 scripts/generate-project.py
           project_status="$(git status --short -- LithApps.xcodeproj)"
           if [ -n "$project_status" ]; then
             echo "LithApps.xcodeproj is out of sync with project.yml." >&2
