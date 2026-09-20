@@ -153,7 +153,7 @@ public final class RSSInboxViewModel {
             }
             // Re-index the persisted note on retries as well, preserving any edits
             // made after a partial save while completing its graph relationships.
-            _ = try await wikiLinkService?.refreshLinks(for: noteID)
+            try await wikiLinkService?.refreshAllLinks()
             try await repository.updateItemWorkflow(itemID: item.id, status: .savedAsNote, savedNoteID: noteID)
             try await reload()
             return noteID

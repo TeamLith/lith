@@ -162,10 +162,15 @@ private actor FailingOnceWikiLinkService: WikiLinkServiceProtocol {
         if shouldFail { shouldFail = false; throw InboxTestError.storageFailure }
         return try await base.refreshLinks(for: noteID)
     }
+    func refreshAllLinks() async throws {
+        if shouldFail { shouldFail = false; throw InboxTestError.storageFailure }
+        try await base.refreshAllLinks()
+    }
     func backlinks(to noteID: UUID) async throws -> [Note] { try await base.backlinks(to: noteID) }
 }
 
 private actor FailingNoteWriter: NoteRepository {
+    func updateExisting(_ note: Note, expected: Note) async throws { try await upsert(note) }
     func upsert(_ note: Note) async throws { throw InboxTestError.storageFailure }
     func delete(noteID: UUID) async throws {}
     func allNotes() async throws -> [Note] { [] }
