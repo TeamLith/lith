@@ -116,6 +116,7 @@ struct RootView: View {
                         repository: dependencies.noteRepository,
                         wikiLinkService: dependencies.wikiLinkService,
                         viewModel: noteListViewModel,
+                        audioServices: dependencies.audioServices,
                         selectedNoteID: $selectedNoteID
                     )
                     .navigationSplitViewColumnWidth(min: 240, ideal: 300)
@@ -124,10 +125,12 @@ struct RootView: View {
                         NoteDetailView(
                             repository: dependencies.noteRepository,
                             wikiLinkService: dependencies.wikiLinkService,
-                            noteID: selectedNoteID
+                            noteID: selectedNoteID,
+                            audioServices: dependencies.audioServices
                         ) {
                             await noteListViewModel.loadNotes()
                         }
+                        .id(selectedNoteID)
                     } else {
                         ContentUnavailableView(
                             "No Note Selected",
@@ -174,7 +177,8 @@ private struct ShellDetailView: View {
             NoteListView(
                 repository: dependencies.noteRepository,
                 wikiLinkService: dependencies.wikiLinkService,
-                viewModel: noteListViewModel
+                viewModel: noteListViewModel,
+                audioServices: dependencies.audioServices
             )
         } else if section == .search {
             SearchView(dependencies: dependencies)

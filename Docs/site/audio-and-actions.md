@@ -9,9 +9,12 @@ Lith is designed to turn spoken capture into useful follow-through.
 
 ## Workflow
 
-- Record audio tied to a note.
-- Generate a transcript when on-device support is available.
-- Extract action items from meetings or spoken notes.
+1. Open a note in preview mode and choose **Record audio**. Allow microphone access when prompted.
+2. Watch the elapsed duration, then choose **Stop recording**. Leaving the note or sending Lith to the background stops capture and retains the recording.
+3. Choose **Play** or **Pause** to listen. Choose **Transcribe** to generate an on-device transcript and allow Speech Recognition permission if prompted.
+4. Partial text appears while transcription runs. Choose **Cancel** to stop, or **Retry transcription** after a failure.
+5. Choose **Edit transcript**, make corrections, and choose **Save transcript**. Corrections are saved with the recording.
+6. Use the recording's trash button and confirm to remove its audio and transcript.
 
 ## Why it matters
 
@@ -31,7 +34,7 @@ Audio recording infrastructure saves each capture beneath a stable note and reco
 
 On-device transcription requests Speech Recognition permission and checks support for your device and language. Audio is never sent to a server as a fallback. When support is unavailable or permission is denied, the saved recording remains available and the failure explains how to retry. Partial transcripts and completion status are saved as recognition progresses. Cancellation or closing Lith leaves a retryable failed transcription and retains available text.
 
-Recording controls arrive in a separate stage. Audio files currently remain local; metadata uses portable relative file identities so enabling sync does not expose a device-specific filesystem path.
+Audio files currently remain local; metadata uses portable relative file identities so enabling sync does not expose a device-specific filesystem path.
 
 ## Siri and Shortcuts
 
