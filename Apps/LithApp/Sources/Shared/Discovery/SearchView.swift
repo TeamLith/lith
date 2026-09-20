@@ -74,7 +74,7 @@ struct SearchView: View {
                                 repository: dependencies.noteRepository,
                                 wikiLinkService: dependencies.wikiLinkService,
                                 noteID: note.id,
-                                audioServices: dependencies.audioServices
+                                actionItemRepository: dependencies.actionItemRepository, actionReviewService: dependencies.actionReviewService, transcriptProvider: { try await dependencies.transcript(for: $0) }, audioServices: dependencies.audioServices
                             ) { await model.search() }
                         } label: {
                             VStack(alignment: .leading, spacing: 6) {

@@ -1,5 +1,6 @@
 import SwiftUI
 import Observation
+import UniformTypeIdentifiers
 import Lith
 
 /// Note list screen showing pinned and recent note sections.
@@ -10,11 +11,17 @@ import Lith
 /// and pushes `NoteDetailView` via `NavigationLink`.
 @available(iOS 17, macOS 14, *)
 struct NoteListView: View {
+    let actionItemRepository: ActionItemRepository?
+    let actionReviewService: ActionItemReviewService?
+    let transcriptProvider: (@Sendable (UUID) async throws -> String)?
     let audioServices: AudioServices?
     let audioRepository: AudioRecordingRepository?
     let repository: NoteRepository
     let wikiLinkService: WikiLinkServiceProtocol
     @Bindable var viewModel: NoteListViewModel
+    @State private var importing = false
+    @State private var importError: String?
+    @State private var pendingDeletion: Note?
 
 #if os(macOS)
     @Binding var selectedNoteID: UUID?
@@ -23,10 +30,16 @@ struct NoteListView: View {
         repository: NoteRepository,
         wikiLinkService: WikiLinkServiceProtocol,
         viewModel: NoteListViewModel,
+        actionItemRepository: ActionItemRepository? = nil,
+        actionReviewService: ActionItemReviewService? = nil,
+        transcriptProvider: (@Sendable (UUID) async throws -> String)? = nil,
         audioRepository: AudioRecordingRepository? = nil,
         audioServices: AudioServices? = nil,
         selectedNoteID: Binding<UUID?>
     ) {
+        self.actionItemRepository = actionItemRepository
+        self.actionReviewService = actionReviewService
+        self.transcriptProvider = transcriptProvider
         self.audioServices = audioServices
         self.audioRepository = audioRepository
         self.repository = repository
@@ -35,7 +48,10 @@ struct NoteListView: View {
         self._selectedNoteID = selectedNoteID
     }
 #else
-    init(repository: NoteRepository, wikiLinkService: WikiLinkServiceProtocol, viewModel: NoteListViewModel, audioRepository: AudioRecordingRepository? = nil, audioServices: AudioServices? = nil) {
+    init(repository: NoteRepository, wikiLinkService: WikiLinkServiceProtocol, viewModel: NoteListViewModel, actionItemRepository: ActionItemRepository? = nil, actionReviewService: ActionItemReviewService? = nil, transcriptProvider: (@Sendable (UUID) async throws -> String)? = nil, audioRepository: AudioRecordingRepository? = nil, audioServices: AudioServices? = nil) {
+        self.actionItemRepository = actionItemRepository
+        self.actionReviewService = actionReviewService
+        self.transcriptProvider = transcriptProvider
         self.audioServices = audioServices
         self.audioRepository = audioRepository
         self.repository = repository
@@ -45,11 +61,41 @@ struct NoteListView: View {
 #endif
 
     var body: some View {
-        noteListContent
-            .navigationTitle("Notes")
-            .onAppear { Task { await viewModel.loadNotes() } }
-            .task { await viewModel.loadNotes() }
+        VStack(spacing: 0) {
+            Picker("Collection", selection: $viewModel.collection) {
+                ForEach(NoteCollection.allCases, id: \.self) { Text($0.rawValue).tag($0) }
+            }.pickerStyle(.segmented).padding()
+            noteListContent
+        }
+            .navigationTitle(viewModel.collection.rawValue)
+            .task(id: viewModel.collection) { await viewModel.loadNotes() }
+            .fileImporter(isPresented: $importing, allowedContentTypes: MarkdownFile.readableContentTypes) { result in
+                Task {
+                    do {
+                        let url = try result.get()
+                        let access = url.startAccessingSecurityScopedResource()
+                        defer { if access { url.stopAccessingSecurityScopedResource() } }
+                        let data = try Data(contentsOf: url)
+                        let imported = await viewModel.importMarkdown(data: data, filename: url.lastPathComponent, wikiLinkService: wikiLinkService)
+#if os(macOS)
+                        if let imported { selectedNoteID = imported.id }
+#endif
+                    } catch { importError = error.localizedDescription }
+                }
+            }
+            .alert("Could Not Import", isPresented: Binding(get: { importError != nil }, set: { if !$0 { importError = nil } })) {
+                Button("OK") { importError = nil }
+            } message: { Text(importError ?? "") }
+            .confirmationDialog("Delete this note permanently?", isPresented: Binding(get: { pendingDeletion != nil }, set: { if !$0 { pendingDeletion = nil } })) {
+                Button("Delete Permanently", role: .destructive) {
+                    if let id = pendingDeletion?.id { Task { await delete(noteID: id) } }
+                    pendingDeletion = nil
+                }
+            } message: { Text("This removes \(pendingDeletion?.title.isEmpty == false ? pendingDeletion!.title : "this note") from Lith and cannot be undone.") }
             .toolbar {
+                ToolbarItem(placement: .secondaryAction) {
+                    Button { importing = true } label: { Label("Import Markdown", systemImage: "square.and.arrow.down") }
+                }
                 ToolbarItem(placement: .primaryAction) {
                     Button {
                         Task {
@@ -91,9 +137,9 @@ struct NoteListView: View {
 
     private var emptyNotesView: some View {
         ContentUnavailableView(
-            "No Notes Yet",
+            viewModel.collection == .active ? "No Notes Yet" : "\(viewModel.collection.rawValue) Is Empty",
             systemImage: "note.text.badge.plus",
-            description: Text("Your notes will appear here. Create your first note to get started.")
+            description: Text(viewModel.collection == .active ? "Create a note or import a Markdown file to get started." : "Notes in this collection will appear here.")
         )
     }
 
@@ -131,7 +177,7 @@ struct NoteListView: View {
             .contextMenu { noteActions(for: note) }
 #else
         NavigationLink {
-            NoteDetailView(repository: repository, wikiLinkService: wikiLinkService, noteID: note.id, audioRepository: audioRepository, audioServices: audioServices) {
+            NoteDetailView(repository: repository, wikiLinkService: wikiLinkService, noteID: note.id, actionItemRepository: actionItemRepository, actionReviewService: actionReviewService, transcriptProvider: transcriptProvider, audioRepository: audioRepository, audioServices: audioServices) {
                 await viewModel.loadNotes()
             }
         } label: {
@@ -139,18 +185,17 @@ struct NoteListView: View {
         }
         .contextMenu { noteActions(for: note) }
         .swipeActions(edge: .leading, allowsFullSwipe: false) {
-            Button {
-                Task { await archive(noteID: note.id) }
-            } label: {
-                Label("Archive", systemImage: "archivebox")
+            if note.isArchived || note.isTrashed {
+                Button("Restore") { Task { await restore(noteID: note.id) } }.tint(.green)
+            } else {
+                Button("Archive") { Task { await archive(noteID: note.id) } }.tint(.blue)
             }
-            .tint(.blue)
         }
         .swipeActions(edge: .trailing, allowsFullSwipe: false) {
-            Button(role: .destructive) {
-                Task { await moveToTrash(noteID: note.id) }
-            } label: {
-                Label("Trash", systemImage: "trash")
+            if note.isTrashed {
+                Button("Delete", role: .destructive) { pendingDeletion = note }
+            } else {
+                Button("Trash", role: .destructive) { Task { await moveToTrash(noteID: note.id) } }
             }
         }
 #endif
@@ -186,23 +231,23 @@ struct NoteListView: View {
 
     @ViewBuilder
     private func noteActions(for note: Note) -> some View {
-        Button {
-            Task { await archive(noteID: note.id) }
-        } label: {
-            Label("Archive", systemImage: "archivebox")
+        if note.isArchived || note.isTrashed {
+            Button { Task { await restore(noteID: note.id) } } label: { Label("Restore", systemImage: "arrow.uturn.backward") }
+        } else {
+            Button { Task { await archive(noteID: note.id) } } label: { Label("Archive", systemImage: "archivebox") }
         }
+        if note.isTrashed {
+            Button(role: .destructive) { pendingDeletion = note } label: { Label("Delete Permanently", systemImage: "xmark.bin") }
+        } else {
+            Button(role: .destructive) { Task { await moveToTrash(noteID: note.id) } } label: { Label("Move to Trash", systemImage: "trash") }
+        }
+    }
 
-        Button(role: .destructive) {
-            Task { await moveToTrash(noteID: note.id) }
-        } label: {
-            Label("Move to Trash", systemImage: "trash")
-        }
-
-        Button(role: .destructive) {
-            Task { await delete(noteID: note.id) }
-        } label: {
-            Label("Delete Permanently", systemImage: "xmark.bin")
-        }
+    private func restore(noteID: UUID) async {
+        await viewModel.restore(noteID: noteID)
+#if os(macOS)
+        if selectedNoteID == noteID { selectedNoteID = nil }
+#endif
     }
 
     private func archive(noteID: UUID) async {

@@ -13,7 +13,11 @@ public enum NoteCaptureError: Error, LocalizedError {
 /// Shared behavior for Shortcuts/Siri and other capture entry points.
 public struct NoteCaptureService: SiriIntentAdapter, Sendable {
     private let repository: NoteRepository
-    public init(repository: NoteRepository) { self.repository = repository }
+    private let wikiLinkService: WikiLinkServiceProtocol?
+    public init(repository: NoteRepository, wikiLinkService: WikiLinkServiceProtocol? = nil) {
+        self.repository = repository
+        self.wikiLinkService = wikiLinkService
+    }
 
     public func createNote(title: String, content: String) async throws -> Note {
         let title = title.trimmingCharacters(in: .whitespacesAndNewlines)
@@ -23,6 +27,7 @@ public struct NoteCaptureService: SiriIntentAdapter, Sendable {
         let fallbackTitle = String(content.split(whereSeparator: \.isNewline).first.map(String.init)?.prefix(80) ?? "Untitled")
         let note = Note(title: title.isEmpty ? fallbackTitle : title, bodyMarkdown: content)
         try await repository.upsert(note)
+        _ = try await wikiLinkService?.refreshLinks(for: note.id)
         return note
     }
 
@@ -32,6 +37,7 @@ public struct NoteCaptureService: SiriIntentAdapter, Sendable {
         note.bodyMarkdown += (note.bodyMarkdown.isEmpty ? "" : "\n\n") + content
         note.updatedAt = Date()
         try await repository.upsert(note)
+        _ = try await wikiLinkService?.refreshLinks(for: note.id)
         return note
     }
 }
