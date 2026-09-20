@@ -7,14 +7,24 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		03388667D4176B3B172B077D /* AudioNoteSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90C95CBFF3A4C5BD199E9AEA /* AudioNoteSection.swift */; };
 		04F64ED69C42450BB12D1797 /* LithmacOSApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = AE49D411D86EDECEBFE63D9E /* LithmacOSApp.swift */; };
 		2973F43614DAD15650F1FD6B /* LithiOSApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = F709463628A953739878AC1A /* LithiOSApp.swift */; };
+		2A2936FA32D5135376AC6A84 /* CreateNoteIntent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B849EF6DA09382F60787933 /* CreateNoteIntent.swift */; };
+		4909293EB94E7DBB36A6ECC3 /* AudioNoteSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90C95CBFF3A4C5BD199E9AEA /* AudioNoteSection.swift */; };
+		4A3FBE40C7698FD6A9929EEC /* GraphView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20342FFE2E34CB1EBAB03E1D /* GraphView.swift */; };
+		4CA2643DEED104B20F78F57F /* RSSInboxView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 907EDF554A424B7FD4B4DBEB /* RSSInboxView.swift */; };
+		5131A449E7DDD21BEE28EECD /* CreateNoteIntent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B849EF6DA09382F60787933 /* CreateNoteIntent.swift */; };
 		7D5EDB250F82B5133B0B349C /* NoteListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8030DC0FD62B167304E8CC8 /* NoteListView.swift */; };
 		A3D006E9269F2DC9329B505B /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A59A6C1A5D68DF5B7EBF2AD8 /* Assets.xcassets */; };
 		ABDA9B9BEBB9BB816D4D8BDA /* NoteDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8A3E60B88EBCBB104E4438C /* NoteDetailView.swift */; };
 		B617A5DAF1A710E43AACBC5B /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B66636C8B07EDF7EB10EE8E /* RootView.swift */; };
+		B72263F82885621EFE08449F /* RSSInboxView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 907EDF554A424B7FD4B4DBEB /* RSSInboxView.swift */; };
+		BF4263306FBA3F30C3CB8033 /* SearchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7626ACF91503F717997B7EEA /* SearchView.swift */; };
 		CEE34ABB9A6AED4C894B2C6E /* NoteDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8A3E60B88EBCBB104E4438C /* NoteDetailView.swift */; };
+		CF4E94E25D042335D653BD11 /* SearchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7626ACF91503F717997B7EEA /* SearchView.swift */; };
 		D70DBE69C2CC6CE217890F2E /* Lith in Frameworks */ = {isa = PBXBuildFile; productRef = B3308A8885192CB6856F7DB8 /* Lith */; };
+		DFBC70FD6AFCC543687BA359 /* GraphView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20342FFE2E34CB1EBAB03E1D /* GraphView.swift */; };
 		E0BFB93D264DA2618F6F223C /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B66636C8B07EDF7EB10EE8E /* RootView.swift */; };
 		E78EA3D22CF06DE879EC4FFD /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A59A6C1A5D68DF5B7EBF2AD8 /* Assets.xcassets */; };
 		F962795E1F8245448FFAD67F /* Lith in Frameworks */ = {isa = PBXBuildFile; productRef = C71C05C8516C2A960CBB47FF /* Lith */; };
@@ -22,10 +32,15 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		0B849EF6DA09382F60787933 /* CreateNoteIntent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateNoteIntent.swift; sourceTree = "<group>"; };
+		20342FFE2E34CB1EBAB03E1D /* GraphView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GraphView.swift; sourceTree = "<group>"; };
+		6EBF900D6E0186B8E7316090 /* Notes + ToDo */ = {isa = PBXFileReference; lastKnownFileType = folder; name = "Notes + ToDo"; path = .; sourceTree = SOURCE_ROOT; };
 		4B66636C8B07EDF7EB10EE8E /* RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
 		5C1D318FCAD055AB7D9F562E /* LithmacOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = LithmacOS.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		6EBF900D6E0186B8E7316090 /* Notes + ToDo */ = {isa = PBXFileReference; lastKnownFileType = folder; name = "Notes + ToDo"; path = .; sourceTree = SOURCE_ROOT; };
+		7626ACF91503F717997B7EEA /* SearchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchView.swift; sourceTree = "<group>"; };
 		892C5C70121A16A76B70F652 /* LithmacOS.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = LithmacOS.entitlements; sourceTree = "<group>"; };
+		907EDF554A424B7FD4B4DBEB /* RSSInboxView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RSSInboxView.swift; sourceTree = "<group>"; };
+		90C95CBFF3A4C5BD199E9AEA /* AudioNoteSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioNoteSection.swift; sourceTree = "<group>"; };
 		A59A6C1A5D68DF5B7EBF2AD8 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		A8A3E60B88EBCBB104E4438C /* NoteDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoteDetailView.swift; sourceTree = "<group>"; };
 		AE49D411D86EDECEBFE63D9E /* LithmacOSApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LithmacOSApp.swift; sourceTree = "<group>"; };
@@ -66,12 +81,37 @@
 			);
 			sourceTree = "<group>";
 		};
+		382FD0BA20A232AD551F4B64 /* Audio */ = {
+			isa = PBXGroup;
+			children = (
+				90C95CBFF3A4C5BD199E9AEA /* AudioNoteSection.swift */,
+			);
+			path = Audio;
+			sourceTree = "<group>";
+		};
 		5023F31D788A56724EDCC80C /* Packages */ = {
 			isa = PBXGroup;
 			children = (
 				6EBF900D6E0186B8E7316090 /* Notes + ToDo */,
 			);
 			name = Packages;
+			sourceTree = "<group>";
+		};
+		602CCAEDF4D7C54316746C10 /* Discovery */ = {
+			isa = PBXGroup;
+			children = (
+				20342FFE2E34CB1EBAB03E1D /* GraphView.swift */,
+				7626ACF91503F717997B7EEA /* SearchView.swift */,
+			);
+			path = Discovery;
+			sourceTree = "<group>";
+		};
+		6AB4491D3D38D1AFB015B614 /* Intents */ = {
+			isa = PBXGroup;
+			children = (
+				0B849EF6DA09382F60787933 /* CreateNoteIntent.swift */,
+			);
+			path = Intents;
 			sourceTree = "<group>";
 		};
 		6D2C9D0846ACB99251275CFB /* iOS */ = {
@@ -102,6 +142,14 @@
 			path = Apps/LithApp/Sources/macOS;
 			sourceTree = "<group>";
 		};
+		AE20A50BC653D08FC9361193 /* RSS */ = {
+			isa = PBXGroup;
+			children = (
+				907EDF554A424B7FD4B4DBEB /* RSSInboxView.swift */,
+			);
+			path = RSS;
+			sourceTree = "<group>";
+		};
 		E69C0373E5068FCABD71F4C6 /* Notes */ = {
 			isa = PBXGroup;
 			children = (
@@ -124,7 +172,11 @@
 			isa = PBXGroup;
 			children = (
 				4B66636C8B07EDF7EB10EE8E /* RootView.swift */,
+				382FD0BA20A232AD551F4B64 /* Audio */,
+				602CCAEDF4D7C54316746C10 /* Discovery */,
+				6AB4491D3D38D1AFB015B614 /* Intents */,
 				E69C0373E5068FCABD71F4C6 /* Notes */,
+				AE20A50BC653D08FC9361193 /* RSS */,
 			);
 			name = Shared;
 			path = Apps/LithApp/Sources/Shared;
@@ -181,6 +233,8 @@
 			attributes = {
 				BuildIndependentTargetsInParallel = YES;
 				LastUpgradeCheck = 1430;
+				TargetAttributes = {
+				};
 			};
 			buildConfigurationList = 290624B7849562F1E6866E38 /* Build configuration list for PBXProject "LithApps" */;
 			developmentRegion = en;
@@ -229,10 +283,15 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4909293EB94E7DBB36A6ECC3 /* AudioNoteSection.swift in Sources */,
+				2A2936FA32D5135376AC6A84 /* CreateNoteIntent.swift in Sources */,
+				4A3FBE40C7698FD6A9929EEC /* GraphView.swift in Sources */,
 				2973F43614DAD15650F1FD6B /* LithiOSApp.swift in Sources */,
 				ABDA9B9BEBB9BB816D4D8BDA /* NoteDetailView.swift in Sources */,
 				FF99E821F7BE4B13EDAA3C2C /* NoteListView.swift in Sources */,
+				4CA2643DEED104B20F78F57F /* RSSInboxView.swift in Sources */,
 				B617A5DAF1A710E43AACBC5B /* RootView.swift in Sources */,
+				BF4263306FBA3F30C3CB8033 /* SearchView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -240,10 +299,15 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				03388667D4176B3B172B077D /* AudioNoteSection.swift in Sources */,
+				5131A449E7DDD21BEE28EECD /* CreateNoteIntent.swift in Sources */,
+				DFBC70FD6AFCC543687BA359 /* GraphView.swift in Sources */,
 				04F64ED69C42450BB12D1797 /* LithmacOSApp.swift in Sources */,
 				CEE34ABB9A6AED4C894B2C6E /* NoteDetailView.swift in Sources */,
 				7D5EDB250F82B5133B0B349C /* NoteListView.swift in Sources */,
+				B72263F82885621EFE08449F /* RSSInboxView.swift in Sources */,
 				E0BFB93D264DA2618F6F223C /* RootView.swift in Sources */,
+				CF4E94E25D042335D653BD11 /* SearchView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -255,10 +319,12 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
-				CURRENT_PROJECT_VERSION = 8;
+				CURRENT_PROJECT_VERSION = 16;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = Lith;
 				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "Record audio attached to your notes.";
+				INFOPLIST_KEY_NSSpeechRecognitionUsageDescription = "Transcribe your recordings on this device.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
@@ -267,7 +333,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 0.1.7;
+				MARKETING_VERSION = 0.1.15;
 				PRODUCT_BUNDLE_IDENTIFIER = me.lith.ios;
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -398,23 +464,25 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = Apps/LithApp/Sources/macOS/LithmacOS.entitlements;
-				CODE_SIGN_IDENTITY = "Apple Development";
-				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 8;
-				DEVELOPMENT_TEAM = 3KG4D4R466;
+				CURRENT_PROJECT_VERSION = 16;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = Lith;
 				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "Record audio attached to your notes.";
+				INFOPLIST_KEY_NSSpeechRecognitionUsageDescription = "Transcribe your recordings on this device.";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				MARKETING_VERSION = 0.1.7;
+				MARKETING_VERSION = 0.1.15;
 				PRODUCT_BUNDLE_IDENTIFIER = me.lith.macos;
-				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = macosx;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 3KG4D4R466;
+				PROVISIONING_PROFILE_SPECIFIER = "";
 			};
 			name = Release;
 		};
@@ -423,23 +491,25 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = Apps/LithApp/Sources/macOS/LithmacOS.entitlements;
-				CODE_SIGN_IDENTITY = "Apple Development";
-				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 8;
-				DEVELOPMENT_TEAM = 3KG4D4R466;
+				CURRENT_PROJECT_VERSION = 16;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = Lith;
 				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "Record audio attached to your notes.";
+				INFOPLIST_KEY_NSSpeechRecognitionUsageDescription = "Transcribe your recordings on this device.";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				MARKETING_VERSION = 0.1.7;
+				MARKETING_VERSION = 0.1.15;
 				PRODUCT_BUNDLE_IDENTIFIER = me.lith.macos;
-				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = macosx;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 3KG4D4R466;
+				PROVISIONING_PROFILE_SPECIFIER = "";
 			};
 			name = Debug;
 		};
@@ -448,10 +518,12 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
-				CURRENT_PROJECT_VERSION = 8;
+				CURRENT_PROJECT_VERSION = 16;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = Lith;
 				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "Record audio attached to your notes.";
+				INFOPLIST_KEY_NSSpeechRecognitionUsageDescription = "Transcribe your recordings on this device.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
@@ -460,7 +532,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 0.1.7;
+				MARKETING_VERSION = 0.1.15;
 				PRODUCT_BUNDLE_IDENTIFIER = me.lith.ios;
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
