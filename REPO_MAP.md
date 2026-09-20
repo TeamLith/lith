@@ -91,6 +91,7 @@ Read only what matches the task:
 - `LithApps.xcodeproj`: generated project artifact. Regenerate after structural source changes.
 - `Apps/LithApp/Sources/Shared/RootView.swift`: top-level app shell used by both platforms.
 - `Apps/LithApp/Sources/Shared/Notes`: SwiftUI note list/detail screens shared across app targets.
+- `Apps/LithApp/Sources/Shared/Intents`: App Intents and Shortcuts entry points backed by shared capture services.
 - `Apps/LithApp/Sources/Shared/RSS`: SwiftUI feed inbox and article review screens shared across app targets.
 - `Apps/LithApp/Sources/Shared/Discovery`: search screens and note discovery UI shared across app targets.
 - `Apps/LithApp/Sources/iOS/LithiOSApp.swift`: iOS app entry point.
