@@ -3,6 +3,7 @@ import Lith
 
 @available(iOS 17, macOS 14, *)
 struct NoteDetailView: View {
+    let audioRepository: AudioRecordingRepository?
     let onNoteChanged: @MainActor () async -> Void
 
     @Environment(\.dismiss) private var dismiss
@@ -14,8 +15,10 @@ struct NoteDetailView: View {
         repository: NoteRepository,
         wikiLinkService: WikiLinkServiceProtocol,
         noteID: UUID,
+        audioRepository: AudioRecordingRepository? = nil,
         onNoteChanged: @escaping @MainActor () async -> Void = {}
     ) {
+        self.audioRepository = audioRepository
         self.onNoteChanged = onNoteChanged
         self._viewModel = State(
             initialValue: NoteDetailViewModel(
@@ -93,6 +96,11 @@ struct NoteDetailView: View {
 
                 if let saveError = viewModel.saveError {
                     saveErrorBanner(saveError)
+                }
+
+                if let audioRepository {
+                    AudioNoteSection(noteID: viewModel.noteID, repository: audioRepository)
+                        .id(viewModel.noteID)
                 }
 
                 if !viewModel.backlinks.isEmpty {

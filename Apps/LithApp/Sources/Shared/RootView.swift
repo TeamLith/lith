@@ -115,6 +115,7 @@ struct RootView: View {
                         repository: dependencies.noteRepository,
                         wikiLinkService: dependencies.wikiLinkService,
                         viewModel: noteListViewModel,
+                        audioRepository: dependencies.audioRecordingRepository,
                         selectedNoteID: $selectedNoteID
                     )
                     .navigationSplitViewColumnWidth(min: 240, ideal: 300)
@@ -123,7 +124,8 @@ struct RootView: View {
                         NoteDetailView(
                             repository: dependencies.noteRepository,
                             wikiLinkService: dependencies.wikiLinkService,
-                            noteID: selectedNoteID
+                            noteID: selectedNoteID,
+                            audioRepository: dependencies.audioRecordingRepository
                         ) {
                             await noteListViewModel.loadNotes()
                         }
@@ -173,7 +175,8 @@ private struct ShellDetailView: View {
             NoteListView(
                 repository: dependencies.noteRepository,
                 wikiLinkService: dependencies.wikiLinkService,
-                viewModel: noteListViewModel
+                viewModel: noteListViewModel,
+                audioRepository: dependencies.audioRecordingRepository
             )
         } else if section == .rss {
             RSSRefreshPanel(viewModel: rssRefreshViewModel)

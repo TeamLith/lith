@@ -10,6 +10,7 @@ import Lith
 /// and pushes `NoteDetailView` via `NavigationLink`.
 @available(iOS 17, macOS 14, *)
 struct NoteListView: View {
+    let audioRepository: AudioRecordingRepository?
     let repository: NoteRepository
     let wikiLinkService: WikiLinkServiceProtocol
     @Bindable var viewModel: NoteListViewModel
@@ -21,15 +22,18 @@ struct NoteListView: View {
         repository: NoteRepository,
         wikiLinkService: WikiLinkServiceProtocol,
         viewModel: NoteListViewModel,
+        audioRepository: AudioRecordingRepository? = nil,
         selectedNoteID: Binding<UUID?>
     ) {
+        self.audioRepository = audioRepository
         self.repository = repository
         self.wikiLinkService = wikiLinkService
         self.viewModel = viewModel
         self._selectedNoteID = selectedNoteID
     }
 #else
-    init(repository: NoteRepository, wikiLinkService: WikiLinkServiceProtocol, viewModel: NoteListViewModel) {
+    init(repository: NoteRepository, wikiLinkService: WikiLinkServiceProtocol, viewModel: NoteListViewModel, audioRepository: AudioRecordingRepository? = nil) {
+        self.audioRepository = audioRepository
         self.repository = repository
         self.wikiLinkService = wikiLinkService
         self.viewModel = viewModel
@@ -123,7 +127,7 @@ struct NoteListView: View {
             .contextMenu { noteActions(for: note) }
 #else
         NavigationLink {
-            NoteDetailView(repository: repository, wikiLinkService: wikiLinkService, noteID: note.id) {
+            NoteDetailView(repository: repository, wikiLinkService: wikiLinkService, noteID: note.id, audioRepository: audioRepository) {
                 await viewModel.loadNotes()
             }
         } label: {

@@ -12,6 +12,7 @@ public final class AppDependencyContainer: @unchecked Sendable {
     public let persistentContainer: NSPersistentContainer
     public let noteRepository: NoteRepository
     public let linkRepository: LinkRepository
+    public let audioRecordingRepository: AudioRecordingRepository
     public let rssRepository: RSSRepository
     public let searchService: SearchServiceProtocol
     public let rssConversionService: RSSConversionServiceProtocol
@@ -29,6 +30,7 @@ public final class AppDependencyContainer: @unchecked Sendable {
 
         self.noteRepository = noteRepository
         self.linkRepository = linkRepository
+        self.audioRecordingRepository = CoreDataAudioRecordingRepository(container: persistentContainer)
         self.rssRepository = rssRepository
         self.searchService = SearchService(repository: noteRepository)
         self.rssConversionService = RSSConversionService()
