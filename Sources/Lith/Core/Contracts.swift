@@ -22,6 +22,7 @@ public protocol RSSRepository: Sendable {
     func upsertItems(_ items: [RSSItem]) async throws
     func items(feedID: UUID?) async throws -> [RSSItem]
     func item(id: UUID) async throws -> RSSItem?
+    func updateItemWorkflow(itemID: UUID, status: RSSItemStatus, savedNoteID: UUID?) async throws
 }
 
 public protocol RSSFeedDataLoading: Sendable {
