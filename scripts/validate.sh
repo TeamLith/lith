@@ -129,8 +129,8 @@ if [[ $package_only -eq 1 ]]; then
   run_logged_step macos-source-typecheck swiftc -typecheck -parse-as-library -I "$modules" -target "$(uname -m)-apple-macosx14.0" "${app_sources[@]}"
   echo "Package validation passed. Xcode app builds, iOS compilation, signing, and UI tests were not run."
 else
-  run_logged_step xcodebuild-macos xcodebuild -scheme LithmacOS -project LithApps.xcodeproj -configuration Debug -destination "platform=macOS" CODE_SIGNING_ALLOWED=NO build
-  run_logged_step xcodebuild-ios xcodebuild -scheme LithiOS -project LithApps.xcodeproj -configuration Debug -destination "generic/platform=iOS Simulator" CODE_SIGNING_ALLOWED=NO build
+  run_logged_step xcodebuild-macos xcodebuild -scheme LithmacOS -project LithApps.xcodeproj -configuration Debug -destination "platform=macOS" CODE_SIGNING_ALLOWED=NO build-for-testing
+  run_logged_step xcodebuild-ios xcodebuild -scheme LithiOS -project LithApps.xcodeproj -configuration Debug -destination "generic/platform=iOS Simulator" CODE_SIGNING_ALLOWED=NO build-for-testing
   if [[ $ui_tests -eq 1 ]]; then
     if [[ -z "${LITH_IOS_TEST_DESTINATION:-}" ]]; then
       echo "Set LITH_IOS_TEST_DESTINATION to an installed iOS simulator destination before --ui-tests." >&2

@@ -57,7 +57,7 @@ private enum AppSection: String, CaseIterable, Hashable, Identifiable {
         case .search:
             return "Query filters and graph exploration will connect once the dedicated UI tasks land."
         case .settings:
-            return "Sync status, app preferences, and diagnostics will be surfaced in a later task."
+            return "Control optional iCloud sync, check progress, and review retained conflicts."
         }
     }
 }
@@ -65,6 +65,8 @@ private enum AppSection: String, CaseIterable, Hashable, Identifiable {
 struct RootView: View {
     private let dependencies: AppDependencyContainer
 
+    @Environment(\.scenePhase) private var scenePhase
+    @State private var syncSceneID = UUID()
     @State private var selectedSection: AppSection? = .notes
     @State private var noteListViewModel: NoteListViewModel
     @State private var rssInboxViewModel: RSSInboxViewModel
@@ -82,6 +84,18 @@ struct RootView: View {
     }
 
     var body: some View {
+        platformBody
+            .task {
+                await dependencies.syncSettings.restoreStatus()
+                dependencies.syncSettings.setSceneActive(syncSceneID, active: scenePhase == .active)
+            }
+            .onChange(of: scenePhase) { _, phase in
+                dependencies.syncSettings.setSceneActive(syncSceneID, active: phase == .active)
+            }
+            .onDisappear { dependencies.syncSettings.setSceneActive(syncSceneID, active: false) }
+    }
+
+    private var platformBody: some View {
 #if os(macOS)
         macOSBody
 #else
@@ -116,6 +130,7 @@ struct RootView: View {
                         repository: dependencies.noteRepository,
                         wikiLinkService: dependencies.wikiLinkService,
                         viewModel: noteListViewModel,
+                        actionItemRepository: dependencies.actionItemRepository, actionReviewService: dependencies.actionReviewService, transcriptProvider: { try await dependencies.transcript(for: $0) }, audioServices: dependencies.audioServices,
                         selectedNoteID: $selectedNoteID
                     )
                     .navigationSplitViewColumnWidth(min: 240, ideal: 300)
@@ -124,10 +139,12 @@ struct RootView: View {
                         NoteDetailView(
                             repository: dependencies.noteRepository,
                             wikiLinkService: dependencies.wikiLinkService,
-                            noteID: selectedNoteID
+                            noteID: selectedNoteID,
+                            actionItemRepository: dependencies.actionItemRepository, actionReviewService: dependencies.actionReviewService, transcriptProvider: { try await dependencies.transcript(for: $0) }, audioServices: dependencies.audioServices
                         ) {
                             await noteListViewModel.loadNotes()
                         }
+                        .id(selectedNoteID)
                     } else {
                         ContentUnavailableView(
                             "No Note Selected",
@@ -175,7 +192,8 @@ private struct ShellDetailView: View {
             NoteListView(
                 repository: dependencies.noteRepository,
                 wikiLinkService: dependencies.wikiLinkService,
-                viewModel: noteListViewModel
+                viewModel: noteListViewModel,
+                actionItemRepository: dependencies.actionItemRepository, actionReviewService: dependencies.actionReviewService, transcriptProvider: { try await dependencies.transcript(for: $0) }, audioServices: dependencies.audioServices
             )
         } else if section == .search {
             SearchView(dependencies: dependencies)
@@ -183,6 +201,8 @@ private struct ShellDetailView: View {
             RSSInboxView(viewModel: rssInboxViewModel, dependencies: dependencies) {
                 await noteListViewModel.loadNotes()
             }
+        } else if section == .settings {
+            SyncSettingsView(viewModel: dependencies.syncSettings)
         } else {
             placeholderBody
         }
@@ -193,6 +213,8 @@ private struct ShellDetailView: View {
             RSSInboxView(viewModel: rssInboxViewModel, dependencies: dependencies) {
                 await noteListViewModel.loadNotes()
             }
+        } else if section == .settings {
+            SyncSettingsView(viewModel: dependencies.syncSettings)
         } else {
             placeholderBody
         }
