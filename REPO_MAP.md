@@ -64,6 +64,7 @@ Read only what matches the task:
 - `Docs/site`: source of truth for the user-facing GitHub Pages documentation built with Just the Docs.
 - `.github/ISSUE_TEMPLATE`: GitHub Issue intake forms for feature work and repo-process work.
 - `.github/pull_request_template.md`: default PR checklist and issue-linking guide.
+- `.github/workflows/validate.yml`: canonical PR and `main` validation workflow that runs `scripts/validate.sh`.
 - `.github/workflows/pages.yml`: GitHub Pages build and deploy workflow for `Docs/site`.
 - `.github/workflows/release-testflight.yml`: manual TestFlight release workflow with preflight validation.
 - `scripts/validate.sh`: shared local/CI validation entry point that regenerates `LithApps.xcodeproj` and runs canonical build/test commands.
