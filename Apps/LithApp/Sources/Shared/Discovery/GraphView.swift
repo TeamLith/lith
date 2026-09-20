@@ -77,7 +77,7 @@ struct GraphView: View {
             set: { if !$0 { model.selectedNoteID = nil } }
         )) {
             if let id = model.selectedNoteID {
-                NoteDetailView(repository: dependencies.noteRepository, wikiLinkService: dependencies.wikiLinkService, noteID: id, audioRepository: dependencies.audioRecordingRepository, audioServices: dependencies.audioServices) {
+                NoteDetailView(repository: dependencies.noteRepository, wikiLinkService: dependencies.wikiLinkService, noteID: id, actionItemRepository: dependencies.actionItemRepository, actionReviewService: dependencies.actionReviewService, transcriptProvider: { try await dependencies.transcript(for: $0) }, audioRepository: dependencies.audioRecordingRepository, audioServices: dependencies.audioServices) {
                     await model.load()
                 }
             }

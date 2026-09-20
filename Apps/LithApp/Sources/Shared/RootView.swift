@@ -116,7 +116,7 @@ struct RootView: View {
                         repository: dependencies.noteRepository,
                         wikiLinkService: dependencies.wikiLinkService,
                         viewModel: noteListViewModel,
-                        audioServices: dependencies.audioServices,
+                        actionItemRepository: dependencies.actionItemRepository, actionReviewService: dependencies.actionReviewService, transcriptProvider: { try await dependencies.transcript(for: $0) }, audioServices: dependencies.audioServices,
                         selectedNoteID: $selectedNoteID
                     )
                     .navigationSplitViewColumnWidth(min: 240, ideal: 300)
@@ -126,7 +126,7 @@ struct RootView: View {
                             repository: dependencies.noteRepository,
                             wikiLinkService: dependencies.wikiLinkService,
                             noteID: selectedNoteID,
-                            audioServices: dependencies.audioServices
+                            actionItemRepository: dependencies.actionItemRepository, actionReviewService: dependencies.actionReviewService, transcriptProvider: { try await dependencies.transcript(for: $0) }, audioServices: dependencies.audioServices
                         ) {
                             await noteListViewModel.loadNotes()
                         }
@@ -178,7 +178,7 @@ private struct ShellDetailView: View {
                 repository: dependencies.noteRepository,
                 wikiLinkService: dependencies.wikiLinkService,
                 viewModel: noteListViewModel,
-                audioServices: dependencies.audioServices
+                actionItemRepository: dependencies.actionItemRepository, actionReviewService: dependencies.actionReviewService, transcriptProvider: { try await dependencies.transcript(for: $0) }, audioServices: dependencies.audioServices
             )
         } else if section == .search {
             SearchView(dependencies: dependencies)

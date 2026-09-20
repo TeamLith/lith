@@ -18,9 +18,14 @@ public final class AppDependencyContainer: @unchecked Sendable {
     public let searchService: SearchServiceProtocol
     public let rssConversionService: RSSConversionServiceProtocol
     public let rssFetchService: RSSFetchServiceProtocol
+    @MainActor public lazy var actionReviewService = ActionItemReviewService(repository: actionItemRepository, notes: noteRepository)
     public let actionItemRepository: ActionItemRepository
     public let actionItemExtractionService: ActionItemExtractionServiceProtocol
     public let wikiLinkService: WikiLinkServiceProtocol
+
+    public func transcript(for noteID: UUID) async throws -> String {
+        try await audioRecordingRepository.recordings(noteID: noteID).compactMap(\.transcript).joined(separator: "\n\n")
+    }
 
     public init(mode: AppBootstrapMode = .live) throws {
         let persistentContainer = try LithPersistentStore.makeContainer(inMemory: mode == .inMemory)
