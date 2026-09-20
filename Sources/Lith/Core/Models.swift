@@ -345,12 +345,16 @@ public struct ActionItem: Identifiable, Codable, Hashable, Sendable {
     }
 }
 
-public struct SavedSearch: Codable, Hashable, Sendable {
+public struct SavedSearch: Codable, Hashable, Sendable, Identifiable {
+    public let id: UUID
+    public var input: SearchInput?
     public var name: String
     public var query: String
     public var filter: SearchFilter
 
-    public init(name: String, query: String, filter: SearchFilter) {
+    public init(id: UUID = UUID(), name: String, query: String, filter: SearchFilter, input: SearchInput? = nil) {
+        self.id = id
+        self.input = input
         self.name = name
         self.query = query
         self.filter = filter

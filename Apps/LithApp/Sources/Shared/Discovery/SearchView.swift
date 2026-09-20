@@ -4,15 +4,45 @@ import Lith
 struct SearchView: View {
     let dependencies: AppDependencyContainer
     @State private var viewModel: SearchViewModel
+    @State private var namingSearch = false
+    @State private var editedSearchID: UUID?
+    @State private var searchName = ""
+    @State private var deletingSearch: SavedSearch?
 
     init(dependencies: AppDependencyContainer) {
         self.dependencies = dependencies
-        _viewModel = State(initialValue: SearchViewModel(service: dependencies.searchService))
+        _viewModel = State(initialValue: SearchViewModel(service: dependencies.searchService, savedRepository: dependencies.savedSearchRepository))
     }
 
     var body: some View {
         @Bindable var model = viewModel
         List {
+            Section("Saved searches") {
+                Button("Save current search") {
+                    editedSearchID = nil
+                    searchName = ""
+                    namingSearch = true
+                }
+                if let error = model.savedSearchError {
+                    Text(error).foregroundStyle(.red)
+                    Button("Reload saved searches") { Task { await model.loadSavedSearches() } }
+                }
+                ForEach(model.savedSearches) { saved in
+                    HStack {
+                        Button(saved.name) { Task { await model.applySavedSearch(saved) } }
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                        Menu {
+                            Button("Rename") {
+                                editedSearchID = saved.id
+                                searchName = saved.name
+                                namingSearch = true
+                            }
+                            Button("Delete", role: .destructive) { deletingSearch = saved }
+                        } label: { Image(systemName: "ellipsis.circle") }
+                        .accessibilityLabel("Manage saved search \(saved.name)")
+                    }
+                }
+            }
             Section("Filters") {
                 Picker("Source", selection: $model.input.source) {
                     Text("All sources").tag(nil as NoteSource?)
@@ -76,5 +106,33 @@ struct SearchView: View {
         }
         .searchable(text: $model.input.query, prompt: "Search notes, tags, and metadata")
         .task(id: model.input) { await model.search() }
+        .task { await model.loadSavedSearches() }
+        .sheet(isPresented: $namingSearch) {
+            VStack(alignment: .leading, spacing: 16) {
+                Text(editedSearchID == nil ? "Save current search" : "Rename saved search").font(.headline)
+                TextField("Name", text: $searchName)
+                if let error = model.savedSearchError { Text(error).foregroundStyle(.red) }
+                HStack {
+                    Button("Cancel") { namingSearch = false }
+                    Spacer()
+                    Button("Save") {
+                        Task {
+                            let saved: Bool
+                            if let id = editedSearchID { saved = await model.renameSavedSearch(id: id, name: searchName) }
+                            else { saved = await model.saveSearch(name: searchName) }
+                            if saved { namingSearch = false }
+                        }
+                    }.disabled(searchName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+                }
+            }
+            .disabled(model.isSavingSearch)
+            .padding().frame(minWidth: 300, idealWidth: 420)
+        }
+        .confirmationDialog("Delete saved search?", isPresented: Binding(get: { deletingSearch != nil }, set: { if !$0 { deletingSearch = nil } })) {
+            Button("Delete saved search", role: .destructive) {
+                if let id = deletingSearch?.id { Task { await model.deleteSavedSearch(id: id) } }
+                deletingSearch = nil
+            }
+        } message: { Text("Only the saved search is removed. Your notes are kept.") }
     }
 }

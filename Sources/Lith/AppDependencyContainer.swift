@@ -15,6 +15,7 @@ public final class AppDependencyContainer: @unchecked Sendable {
     @MainActor public lazy var audioServices = AudioServices(repository: audioRecordingRepository)
     public let audioRecordingRepository: AudioRecordingRepository
     public let rssRepository: RSSRepository
+    public let savedSearchRepository: SavedSearchRepository
     public let searchService: SearchServiceProtocol
     public let rssConversionService: RSSConversionServiceProtocol
     public let rssFetchService: RSSFetchServiceProtocol
@@ -33,6 +34,7 @@ public final class AppDependencyContainer: @unchecked Sendable {
         self.noteRepository = noteRepository
         self.linkRepository = linkRepository
         self.rssRepository = rssRepository
+        self.savedSearchRepository = LocalSavedSearchRepository(url: mode == .inMemory ? nil : LocalSavedSearchRepository.defaultURL)
         self.searchService = SearchService(repository: noteRepository)
         self.rssConversionService = RSSConversionService()
         self.rssFetchService = RSSFetchService(repository: rssRepository)
