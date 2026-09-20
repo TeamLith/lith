@@ -58,6 +58,7 @@
 
 /* Begin PBXFileReference section */
 		0B849EF6DA09382F60787933 /* CreateNoteIntent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateNoteIntent.swift; sourceTree = "<group>"; };
+		6EBF900D6E0186B8E7316090 /* Notes + ToDo */ = {isa = PBXFileReference; lastKnownFileType = folder; name = "Notes + ToDo"; path = .; sourceTree = SOURCE_ROOT; };
 		20342FFE2E34CB1EBAB03E1D /* GraphView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GraphView.swift; sourceTree = "<group>"; };
 		27948C837338A798706C7939 /* ActionItemsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionItemsView.swift; sourceTree = "<group>"; };
 		4249B0DDA4845512E18A713B /* CriticalNavigationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CriticalNavigationTests.swift; sourceTree = "<group>"; };
@@ -490,7 +491,11 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
+<<<<<<< HEAD
 				CURRENT_PROJECT_VERSION = 23;
+=======
+				CURRENT_PROJECT_VERSION = 21;
+>>>>>>> origin/codex/complete-product-backlog
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = Lith;
 				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
@@ -504,7 +509,11 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
+<<<<<<< HEAD
 				MARKETING_VERSION = 0.2.0;
+=======
+				MARKETING_VERSION = 0.1.20;
+>>>>>>> origin/codex/complete-product-backlog
 				PRODUCT_BUNDLE_IDENTIFIER = me.lith.ios;
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -655,8 +664,12 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
+<<<<<<< HEAD
 				CURRENT_PROJECT_VERSION = 23;
 				DEVELOPMENT_TEAM = 3KG4D4R466;
+=======
+				CURRENT_PROJECT_VERSION = 21;
+>>>>>>> origin/codex/complete-product-backlog
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = Lith;
 				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
@@ -667,7 +680,11 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
+<<<<<<< HEAD
 				MARKETING_VERSION = 0.2.0;
+=======
+				MARKETING_VERSION = 0.1.20;
+>>>>>>> origin/codex/complete-product-backlog
 				PRODUCT_BUNDLE_IDENTIFIER = me.lith.macos;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = macosx;
@@ -682,8 +699,12 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
+<<<<<<< HEAD
 				CURRENT_PROJECT_VERSION = 23;
 				DEVELOPMENT_TEAM = 3KG4D4R466;
+=======
+				CURRENT_PROJECT_VERSION = 21;
+>>>>>>> origin/codex/complete-product-backlog
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = Lith;
 				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
@@ -694,7 +715,11 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
+<<<<<<< HEAD
 				MARKETING_VERSION = 0.2.0;
+=======
+				MARKETING_VERSION = 0.1.20;
+>>>>>>> origin/codex/complete-product-backlog
 				PRODUCT_BUNDLE_IDENTIFIER = me.lith.macos;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = macosx;
@@ -723,7 +748,11 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
+<<<<<<< HEAD
 				CURRENT_PROJECT_VERSION = 23;
+=======
+				CURRENT_PROJECT_VERSION = 21;
+>>>>>>> origin/codex/complete-product-backlog
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = Lith;
 				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
@@ -737,7 +766,11 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
+<<<<<<< HEAD
 				MARKETING_VERSION = 0.2.0;
+=======
+				MARKETING_VERSION = 0.1.20;
+>>>>>>> origin/codex/complete-product-backlog
 				PRODUCT_BUNDLE_IDENTIFIER = me.lith.ios;
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";

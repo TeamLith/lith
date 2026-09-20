@@ -78,7 +78,8 @@ struct RootView: View {
             initialValue: RSSInboxViewModel(
                 repository: dependencies.rssRepository,
                 noteRepository: dependencies.noteRepository,
-                fetchService: dependencies.rssFetchService
+                fetchService: dependencies.rssFetchService,
+                wikiLinkService: dependencies.wikiLinkService
             )
         )
     }
