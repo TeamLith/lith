@@ -7,7 +7,7 @@ public final class CoreDataActionItemRepository: @unchecked Sendable, ActionItem
 
     public init(container: NSPersistentContainer) {
         context = container.newBackgroundContext()
-        context.mergePolicy = NSMergePolicy(merge: .mergeByPropertyObjectTrumpMergePolicyType)
+        context.mergePolicy = NSMergePolicy(merge: .errorMergePolicyType)
         context.automaticallyMergesChangesFromParent = true
         context.undoManager = nil
     }
@@ -15,6 +15,7 @@ public final class CoreDataActionItemRepository: @unchecked Sendable, ActionItem
     public func upsert(_ item: ActionItem) async throws {
         let data = try JSONEncoder().encode(item)
         try await perform {
+            try self.requireParent(item.sourceNoteID)
             let record = try self.fetch(item.id) ?? NSEntityDescription.insertNewObject(forEntityName: "ActionItem", into: self.context)
             record.setValue(item.id, forKey: "id")
             record.setValue(item.sourceNoteID, forKey: "sourceNoteID")
@@ -23,6 +24,26 @@ public final class CoreDataActionItemRepository: @unchecked Sendable, ActionItem
             record.setValue(item.updatedAt, forKey: "updatedAt")
             try self.context.save()
         }
+    }
+
+    public func updateExisting(_ item: ActionItem, expected: ActionItem) async throws {
+        let data = try JSONEncoder().encode(item)
+        try await perform {
+            try self.requireParent(item.sourceNoteID)
+            guard let record = try self.fetch(item.id) else { throw ActionItemReviewError.missingNote }
+            guard try self.decode(record) == expected else { throw NoteWriteError.conflict }
+            record.setValue(data, forKey: "payload")
+            record.setValue(item.createdAt, forKey: "createdAt")
+            record.setValue(item.updatedAt, forKey: "updatedAt")
+            try self.context.save()
+        }
+    }
+
+    private func requireParent(_ id: UUID) throws {
+        let request = NSFetchRequest<NSManagedObject>(entityName: "Note")
+        request.predicate = NSPredicate(format: "id == %@ AND isTrashed == NO", id as CVarArg)
+        request.fetchLimit = 1
+        guard try !context.fetch(request).isEmpty else { throw ActionItemReviewError.missingNote }
     }
 
     public func items(noteID: UUID?) async throws -> [ActionItem] {
@@ -66,8 +87,11 @@ public final class CoreDataActionItemRepository: @unchecked Sendable, ActionItem
 
     private func perform<T: Sendable>(_ work: @escaping @Sendable () throws -> T) async throws -> T {
         try await context.perform {
-            do { return try work() }
-            catch { self.context.rollback(); throw error }
+            try LithStoreWriteLock.withLock {
+                self.context.reset()
+                do { return try work() }
+                catch { self.context.rollback(); throw error }
+            }
         }
     }
 }
