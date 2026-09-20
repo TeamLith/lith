@@ -11,13 +11,13 @@ struct LithiOSApp: App {
 
     var body: some Scene {
         WindowGroup {
-            RootView(dependencies: dependencies)
+            AppLaunchView(dependencies: dependencies)
         }
     }
 
     private static func makeDependencies() -> AppDependencyContainer {
         do {
-            return try AppDependencyContainer(mode: .live)
+            return try AppDependencyContainer(mode: UITestSupport.isEnabled ? .inMemory : .live)
         } catch {
             preconditionFailure("Failed to bootstrap Lith iOS dependencies: \(error)")
         }

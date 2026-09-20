@@ -25,6 +25,7 @@ public final class NoteDetailViewModel {
 
     private var existingNote: Note?
     private var autosaveTask: Task<Void, Never>?
+    private var activeSave: Task<Note?, Never>?
 
     public init(
         noteID: UUID,
@@ -81,26 +82,30 @@ public final class NoteDetailViewModel {
     @discardableResult
     public func saveNow() async -> Note? {
         autosaveTask?.cancel()
-        guard hasUnsavedChanges else {
-            saveError = nil
-            return existingNote
+        if let activeSave {
+            _ = await activeSave.value
+            if saveError != nil { return nil }
+            return await saveNow()
         }
-        guard let note = makeCurrentNote() else {
-            return nil
+        guard hasUnsavedChanges else { return existingNote }
+        guard let note = makeCurrentNote(), let expected = existingNote else { return nil }
+        let operation = Task { [self] () -> Note? in
+            defer { activeSave = nil }
+            do {
+                try await repository.updateExisting(note, expected: expected)
+                existingNote = note
+                updatedAt = note.updatedAt
+                try await wikiLinkService.refreshAllLinks()
+                backlinks = try await wikiLinkService.backlinks(to: note.id)
+                saveError = nil
+                return note
+            } catch {
+                saveError = error
+                return nil
+            }
         }
-
-        do {
-            try await repository.upsert(note)
-            _ = try await wikiLinkService.refreshLinks(for: note.id)
-            backlinks = try await wikiLinkService.backlinks(to: note.id)
-            existingNote = note
-            updatedAt = note.updatedAt
-            saveError = nil
-            return note
-        } catch {
-            saveError = error
-            return nil
-        }
+        activeSave = operation
+        return await operation.value
     }
 
     @discardableResult
@@ -114,6 +119,13 @@ public final class NoteDetailViewModel {
     public func moveToTrash() async -> Note? {
         isArchived = false
         isTrashed = true
+        return await saveNow()
+    }
+
+    @discardableResult
+    public func restore() async -> Note? {
+        isArchived = false
+        isTrashed = false
         return await saveNow()
     }
 

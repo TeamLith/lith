@@ -2,6 +2,7 @@ import Foundation
 
 public protocol NoteRepository: Sendable {
     func upsert(_ note: Note) async throws
+    func updateExisting(_ note: Note, expected: Note) async throws
     func delete(noteID: UUID) async throws
     func allNotes() async throws -> [Note]
     func note(id: UUID) async throws -> Note?
@@ -22,6 +23,7 @@ public protocol RSSRepository: Sendable {
     func upsertItems(_ items: [RSSItem]) async throws
     func items(feedID: UUID?) async throws -> [RSSItem]
     func item(id: UUID) async throws -> RSSItem?
+    func updateItemWorkflow(itemID: UUID, status: RSSItemStatus, savedNoteID: UUID?) async throws
 }
 
 public protocol RSSFeedDataLoading: Sendable {
@@ -57,6 +59,7 @@ public protocol ActionItemExtractionServiceProtocol: Sendable {
 
 public protocol WikiLinkServiceProtocol: Sendable {
     func refreshLinks(for sourceNoteID: UUID) async throws -> [Link]
+    func refreshAllLinks() async throws
     func backlinks(to noteID: UUID) async throws -> [Note]
 }
 
@@ -72,5 +75,15 @@ public struct SyncConflict: Sendable {
     public init(local: Note, remote: Note) {
         self.local = local
         self.remote = remote
+    }
+}
+
+public enum NoteWriteError: Error, LocalizedError {
+    case missingNote, conflict
+    public var errorDescription: String? {
+        switch self {
+        case .missingNote: "This note was deleted. Your unsaved text has been kept in the editor."
+        case .conflict: "This note changed in another window or during sync. Copy your unsaved text, then reopen the note before editing again."
+        }
     }
 }

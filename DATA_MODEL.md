@@ -80,16 +80,22 @@ All entities are Core Data backed. IDs are UUID unless noted.
 - Fields:
   - `id: UUID`
   - `noteId: UUID`
-  - `audioFileUrl: URL`
+  - `relativeFilePath: String` (derived from note/recording UUIDs; resolved locally to `fileURL`)
   - `durationSeconds: Double`
   - `transcript: String?`
   - `transcriptionStatus: String` (`notStarted|processing|complete|failed`)
   - `recordedAt: Date`
+  - `updatedAt: Date`
+  - `recordingState: String` (`recording|complete|interrupted|failed`)
+  - `errorMessage: String?`
 - Relationships:
   - to-one `note`
 - CloudKit sync: Metadata yes; binary file path points to iCloud/local file store
 
 ## ActionItem
+
+Implemented as a Core Data `ActionItem` entity with `id`, `sourceNoteID`, and a Codable JSON `payload`, plus optional `createdAt` and `updatedAt` columns. The JSON domain value uses `task` and `assignee`; these correspond to the product fields `descriptionText` and `assigneeText` below. Optional timestamps preserve decoding of earlier payloads. IDs for extracted drafts are stable per source note and normalized action text; acceptance preserves this ID so repeated extraction cannot duplicate or overwrite an accepted action.
+
 
 - Fields:
   - `id: UUID`

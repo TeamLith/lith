@@ -12,6 +12,7 @@ public final class CoreDataRSSRepository: @unchecked Sendable, RSSRepository {
         self.context = container.newBackgroundContext()
         self.context.mergePolicy = NSMergePolicy(merge: .mergeByPropertyObjectTrumpMergePolicyType)
         self.context.undoManager = nil
+        self.context.automaticallyMergesChangesFromParent = true
     }
 
     public init(container: NSPersistentContainer) {
@@ -19,6 +20,7 @@ public final class CoreDataRSSRepository: @unchecked Sendable, RSSRepository {
         self.context = container.newBackgroundContext()
         self.context.mergePolicy = NSMergePolicy(merge: .mergeByPropertyObjectTrumpMergePolicyType)
         self.context.undoManager = nil
+        self.context.automaticallyMergesChangesFromParent = true
     }
 
     public func addFeed(_ feed: RSSFeed) async throws {
@@ -105,6 +107,15 @@ public final class CoreDataRSSRepository: @unchecked Sendable, RSSRepository {
         }
     }
 
+    public func updateItemWorkflow(itemID: UUID, status: RSSItemStatus, savedNoteID: UUID?) async throws {
+        try await perform {
+            guard let item = try self.fetchManagedItem(id: itemID) else { throw RSSInboxError.missingItem }
+            item.statusRawValue = status.rawValue
+            item.savedNoteID = savedNoteID
+            try self.saveIfNeeded()
+        }
+    }
+
     private func fetchManagedFeed(id: UUID) throws -> ManagedRSSFeed? {
         let request = ManagedRSSFeed.fetchRequest()
         request.fetchLimit = 1
@@ -162,6 +173,7 @@ public final class CoreDataRSSRepository: @unchecked Sendable, RSSRepository {
                 do {
                     continuation.resume(returning: try work())
                 } catch {
+                    self.context.rollback()
                     continuation.resume(throwing: error)
                 }
             }

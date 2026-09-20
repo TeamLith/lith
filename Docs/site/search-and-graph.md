@@ -9,14 +9,34 @@ Lith is meant to make stored knowledge easier to find, revisit, and connect.
 
 ## Search
 
-- Search note content, tags, and selected metadata.
-- Jump from a query to the underlying note quickly.
+Open **Search & Graph** and type in the search field. Results include the title, a body snippet, source, last-updated date, and tags. Select a result to read or edit the note; results refresh after you return.
+
+- Leave the query empty to browse all active notes, newest updated first. Archived and trashed notes are excluded.
+- Choose a source: Manual, RSS, Audio, or All sources.
+- Enter comma-separated tags to match notes with any of those tags.
+- Turn on the date filter to include notes updated from the selected start day through the end day, in your current time zone.
+- Use **Clear search and filters** to start again.
+
+Search matches titles, body text, tags, and stored metadata. Basic `AND`, `OR`, and `NOT` expressions are supported. A failed search shows a retry button. An invalid date range shows an explanation instead of running the search.
+
+## Saved searches
+
+Set the query and filters, then choose **Save current search** and enter a name. The **Saved searches** section lists your named searches. Select one to restore the query, source, tags, and date controls and immediately run it.
+
+Use the menu beside a saved search to rename or delete it. Names must be unique (ignoring letter case), 1–80 characters long, and on one line. Invalid dates must be corrected before saving. Deleting a saved search never deletes notes.
+
+Saved searches remain on this device across app launches. They do not sync through iCloud. Storage failures appear in the saved-search section; use **Reload saved searches** to retry. A damaged saved-search file is kept intact rather than overwritten.
 
 ## Graph
 
-- Visualize how notes connect through wikilinks.
-- Explore related notes without tracing every link by hand.
+Graph data is built from your saved notes and links. Global mode includes all active notes, including unlinked notes. Local mode starts from one note and follows both incoming and outgoing links up to the selected number of hops. Zero hops includes only the selected note. Archived and trashed notes are excluded, along with links to missing or hidden notes.
+
+From Search, select **Graph** in the toolbar to explore your notes on a stable circular layout. Select a node to open its note. Drag the graph to pan, pinch to zoom, or use the zoom buttons. **Reset view** restores the initial position and zoom.
+
+Choose a note in the Graph picker for local mode, then adjust **Link depth** (0–5). Choose **All notes** to return to the global graph. The center is highlighted. Changing the mode resets the viewport. Returning from a note refreshes the graph.
+
+Turn on **Show accessible note list** for a linear list of notes and link counts, with the same note navigation. Nodes also have VoiceOver labels. The graph uses no automatic motion or layout animations, including when Reduce Motion is enabled.
 
 ## Availability
 
-Search and graph experiences are designed to stay deterministic and local-first. Depending on your build, some views may still be in progress.
+Search and graph run locally on your stored notes. Graph edges represent saved links; arrows are not shown in the visual layout.

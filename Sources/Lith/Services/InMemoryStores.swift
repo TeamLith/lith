@@ -13,6 +13,12 @@ public actor InMemoryNoteRepository: NoteRepository {
         notes[note.id] = note
     }
 
+    public func updateExisting(_ note: Note, expected: Note) async throws {
+        guard let current = notes[note.id] else { throw NoteWriteError.missingNote }
+        guard current == expected else { throw NoteWriteError.conflict }
+        notes[note.id] = note
+    }
+
     public func delete(noteID: UUID) async throws {
         notes.removeValue(forKey: noteID)
     }
@@ -158,6 +164,13 @@ public actor InMemoryRSSRepository: RSSRepository {
 
     public func item(id: UUID) async throws -> RSSItem? {
         itemsByID[id]
+    }
+
+    public func updateItemWorkflow(itemID: UUID, status: RSSItemStatus, savedNoteID: UUID?) async throws {
+        guard var item = itemsByID[itemID] else { throw RSSInboxError.missingItem }
+        item.status = status
+        item.savedNoteID = savedNoteID
+        storeItem(item)
     }
 
     private func storeFeed(_ feed: RSSFeed) {

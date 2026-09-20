@@ -285,6 +285,10 @@ public struct AudioRecording: Identifiable, Codable, Hashable, Sendable {
     public var duration: TimeInterval
     public var transcript: String
     public var status: TranscriptionStatus
+    public var recordedAt: Date
+    public var updatedAt: Date
+    public var recordingState: RecordingState
+    public var errorMessage: String?
 
     public init(
         id: UUID = UUID(),
@@ -292,7 +296,10 @@ public struct AudioRecording: Identifiable, Codable, Hashable, Sendable {
         fileURL: URL,
         duration: TimeInterval = 0,
         transcript: String = "",
-        status: TranscriptionStatus = .notStarted
+        status: TranscriptionStatus = .notStarted,
+        recordedAt: Date = Date(),
+        recordingState: RecordingState = .complete,
+        errorMessage: String? = nil
     ) {
         self.id = id
         self.noteID = noteID
@@ -300,6 +307,10 @@ public struct AudioRecording: Identifiable, Codable, Hashable, Sendable {
         self.duration = duration
         self.transcript = transcript
         self.status = status
+        self.recordedAt = recordedAt
+        self.updatedAt = recordedAt
+        self.recordingState = recordingState
+        self.errorMessage = errorMessage
     }
 }
 
@@ -316,6 +327,8 @@ public struct ActionItem: Identifiable, Codable, Hashable, Sendable {
     public var assignee: String?
     public var dueDate: Date?
     public var status: ActionItemStatus
+    public var createdAt: Date?
+    public var updatedAt: Date?
 
     public init(
         id: UUID = UUID(),
@@ -323,7 +336,9 @@ public struct ActionItem: Identifiable, Codable, Hashable, Sendable {
         task: String,
         assignee: String? = nil,
         dueDate: Date? = nil,
-        status: ActionItemStatus = .open
+        status: ActionItemStatus = .open,
+        createdAt: Date? = nil,
+        updatedAt: Date? = nil
     ) {
         self.id = id
         self.sourceNoteID = sourceNoteID
@@ -331,15 +346,21 @@ public struct ActionItem: Identifiable, Codable, Hashable, Sendable {
         self.assignee = assignee
         self.dueDate = dueDate
         self.status = status
+        self.createdAt = createdAt
+        self.updatedAt = updatedAt
     }
 }
 
-public struct SavedSearch: Codable, Hashable, Sendable {
+public struct SavedSearch: Codable, Hashable, Sendable, Identifiable {
+    public let id: UUID
+    public var input: SearchInput?
     public var name: String
     public var query: String
     public var filter: SearchFilter
 
-    public init(name: String, query: String, filter: SearchFilter) {
+    public init(id: UUID = UUID(), name: String, query: String, filter: SearchFilter, input: SearchInput? = nil) {
+        self.id = id
+        self.input = input
         self.name = name
         self.query = query
         self.filter = filter

@@ -7,31 +7,80 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		03388667D4176B3B172B077D /* AudioNoteSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90C95CBFF3A4C5BD199E9AEA /* AudioNoteSection.swift */; };
 		04F64ED69C42450BB12D1797 /* LithmacOSApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = AE49D411D86EDECEBFE63D9E /* LithmacOSApp.swift */; };
+		1FC1C7CFC0E2DC53DEC94BF7 /* SyncSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7F3C753F050D94D3FEE094B /* SyncSettingsView.swift */; };
 		2973F43614DAD15650F1FD6B /* LithiOSApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = F709463628A953739878AC1A /* LithiOSApp.swift */; };
+		2A2936FA32D5135376AC6A84 /* CreateNoteIntent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B849EF6DA09382F60787933 /* CreateNoteIntent.swift */; };
+		4909293EB94E7DBB36A6ECC3 /* AudioNoteSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90C95CBFF3A4C5BD199E9AEA /* AudioNoteSection.swift */; };
+		4A3FBE40C7698FD6A9929EEC /* GraphView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20342FFE2E34CB1EBAB03E1D /* GraphView.swift */; };
+		4CA2643DEED104B20F78F57F /* RSSInboxView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 907EDF554A424B7FD4B4DBEB /* RSSInboxView.swift */; };
+		5131A449E7DDD21BEE28EECD /* CreateNoteIntent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B849EF6DA09382F60787933 /* CreateNoteIntent.swift */; };
+		522482A082C8CE291267CE77 /* SyncSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7F3C753F050D94D3FEE094B /* SyncSettingsView.swift */; };
+		7CF1E8687327BA77E8629E9D /* MarkdownPreview.swift in Sources */ = {isa = PBXBuildFile; fileRef = 098F3E665939AC4A2DFBC459 /* MarkdownPreview.swift */; };
 		7D5EDB250F82B5133B0B349C /* NoteListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8030DC0FD62B167304E8CC8 /* NoteListView.swift */; };
+		9313D62CB486A4EF81948D2D /* ActionItemsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27948C837338A798706C7939 /* ActionItemsView.swift */; };
 		A3D006E9269F2DC9329B505B /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A59A6C1A5D68DF5B7EBF2AD8 /* Assets.xcassets */; };
+		A5FE0B8AC59685DABCDF60E2 /* AppLaunchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B55FFE1AB8BA1A065290CA0F /* AppLaunchView.swift */; };
 		ABDA9B9BEBB9BB816D4D8BDA /* NoteDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8A3E60B88EBCBB104E4438C /* NoteDetailView.swift */; };
+		AD56E8656431152C32870A94 /* MarkdownPreview.swift in Sources */ = {isa = PBXBuildFile; fileRef = 098F3E665939AC4A2DFBC459 /* MarkdownPreview.swift */; };
 		B617A5DAF1A710E43AACBC5B /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B66636C8B07EDF7EB10EE8E /* RootView.swift */; };
+		B72263F82885621EFE08449F /* RSSInboxView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 907EDF554A424B7FD4B4DBEB /* RSSInboxView.swift */; };
+		BB0023684094C66ED5959E00 /* CriticalNavigationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4249B0DDA4845512E18A713B /* CriticalNavigationTests.swift */; };
+		BC581A8B82FA572687A8C7D3 /* CriticalNavigationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4249B0DDA4845512E18A713B /* CriticalNavigationTests.swift */; };
+		BF4263306FBA3F30C3CB8033 /* SearchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7626ACF91503F717997B7EEA /* SearchView.swift */; };
+		C65A533C443EECA4447DA2F5 /* AppLaunchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B55FFE1AB8BA1A065290CA0F /* AppLaunchView.swift */; };
 		CEE34ABB9A6AED4C894B2C6E /* NoteDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8A3E60B88EBCBB104E4438C /* NoteDetailView.swift */; };
+		CF4E94E25D042335D653BD11 /* SearchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7626ACF91503F717997B7EEA /* SearchView.swift */; };
 		D70DBE69C2CC6CE217890F2E /* Lith in Frameworks */ = {isa = PBXBuildFile; productRef = B3308A8885192CB6856F7DB8 /* Lith */; };
+		DFBC70FD6AFCC543687BA359 /* GraphView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20342FFE2E34CB1EBAB03E1D /* GraphView.swift */; };
 		E0BFB93D264DA2618F6F223C /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B66636C8B07EDF7EB10EE8E /* RootView.swift */; };
 		E78EA3D22CF06DE879EC4FFD /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A59A6C1A5D68DF5B7EBF2AD8 /* Assets.xcassets */; };
 		F962795E1F8245448FFAD67F /* Lith in Frameworks */ = {isa = PBXBuildFile; productRef = C71C05C8516C2A960CBB47FF /* Lith */; };
+		F9D90ADEC8ADB6FDADCE794C /* ActionItemsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27948C837338A798706C7939 /* ActionItemsView.swift */; };
 		FF99E821F7BE4B13EDAA3C2C /* NoteListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8030DC0FD62B167304E8CC8 /* NoteListView.swift */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXContainerItemProxy section */
+		AAE4FECE82DE08B1EF9C4535 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = BC2B8D8A0D69834C4BD3A12A /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 14944C8D6747B619661013A4;
+			remoteInfo = LithmacOS;
+		};
+		AF90DF433035185FEEB1750E /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = BC2B8D8A0D69834C4BD3A12A /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 6690B95583508B98BFBDA41D;
+			remoteInfo = LithiOS;
+		};
+/* End PBXContainerItemProxy section */
+
 /* Begin PBXFileReference section */
+		098F3E665939AC4A2DFBC459 /* MarkdownPreview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarkdownPreview.swift; sourceTree = "<group>"; };
+		0B849EF6DA09382F60787933 /* CreateNoteIntent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateNoteIntent.swift; sourceTree = "<group>"; };
+		20342FFE2E34CB1EBAB03E1D /* GraphView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GraphView.swift; sourceTree = "<group>"; };
+		27948C837338A798706C7939 /* ActionItemsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionItemsView.swift; sourceTree = "<group>"; };
+		4249B0DDA4845512E18A713B /* CriticalNavigationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CriticalNavigationTests.swift; sourceTree = "<group>"; };
 		4B66636C8B07EDF7EB10EE8E /* RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
+		5A88E5EB6343C70776D6267E /* Lith */ = {isa = PBXFileReference; lastKnownFileType = folder; name = Lith; path = .; sourceTree = SOURCE_ROOT; };
 		5C1D318FCAD055AB7D9F562E /* LithmacOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = LithmacOS.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		6EBF900D6E0186B8E7316090 /* Notes + ToDo */ = {isa = PBXFileReference; lastKnownFileType = folder; name = "Notes + ToDo"; path = .; sourceTree = SOURCE_ROOT; };
+		7626ACF91503F717997B7EEA /* SearchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchView.swift; sourceTree = "<group>"; };
 		892C5C70121A16A76B70F652 /* LithmacOS.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = LithmacOS.entitlements; sourceTree = "<group>"; };
+		907EDF554A424B7FD4B4DBEB /* RSSInboxView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RSSInboxView.swift; sourceTree = "<group>"; };
+		90C95CBFF3A4C5BD199E9AEA /* AudioNoteSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioNoteSection.swift; sourceTree = "<group>"; };
 		A59A6C1A5D68DF5B7EBF2AD8 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		A7F3C753F050D94D3FEE094B /* SyncSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncSettingsView.swift; sourceTree = "<group>"; };
 		A8A3E60B88EBCBB104E4438C /* NoteDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoteDetailView.swift; sourceTree = "<group>"; };
 		AE49D411D86EDECEBFE63D9E /* LithmacOSApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LithmacOSApp.swift; sourceTree = "<group>"; };
+		B55FFE1AB8BA1A065290CA0F /* AppLaunchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppLaunchView.swift; sourceTree = "<group>"; };
 		BFB8D0AED61B9D003A5D5CE1 /* LithiOS.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = LithiOS.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		C6B174C0CAB66D882A3F2709 /* LithiOSUITests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = LithiOSUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		E8030DC0FD62B167304E8CC8 /* NoteListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoteListView.swift; sourceTree = "<group>"; };
 		F709463628A953739878AC1A /* LithiOSApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LithiOSApp.swift; sourceTree = "<group>"; };
+		FE3C6FBBFD32B25839BDBF3D /* LithmacOSUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = LithmacOSUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -62,16 +111,59 @@
 				5023F31D788A56724EDCC80C /* Packages */,
 				7949471ABB26D71EDB003DD4 /* Resources */,
 				FCDA42C061A84CCB2E44B276 /* Shared */,
+				2D5249E9F7EDAF5B78F14B7B /* UITests */,
 				FCC746DBD3E0FA8D5733472B /* Products */,
 			);
+			sourceTree = "<group>";
+		};
+		2D5249E9F7EDAF5B78F14B7B /* UITests */ = {
+			isa = PBXGroup;
+			children = (
+				4249B0DDA4845512E18A713B /* CriticalNavigationTests.swift */,
+			);
+			name = UITests;
+			path = Apps/LithApp/UITests;
+			sourceTree = "<group>";
+		};
+		382FD0BA20A232AD551F4B64 /* Audio */ = {
+			isa = PBXGroup;
+			children = (
+				90C95CBFF3A4C5BD199E9AEA /* AudioNoteSection.swift */,
+			);
+			path = Audio;
+			sourceTree = "<group>";
+		};
+		3CF01BE7305C5AE1196CCF53 /* Settings */ = {
+			isa = PBXGroup;
+			children = (
+				A7F3C753F050D94D3FEE094B /* SyncSettingsView.swift */,
+			);
+			path = Settings;
 			sourceTree = "<group>";
 		};
 		5023F31D788A56724EDCC80C /* Packages */ = {
 			isa = PBXGroup;
 			children = (
-				6EBF900D6E0186B8E7316090 /* Notes + ToDo */,
+				5A88E5EB6343C70776D6267E /* Lith */,
 			);
 			name = Packages;
+			sourceTree = "<group>";
+		};
+		602CCAEDF4D7C54316746C10 /* Discovery */ = {
+			isa = PBXGroup;
+			children = (
+				20342FFE2E34CB1EBAB03E1D /* GraphView.swift */,
+				7626ACF91503F717997B7EEA /* SearchView.swift */,
+			);
+			path = Discovery;
+			sourceTree = "<group>";
+		};
+		6AB4491D3D38D1AFB015B614 /* Intents */ = {
+			isa = PBXGroup;
+			children = (
+				0B849EF6DA09382F60787933 /* CreateNoteIntent.swift */,
+			);
+			path = Intents;
 			sourceTree = "<group>";
 		};
 		6D2C9D0846ACB99251275CFB /* iOS */ = {
@@ -102,9 +194,19 @@
 			path = Apps/LithApp/Sources/macOS;
 			sourceTree = "<group>";
 		};
+		AE20A50BC653D08FC9361193 /* RSS */ = {
+			isa = PBXGroup;
+			children = (
+				907EDF554A424B7FD4B4DBEB /* RSSInboxView.swift */,
+			);
+			path = RSS;
+			sourceTree = "<group>";
+		};
 		E69C0373E5068FCABD71F4C6 /* Notes */ = {
 			isa = PBXGroup;
 			children = (
+				27948C837338A798706C7939 /* ActionItemsView.swift */,
+				098F3E665939AC4A2DFBC459 /* MarkdownPreview.swift */,
 				A8A3E60B88EBCBB104E4438C /* NoteDetailView.swift */,
 				E8030DC0FD62B167304E8CC8 /* NoteListView.swift */,
 			);
@@ -115,7 +217,9 @@
 			isa = PBXGroup;
 			children = (
 				BFB8D0AED61B9D003A5D5CE1 /* LithiOS.app */,
+				C6B174C0CAB66D882A3F2709 /* LithiOSUITests.xctest */,
 				5C1D318FCAD055AB7D9F562E /* LithmacOS.app */,
+				FE3C6FBBFD32B25839BDBF3D /* LithmacOSUITests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -123,8 +227,14 @@
 		FCDA42C061A84CCB2E44B276 /* Shared */ = {
 			isa = PBXGroup;
 			children = (
+				B55FFE1AB8BA1A065290CA0F /* AppLaunchView.swift */,
 				4B66636C8B07EDF7EB10EE8E /* RootView.swift */,
+				382FD0BA20A232AD551F4B64 /* Audio */,
+				602CCAEDF4D7C54316746C10 /* Discovery */,
+				6AB4491D3D38D1AFB015B614 /* Intents */,
 				E69C0373E5068FCABD71F4C6 /* Notes */,
+				AE20A50BC653D08FC9361193 /* RSS */,
+				3CF01BE7305C5AE1196CCF53 /* Settings */,
 			);
 			name = Shared;
 			path = Apps/LithApp/Sources/Shared;
@@ -153,6 +263,24 @@
 			productReference = 5C1D318FCAD055AB7D9F562E /* LithmacOS.app */;
 			productType = "com.apple.product-type.application";
 		};
+		35203B49EFC95E89477D7FA9 /* LithmacOSUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 1E24D02704208F89D6692385 /* Build configuration list for PBXNativeTarget "LithmacOSUITests" */;
+			buildPhases = (
+				BEF1BF2E08BD9BE86D673CC3 /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				EE07A48AB791CD23A7A5A0F2 /* PBXTargetDependency */,
+			);
+			name = LithmacOSUITests;
+			packageProductDependencies = (
+			);
+			productName = LithmacOSUITests;
+			productReference = FE3C6FBBFD32B25839BDBF3D /* LithmacOSUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
 		6690B95583508B98BFBDA41D /* LithiOS */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 956BE4C12F8239D05460F718 /* Build configuration list for PBXNativeTarget "LithiOS" */;
@@ -173,6 +301,24 @@
 			productReference = BFB8D0AED61B9D003A5D5CE1 /* LithiOS.app */;
 			productType = "com.apple.product-type.application";
 		};
+		F01403BA7C05776029E24AEA /* LithiOSUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = A50D64C5DE5E0362F05B2734 /* Build configuration list for PBXNativeTarget "LithiOSUITests" */;
+			buildPhases = (
+				3238780FDE580FC70D0CDE74 /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				10A021CC2D9EB823D2853393 /* PBXTargetDependency */,
+			);
+			name = LithiOSUITests;
+			packageProductDependencies = (
+			);
+			productName = LithiOSUITests;
+			productReference = C6B174C0CAB66D882A3F2709 /* LithiOSUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -181,6 +327,18 @@
 			attributes = {
 				BuildIndependentTargetsInParallel = YES;
 				LastUpgradeCheck = 1430;
+				TargetAttributes = {
+					14944C8D6747B619661013A4 = {
+						DevelopmentTeam = 3KG4D4R466;
+						ProvisioningStyle = Automatic;
+					};
+					35203B49EFC95E89477D7FA9 = {
+						TestTargetID = 14944C8D6747B619661013A4;
+					};
+					F01403BA7C05776029E24AEA = {
+						TestTargetID = 6690B95583508B98BFBDA41D;
+					};
+				};
 			};
 			buildConfigurationList = 290624B7849562F1E6866E38 /* Build configuration list for PBXProject "LithApps" */;
 			developmentRegion = en;
@@ -192,7 +350,7 @@
 			mainGroup = 2C0919F4D5233BA73BCB3C42;
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
-				4BC09BB9FF8927E0719F13BC /* XCLocalSwiftPackageReference "." */,
+				991623B085381212CCE94DC4 /* XCLocalSwiftPackageReference "Lith" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = FCC746DBD3E0FA8D5733472B /* Products */;
@@ -201,6 +359,8 @@
 			targets = (
 				6690B95583508B98BFBDA41D /* LithiOS */,
 				14944C8D6747B619661013A4 /* LithmacOS */,
+				F01403BA7C05776029E24AEA /* LithiOSUITests */,
+				35203B49EFC95E89477D7FA9 /* LithmacOSUITests */,
 			);
 		};
 /* End PBXProject section */
@@ -225,14 +385,39 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		3238780FDE580FC70D0CDE74 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				BC581A8B82FA572687A8C7D3 /* CriticalNavigationTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		95BF3D0805D220BDA004189A /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F9D90ADEC8ADB6FDADCE794C /* ActionItemsView.swift in Sources */,
+				A5FE0B8AC59685DABCDF60E2 /* AppLaunchView.swift in Sources */,
+				4909293EB94E7DBB36A6ECC3 /* AudioNoteSection.swift in Sources */,
+				2A2936FA32D5135376AC6A84 /* CreateNoteIntent.swift in Sources */,
+				4A3FBE40C7698FD6A9929EEC /* GraphView.swift in Sources */,
 				2973F43614DAD15650F1FD6B /* LithiOSApp.swift in Sources */,
+				7CF1E8687327BA77E8629E9D /* MarkdownPreview.swift in Sources */,
 				ABDA9B9BEBB9BB816D4D8BDA /* NoteDetailView.swift in Sources */,
 				FF99E821F7BE4B13EDAA3C2C /* NoteListView.swift in Sources */,
+				4CA2643DEED104B20F78F57F /* RSSInboxView.swift in Sources */,
 				B617A5DAF1A710E43AACBC5B /* RootView.swift in Sources */,
+				BF4263306FBA3F30C3CB8033 /* SearchView.swift in Sources */,
+				1FC1C7CFC0E2DC53DEC94BF7 /* SyncSettingsView.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		BEF1BF2E08BD9BE86D673CC3 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				BB0023684094C66ED5959E00 /* CriticalNavigationTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -240,25 +425,83 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9313D62CB486A4EF81948D2D /* ActionItemsView.swift in Sources */,
+				C65A533C443EECA4447DA2F5 /* AppLaunchView.swift in Sources */,
+				03388667D4176B3B172B077D /* AudioNoteSection.swift in Sources */,
+				5131A449E7DDD21BEE28EECD /* CreateNoteIntent.swift in Sources */,
+				DFBC70FD6AFCC543687BA359 /* GraphView.swift in Sources */,
 				04F64ED69C42450BB12D1797 /* LithmacOSApp.swift in Sources */,
+				AD56E8656431152C32870A94 /* MarkdownPreview.swift in Sources */,
 				CEE34ABB9A6AED4C894B2C6E /* NoteDetailView.swift in Sources */,
 				7D5EDB250F82B5133B0B349C /* NoteListView.swift in Sources */,
+				B72263F82885621EFE08449F /* RSSInboxView.swift in Sources */,
 				E0BFB93D264DA2618F6F223C /* RootView.swift in Sources */,
+				CF4E94E25D042335D653BD11 /* SearchView.swift in Sources */,
+				522482A082C8CE291267CE77 /* SyncSettingsView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
+/* Begin PBXTargetDependency section */
+		10A021CC2D9EB823D2853393 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 6690B95583508B98BFBDA41D /* LithiOS */;
+			targetProxy = AF90DF433035185FEEB1750E /* PBXContainerItemProxy */;
+		};
+		EE07A48AB791CD23A7A5A0F2 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 14944C8D6747B619661013A4 /* LithmacOS */;
+			targetProxy = AAE4FECE82DE08B1EF9C4535 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
 /* Begin XCBuildConfiguration section */
+		2DDF3C9E66F4EBCCED84292D /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				COMBINE_HIDPI_IMAGES = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = me.lith.macos.uitests;
+				SDKROOT = macosx;
+				TEST_TARGET_NAME = LithmacOS;
+			};
+			name = Release;
+		};
+		7033ED4E7B36AEA24D1FA35C /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = me.lith.ios.uitests;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = LithiOS;
+			};
+			name = Release;
+		};
 		72636DC3B04CA923BC098767 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
-				CURRENT_PROJECT_VERSION = 7;
+				CURRENT_PROJECT_VERSION = 26;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = Lith;
 				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "Record audio attached to your notes.";
+				INFOPLIST_KEY_NSSpeechRecognitionUsageDescription = "Transcribe your recordings on this device.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
@@ -267,7 +510,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 0.1.6;
+				MARKETING_VERSION = 0.2.0;
 				PRODUCT_BUNDLE_IDENTIFIER = me.lith.ios;
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -337,6 +580,23 @@
 			};
 			name = Debug;
 		};
+		83B0F0EF44C768FAFAC02AFB /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = me.lith.ios.uitests;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = LithiOS;
+			};
+			name = Debug;
+		};
 		A06A4F6DBB212A0BCBCFADBA /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -401,17 +661,19 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 7;
+				CURRENT_PROJECT_VERSION = 26;
 				DEVELOPMENT_TEAM = 3KG4D4R466;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = Lith;
 				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "Record audio attached to your notes.";
+				INFOPLIST_KEY_NSSpeechRecognitionUsageDescription = "Transcribe your recordings on this device.";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				MARKETING_VERSION = 0.1.6;
+				MARKETING_VERSION = 0.2.0;
 				PRODUCT_BUNDLE_IDENTIFIER = me.lith.macos;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = macosx;
@@ -426,20 +688,39 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 7;
+				CURRENT_PROJECT_VERSION = 26;
 				DEVELOPMENT_TEAM = 3KG4D4R466;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = Lith;
 				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "Record audio attached to your notes.";
+				INFOPLIST_KEY_NSSpeechRecognitionUsageDescription = "Transcribe your recordings on this device.";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				MARKETING_VERSION = 0.1.6;
+				MARKETING_VERSION = 0.2.0;
 				PRODUCT_BUNDLE_IDENTIFIER = me.lith.macos;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		F1FBCC38E155BB58F3F64998 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				COMBINE_HIDPI_IMAGES = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = me.lith.macos.uitests;
+				SDKROOT = macosx;
+				TEST_TARGET_NAME = LithmacOS;
 			};
 			name = Debug;
 		};
@@ -448,10 +729,12 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
-				CURRENT_PROJECT_VERSION = 7;
+				CURRENT_PROJECT_VERSION = 26;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = Lith;
 				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "Record audio attached to your notes.";
+				INFOPLIST_KEY_NSSpeechRecognitionUsageDescription = "Transcribe your recordings on this device.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
@@ -460,7 +743,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 0.1.6;
+				MARKETING_VERSION = 0.2.0;
 				PRODUCT_BUNDLE_IDENTIFIER = me.lith.ios;
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -470,6 +753,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		1E24D02704208F89D6692385 /* Build configuration list for PBXNativeTarget "LithmacOSUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F1FBCC38E155BB58F3F64998 /* Debug */,
+				2DDF3C9E66F4EBCCED84292D /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
 		290624B7849562F1E6866E38 /* Build configuration list for PBXProject "LithApps" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
@@ -497,10 +789,19 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
 		};
+		A50D64C5DE5E0362F05B2734 /* Build configuration list for PBXNativeTarget "LithiOSUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				83B0F0EF44C768FAFAC02AFB /* Debug */,
+				7033ED4E7B36AEA24D1FA35C /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
 /* End XCConfigurationList section */
 
 /* Begin XCLocalSwiftPackageReference section */
-		4BC09BB9FF8927E0719F13BC /* XCLocalSwiftPackageReference "." */ = {
+		991623B085381212CCE94DC4 /* XCLocalSwiftPackageReference "Lith" */ = {
 			isa = XCLocalSwiftPackageReference;
 			relativePath = .;
 		};
