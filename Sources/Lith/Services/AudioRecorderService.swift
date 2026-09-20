@@ -78,16 +78,24 @@ public final class AudioRecorderService: AudioCaptureAdapter {
         guard var recording = activeRecording, recording.id == id, !busy else { throw AudioRecordingError.noActiveRecording }
         busy = true
         defer { busy = false }
-        recording.duration = duration
-        recording.recordingState = state
-        recording.errorMessage = message
-        recording.updatedAt = Date()
+        if recording.recordingState == .recording {
+            recording.duration = duration
+            recording.recordingState = state
+            recording.errorMessage = message
+            recording.updatedAt = Date()
+        }
         driver.stop()
         activeRecording = recording // Retain metadata if persistence fails; Stop can retry saving.
         try await repository.upsert(recording)
         activeRecording = nil
-        lastError = message
+        lastError = recording.errorMessage
         return recording
+    }
+
+    /// Finalizes available audio after a platform interruption without restarting capture.
+    public func interruptRecording(message: String) async throws -> AudioRecording {
+        guard let recording = activeRecording else { throw AudioRecordingError.noActiveRecording }
+        return try await finish(id: recording.id, state: .interrupted, message: message)
     }
 
     /// Restore discoverable metadata after process termination; retain partial audio for playback.
@@ -103,7 +111,9 @@ public final class AudioRecorderService: AudioCaptureAdapter {
 
     public func delete(_ recording: AudioRecording) async throws {
         guard recording.id != activeRecording?.id else { throw AudioRecordingError.alreadyRecording }
-        try files.remove(recording)
+        // Preserve the binary if metadata deletion fails. File cleanup is idempotent
+        // and can be retried with the same recording if the filesystem rejects it.
         try await repository.delete(recordingID: recording.id)
+        try files.remove(recording)
     }
 }

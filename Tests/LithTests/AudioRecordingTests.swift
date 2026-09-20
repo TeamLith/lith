@@ -75,6 +75,50 @@ import CoreData
     #expect(FileManager.default.fileExists(atPath: url.path))
 }
 
+@Test @MainActor func interruptedSaveRetryPreservesTerminalStateAndFailedDeletionRetainsAudio() async throws {
+    let files = AudioFileStore(root: FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString))
+    defer { try? FileManager.default.removeItem(at: files.root) }
+    let storage = CoreDataAudioRecordingRepository(container: try LithPersistentStore.makeContainer(inMemory: true), files: files)
+    let repository = FailingAudioRepository(base: storage)
+    let driver = TestAudioDriver()
+    let service = AudioRecorderService(repository: repository, files: files, driver: driver)
+    let recording = try await service.startRecording(noteID: UUID())
+    driver.currentTime = 9
+    await repository.setFailure(upsert: true, delete: false)
+    await #expect(throws: AudioRecordingError.self) { try await service.interruptRecording(message: "Phone call") }
+    #expect(service.activeRecording?.recordingState == .interrupted)
+    await repository.setFailure(upsert: false, delete: false)
+    let saved = try await service.stopRecording(recordingID: recording.id)
+    #expect(saved.recordingState == .interrupted)
+    #expect(saved.duration == 9)
+    #expect(saved.errorMessage == "Phone call")
+    await repository.setFailure(upsert: false, delete: true)
+    await #expect(throws: AudioRecordingError.self) { try await service.delete(saved) }
+    #expect(FileManager.default.fileExists(atPath: saved.fileURL.path))
+    #expect(try await storage.recording(id: saved.id) != nil)
+    await repository.setFailure(upsert: false, delete: false)
+    try await service.delete(saved)
+    #expect(!FileManager.default.fileExists(atPath: saved.fileURL.path))
+}
+
+private actor FailingAudioRepository: AudioRecordingRepository {
+    let base: AudioRecordingRepository
+    var failUpsert = false
+    var failDelete = false
+    init(base: AudioRecordingRepository) { self.base = base }
+    func setFailure(upsert: Bool, delete: Bool) { failUpsert = upsert; failDelete = delete }
+    func upsert(_ recording: AudioRecording) async throws {
+        if failUpsert { throw AudioRecordingError.recordingFailed }
+        try await base.upsert(recording)
+    }
+    func delete(recordingID: UUID) async throws {
+        if failDelete { throw AudioRecordingError.recordingFailed }
+        try await base.delete(recordingID: recordingID)
+    }
+    func recording(id: UUID) async throws -> AudioRecording? { try await base.recording(id: id) }
+    func recordings(noteID: UUID?) async throws -> [AudioRecording] { try await base.recordings(noteID: noteID) }
+}
+
 @MainActor private func audioFixture() throws -> (AudioRecorderService, TestAudioDriver, CoreDataAudioRecordingRepository, AudioFileStore) {
     let files = AudioFileStore(root: FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString))
     let repository = CoreDataAudioRecordingRepository(container: try LithPersistentStore.makeContainer(inMemory: true), files: files)
