@@ -327,6 +327,8 @@ public struct ActionItem: Identifiable, Codable, Hashable, Sendable {
     public var assignee: String?
     public var dueDate: Date?
     public var status: ActionItemStatus
+    public var createdAt: Date?
+    public var updatedAt: Date?
 
     public init(
         id: UUID = UUID(),
@@ -334,7 +336,9 @@ public struct ActionItem: Identifiable, Codable, Hashable, Sendable {
         task: String,
         assignee: String? = nil,
         dueDate: Date? = nil,
-        status: ActionItemStatus = .open
+        status: ActionItemStatus = .open,
+        createdAt: Date? = nil,
+        updatedAt: Date? = nil
     ) {
         self.id = id
         self.sourceNoteID = sourceNoteID
@@ -342,6 +346,8 @@ public struct ActionItem: Identifiable, Codable, Hashable, Sendable {
         self.assignee = assignee
         self.dueDate = dueDate
         self.status = status
+        self.createdAt = createdAt
+        self.updatedAt = updatedAt
     }
 }
 
