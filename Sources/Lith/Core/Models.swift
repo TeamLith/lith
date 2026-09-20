@@ -285,6 +285,10 @@ public struct AudioRecording: Identifiable, Codable, Hashable, Sendable {
     public var duration: TimeInterval
     public var transcript: String
     public var status: TranscriptionStatus
+    public var recordedAt: Date
+    public var updatedAt: Date
+    public var recordingState: RecordingState
+    public var errorMessage: String?
 
     public init(
         id: UUID = UUID(),
@@ -292,7 +296,10 @@ public struct AudioRecording: Identifiable, Codable, Hashable, Sendable {
         fileURL: URL,
         duration: TimeInterval = 0,
         transcript: String = "",
-        status: TranscriptionStatus = .notStarted
+        status: TranscriptionStatus = .notStarted,
+        recordedAt: Date = Date(),
+        recordingState: RecordingState = .complete,
+        errorMessage: String? = nil
     ) {
         self.id = id
         self.noteID = noteID
@@ -300,6 +307,10 @@ public struct AudioRecording: Identifiable, Codable, Hashable, Sendable {
         self.duration = duration
         self.transcript = transcript
         self.status = status
+        self.recordedAt = recordedAt
+        self.updatedAt = recordedAt
+        self.recordingState = recordingState
+        self.errorMessage = errorMessage
     }
 }
 
