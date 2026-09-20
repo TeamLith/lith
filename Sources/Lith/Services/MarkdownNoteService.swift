@@ -35,7 +35,7 @@ public struct MarkdownNoteService: Sendable {
         let content = try decode(data, filename: filename)
         let note = Note(title: content.title, bodyMarkdown: content.body)
         try await repository.upsert(note)
-        _ = try await wikiLinkService.refreshLinks(for: note.id)
+        try await wikiLinkService.refreshAllLinks()
         return note
     }
 }

@@ -41,14 +41,17 @@ public final class RSSInboxViewModel {
     private let noteRepository: NoteRepository
     private let fetchService: RSSFetchServiceProtocol
     private let conversionService: RSSConversionServiceProtocol
+    private let wikiLinkService: WikiLinkServiceProtocol?
 
     public init(repository: RSSRepository, noteRepository: NoteRepository,
                 fetchService: RSSFetchServiceProtocol,
-                conversionService: RSSConversionServiceProtocol = RSSConversionService()) {
+                conversionService: RSSConversionServiceProtocol = RSSConversionService(),
+                wikiLinkService: WikiLinkServiceProtocol? = nil) {
         self.repository = repository
         self.noteRepository = noteRepository
         self.fetchService = fetchService
         self.conversionService = conversionService
+        self.wikiLinkService = wikiLinkService
     }
 
     public var groups: [RSSInboxGroup] {
@@ -148,6 +151,9 @@ public final class RSSInboxViewModel {
                                 tags: converted.tags, source: .rss, metadata: metadata)
                 try await noteRepository.upsert(note)
             }
+            // Re-index the persisted note on retries as well, preserving any edits
+            // made after a partial save while completing its graph relationships.
+            try await wikiLinkService?.refreshAllLinks()
             try await repository.updateItemWorkflow(itemID: item.id, status: .savedAsNote, savedNoteID: noteID)
             try await reload()
             return noteID

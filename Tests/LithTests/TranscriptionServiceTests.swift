@@ -81,10 +81,40 @@ import CoreData
     #expect(try await repository.recording(id: recording.id)?.status == .failed)
 }
 
+
+@Test @MainActor func externalDeletionDuringRecognitionDoesNotResurrectMetadata() async throws {
+    let driver = FakeSpeechDriver(updates: [.init(text: "Partial"), .init(text: "Late final", isFinal: true)])
+    let (service, repository, recording, files) = try await transcriptionFixture(driver: driver)
+    defer { try? FileManager.default.removeItem(at: files.root) }
+    await #expect(throws: AudioRecordingPersistenceError.self) {
+        try await service.transcribe(recording: recording) { update in
+            if !update.isFinal { try? await repository.delete(recordingID: recording.id) }
+        }
+    }
+    #expect(try await repository.recording(id: recording.id) == nil)
+}
+
+@Test @MainActor func externalCorrectionDuringRecognitionIsNotOverwrittenByLateResults() async throws {
+    let driver = FakeSpeechDriver(updates: [.init(text: "Partial"), .init(text: "Late final", isFinal: true)])
+    let (service, repository, recording, files) = try await transcriptionFixture(driver: driver)
+    defer { try? FileManager.default.removeItem(at: files.root) }
+    await #expect(throws: AudioRecordingPersistenceError.self) {
+        try await service.transcribe(recording: recording) { update in
+            if !update.isFinal, var saved = try? await repository.recording(id: recording.id) {
+                let previous = saved.updatedAt
+                saved.transcript = "Manual correction"
+                saved.updatedAt = previous.addingTimeInterval(1)
+                try? await repository.update(saved, ifUnchangedSince: previous)
+            }
+        }
+    }
+    #expect(try await repository.recording(id: recording.id)?.transcript == "Manual correction")
+}
+
 @MainActor private func transcriptionFixture(driver: SpeechTranscriptionDriver) async throws -> (TranscriptionService, CoreDataAudioRecordingRepository, AudioRecording, AudioFileStore) {
     let files = AudioFileStore(root: FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString))
-    let repository = CoreDataAudioRecordingRepository(container: try LithPersistentStore.makeContainer(inMemory: true), files: files)
-    let id = UUID(), noteID = UUID()
+    let repository = CoreDataAudioRecordingRepository(container: try makeAudioTestContainer(), files: files)
+    let id = UUID(), noteID = audioTestNoteID
     let fileURL = try files.prepare(noteID: noteID, recordingID: id)
     try Data("recorded audio".utf8).write(to: fileURL)
     let recording = AudioRecording(id: id, noteID: noteID, fileURL: fileURL, duration: 5)

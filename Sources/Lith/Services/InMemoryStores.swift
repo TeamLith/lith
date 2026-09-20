@@ -13,6 +13,12 @@ public actor InMemoryNoteRepository: NoteRepository {
         notes[note.id] = note
     }
 
+    public func updateExisting(_ note: Note, expected: Note) async throws {
+        guard let current = notes[note.id] else { throw NoteWriteError.missingNote }
+        guard current == expected else { throw NoteWriteError.conflict }
+        notes[note.id] = note
+    }
+
     public func delete(noteID: UUID) async throws {
         notes.removeValue(forKey: noteID)
     }

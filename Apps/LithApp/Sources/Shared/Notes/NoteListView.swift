@@ -20,8 +20,13 @@ struct NoteListView: View {
     let wikiLinkService: WikiLinkServiceProtocol
     @Bindable var viewModel: NoteListViewModel
     @State private var importing = false
-    @State private var importError: String?
+    @State private var operationError: String?
     @State private var pendingDeletion: Note?
+    @State private var creatingNote = false
+#if os(iOS)
+    @State private var openedNote: Note?
+    @State private var openInEditor = false
+#endif
 
 #if os(macOS)
     @Binding var selectedNoteID: UUID?
@@ -68,6 +73,15 @@ struct NoteListView: View {
             noteListContent
         }
             .navigationTitle(viewModel.collection.rawValue)
+#if os(iOS)
+            .navigationDestination(item: $openedNote) { note in
+                NoteDetailView(repository: repository, wikiLinkService: wikiLinkService, noteID: note.id,
+                               initiallyEditing: openInEditor,
+                               actionItemRepository: actionItemRepository, actionReviewService: actionReviewService,
+                               transcriptProvider: transcriptProvider, audioRepository: audioRepository, audioServices: audioServices,
+                               onNoteChanged: { await viewModel.loadNotes() })
+            }
+#endif
             .task(id: viewModel.collection) { await viewModel.loadNotes() }
             .fileImporter(isPresented: $importing, allowedContentTypes: MarkdownFile.readableContentTypes) { result in
                 Task {
@@ -79,13 +93,15 @@ struct NoteListView: View {
                         let imported = await viewModel.importMarkdown(data: data, filename: url.lastPathComponent, wikiLinkService: wikiLinkService)
 #if os(macOS)
                         if let imported { selectedNoteID = imported.id }
+#elseif os(iOS)
+                        if let imported { openInEditor = false; openedNote = imported }
 #endif
-                    } catch { importError = error.localizedDescription }
+                    } catch { operationError = error.localizedDescription }
                 }
             }
-            .alert("Could Not Import", isPresented: Binding(get: { importError != nil }, set: { if !$0 { importError = nil } })) {
-                Button("OK") { importError = nil }
-            } message: { Text(importError ?? "") }
+            .alert("Could Not Complete Action", isPresented: Binding(get: { operationError != nil }, set: { if !$0 { operationError = nil } })) {
+                Button("OK") { operationError = nil }
+            } message: { Text(operationError ?? "") }
             .confirmationDialog("Delete this note permanently?", isPresented: Binding(get: { pendingDeletion != nil }, set: { if !$0 { pendingDeletion = nil } })) {
                 Button("Delete Permanently", role: .destructive) {
                     if let id = pendingDeletion?.id { Task { await delete(noteID: id) } }
@@ -98,17 +114,22 @@ struct NoteListView: View {
                 }
                 ToolbarItem(placement: .primaryAction) {
                     Button {
+                        creatingNote = true
                         Task {
+                            defer { creatingNote = false }
                             guard let note = await viewModel.createNote() else {
                                 return
                             }
 #if os(macOS)
                             selectedNoteID = note.id
+#elseif os(iOS)
+                            openInEditor = true
+                            openedNote = note
 #endif
                         }
                     } label: {
                         Label("New Note", systemImage: "plus")
-                    }
+                    }.disabled(creatingNote || viewModel.isLoading)
                 }
             }
     }
@@ -269,12 +290,14 @@ struct NoteListView: View {
     }
 
     private func delete(noteID: UUID) async {
-        await viewModel.delete(noteID: noteID)
+        defer { audioServices?.finishNoteDeletion(noteID: noteID) }
+        do {
+            try await audioServices?.prepareForNoteDeletion(noteID: noteID)
+            await viewModel.delete(noteID: noteID)
 #if os(macOS)
-        if selectedNoteID == noteID {
-            selectedNoteID = nil
-        }
+            if viewModel.loadError == nil, selectedNoteID == noteID { selectedNoteID = nil }
 #endif
+        } catch { operationError = error.localizedDescription }
     }
 }
 

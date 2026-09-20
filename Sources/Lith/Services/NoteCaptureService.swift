@@ -27,17 +27,18 @@ public struct NoteCaptureService: SiriIntentAdapter, Sendable {
         let fallbackTitle = String(content.split(whereSeparator: \.isNewline).first.map(String.init)?.prefix(80) ?? "Untitled")
         let note = Note(title: title.isEmpty ? fallbackTitle : title, bodyMarkdown: content)
         try await repository.upsert(note)
-        _ = try await wikiLinkService?.refreshLinks(for: note.id)
+        try await wikiLinkService?.refreshAllLinks()
         return note
     }
 
     public func appendToNote(noteID: UUID, content: String) async throws -> Note {
         guard !content.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else { throw NoteCaptureError.emptyNote }
         guard var note = try await repository.note(id: noteID), !note.isTrashed else { throw NoteCaptureError.missingNote }
+        let expected = note
         note.bodyMarkdown += (note.bodyMarkdown.isEmpty ? "" : "\n\n") + content
         note.updatedAt = Date()
-        try await repository.upsert(note)
-        _ = try await wikiLinkService?.refreshLinks(for: note.id)
+        try await repository.updateExisting(note, expected: expected)
+        try await wikiLinkService?.refreshAllLinks()
         return note
     }
 }

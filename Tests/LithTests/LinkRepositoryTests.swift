@@ -10,6 +10,9 @@ func replaceLinksPersistsAndPreservesIdentity() async throws {
     let repository = CoreDataLinkRepository(container: container)
     let sourceID = UUID()
     let targetID = UUID()
+    let notes = CoreDataNoteRepository(container: container)
+    try await notes.upsert(Note(id: sourceID, title: "Source", bodyMarkdown: ""))
+    try await notes.upsert(Note(id: targetID, title: "Target", bodyMarkdown: ""))
 
     try await repository.replaceLinks(
         from: sourceID,
@@ -38,6 +41,8 @@ func replaceLinksRemovesStaleLinks() async throws {
     let sourceID = UUID()
     let firstTargetID = UUID()
     let secondTargetID = UUID()
+    let notes = CoreDataNoteRepository(container: container)
+    for id in [sourceID, firstTargetID, secondTargetID] { try await notes.upsert(Note(id: id, title: "Note", bodyMarkdown: "")) }
 
     try await repository.replaceLinks(
         from: sourceID,
