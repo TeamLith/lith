@@ -21,7 +21,9 @@ Lith is built around local ownership of your data.
 - iCloud can ask Lith to wait before retrying. Longer retry deadlines are retained across app restarts. Errors never require deleting your local library.
 - Switching iCloud accounts pauses sync to prevent mixing private libraries. Sign back into the original account to resume; Lith does not silently upload the previous account's local data to a new account.
 - A deleted feed never silently removes unsynced articles. If local articles remain, retain the local feed when resolving the conflict to preserve and sync them.
+- A deleted note is retained for review while local recordings, actions, or links still depend on it. Child deletions are processed first; unsynced children are kept locally until you keep the parent or remove those children. An incoming deletion that conflicts with a local edit always requires an explicit choice.
 - Audio sync currently includes metadata and transcript only. Recording files remain on the device where they were captured; cross-device playback requires a future audio-file transfer provider.
+- Accepting a recording deletion removes its local audio file after metadata is safely deleted. Interrupted file cleanup resumes on the next sync. Active recordings and transcription jobs are retained for review until that work finishes.
 
 The release owner must configure the app's Apple-owned CloudKit container and capabilities before a build can enable live sync. An unconfigured build remains local-only. Live, signed multi-device sync still needs verification with that account configuration.
 
@@ -35,6 +37,8 @@ When enabled, Lith syncs when a window becomes active and every **60 seconds** w
 Settings also shows a server-requested retry deadline. Waiting until that time avoids repeatedly contacting a throttled service. If you change iCloud accounts, sign back into the original account before retrying; account boundaries are not reset automatically.
 
 Under **Retained Conflicts**, expand an item to read both versions. Unresolved conflicts offer **Keep Local Version** and **Use Cloud Version**; choose explicitly, then use **Sync Now**. Both historical copies remain available. A cloud deletion of a feed cannot be accepted while local articles still depend on it; keeping the local feed preserves them. If you edited an item during review, sync again to refresh its retained local version before choosing.
+
+The same protection applies to notes with recordings, actions, or links. Choose **Keep Local Version** to preserve the note and sync its children. To accept deletion, remove the dependent records first. Retained conflict history contains audio metadata and transcripts; choosing to delete a recording also deletes its device-local audio file.
 
 ## Platform boundaries
 

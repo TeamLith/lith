@@ -79,7 +79,7 @@ public enum SyncEngineError: Error, LocalizedError, Sendable {
     case configuration(String)
     public var errorDescription: String? {
         switch self {
-        case .dependentRecords: "This feed still has local articles. Keep the local feed to preserve them, or remove its articles before accepting deletion."
+        case .dependentRecords: "This item still has local dependents or active audio work. Keep the local version, or finish the audio work and remove its dependents before accepting deletion."
         case .accountUnavailable: "Sign in to iCloud to sync. Your local data is available."
         case .accountChanged: "The iCloud account changed. Sync is paused to prevent mixing accounts."
         case .localChanged: "An item changed while syncing. Your edit was kept; sync again."
@@ -197,6 +197,11 @@ public final class SyncEngine {
                    checkpoint.manualConflicts?.values.contains(where: {
                        $0.local.kind == .feed && $0.local.entityID == item.feedID
                    }) == true { continue }
+                if !value.deleted, Self.noteParents(of: value).contains(where: { parent in
+                    checkpoint.manualConflicts?.values.contains(where: {
+                        $0.local.kind == .note && $0.local.entityID == parent
+                    }) == true
+                }) { continue }
                 try await push(value, revision: baseline?.revision)
             }
             if !(checkpoint.manualConflicts ?? [:]).isEmpty {
@@ -221,7 +226,8 @@ public final class SyncEngine {
         if let candidate, locallyChanged, !syncContentEqual(candidate, remote.record) {
             let remotelyChanged = !syncContentEqual(remote.record, baseline)
             if remotelyChanged { try await retainConflict(local: candidate, remote: remote.record) }
-            if checkpoint.manualConflicts?[candidate.id] != nil || (remotelyChanged && !Self.hasReliableClock(candidate)) {
+            if checkpoint.manualConflicts?[candidate.id] != nil ||
+                (remotelyChanged && (remote.record.deleted || !Self.hasReliableClock(candidate))) {
                 try await retainManualConflict(local: candidate, remote: remote)
                 return
             }
@@ -381,9 +387,17 @@ public final class SyncEngine {
     }
     private static func recordOrder(_ lhs: SyncRemoteRecord, _ rhs: SyncRemoteRecord) -> Bool {
         func rank(_ record: CloudRecord) -> Int {
-            if record.deleted { return record.kind == .feed ? 12 : 10 }
+            if record.deleted { return record.kind == .feed || record.kind == .note ? 12 : 10 }
             switch record.kind { case .note, .feed: return 0; default: return 1 }
         }
         return rank(lhs.record) == rank(rhs.record) ? lhs.record.id < rhs.record.id : rank(lhs.record) < rank(rhs.record)
+    }
+    private static func noteParents(of record: CloudRecord) -> [UUID] {
+        switch record.kind {
+        case .audio: return (try? record.decode(AudioRecording.self)).map { [$0.noteID] } ?? []
+        case .action: return (try? record.decode(ActionItem.self)).map { [$0.sourceNoteID] } ?? []
+        case .link: return (try? record.decode(Link.self)).map { [$0.fromNoteID, $0.toNoteID] } ?? []
+        default: return []
+        }
     }
 }

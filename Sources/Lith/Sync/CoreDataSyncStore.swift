@@ -5,26 +5,37 @@ import Foundation
 /// Fresh contexts avoid cached snapshots; error merge policy rejects writes racing a local editor.
 public final class CoreDataSyncStore: SyncLocalStore, @unchecked Sendable {
     private let container: NSPersistentContainer
-    public init(container: NSPersistentContainer) { self.container = container }
+    private let audioCleanup: SyncAudioDeletionJournal?
+    public init(container: NSPersistentContainer, audioFiles: AudioFileStore? = nil) {
+        self.container = container
+        // In-memory previews/tests must never inspect the user's real audio directory.
+        let files = audioFiles ?? (container.persistentStoreCoordinator.persistentStores.contains {
+            $0.type != NSInMemoryStoreType
+        } ? AudioFileStore() : nil)
+        self.audioCleanup = files.map(SyncAudioDeletionJournal.init)
+    }
 
     public func snapshot() async throws -> [CloudRecord] {
         let context = container.newBackgroundContext()
         return try await context.perform {
-            var result: [CloudRecord] = []
-            let feeds = try Self.feedIdentities(context)
-            let items = try Self.itemIdentities(context, feeds: feeds)
-            for (kind, entity) in Self.entities where context.persistentStoreCoordinator?.managedObjectModel.entitiesByName[entity] != nil {
-                let request = NSFetchRequest<NSManagedObject>(entityName: entity)
-                for object in try context.fetch(request) { result.append(try Self.encode(object, kind: kind, feeds: feeds, items: items)) }
-            }
-            var unique: [String: CloudRecord] = [:]
-            for record in result {
-                if let previous = unique[record.id], !syncContentEqual(previous, record) {
-                    throw SyncEngineError.configuration("Duplicate local RSS identities have different content. Resolve the duplicate feeds before syncing.")
+            try LithStoreWriteLock.withLock {
+                try self.audioCleanup?.recover(in: context)
+                var result: [CloudRecord] = []
+                let feeds = try Self.feedIdentities(context)
+                let items = try Self.itemIdentities(context, feeds: feeds)
+                for (kind, entity) in Self.entities where context.persistentStoreCoordinator?.managedObjectModel.entitiesByName[entity] != nil {
+                    let request = NSFetchRequest<NSManagedObject>(entityName: entity)
+                    for object in try context.fetch(request) { result.append(try Self.encode(object, kind: kind, feeds: feeds, items: items)) }
                 }
-                unique[record.id] = record
+                var unique: [String: CloudRecord] = [:]
+                for record in result {
+                    if let previous = unique[record.id], !syncContentEqual(previous, record) {
+                        throw SyncEngineError.configuration("Duplicate local RSS identities have different content. Resolve the duplicate feeds before syncing.")
+                    }
+                    unique[record.id] = record
+                }
+                return Array(unique.values)
             }
-            return Array(unique.values)
         }
     }
 
@@ -47,34 +58,52 @@ public final class CoreDataSyncStore: SyncLocalStore, @unchecked Sendable {
         let context = container.newBackgroundContext()
         context.mergePolicy = NSErrorMergePolicy
         try await context.perform {
-            do {
-                guard let entity = Self.entities[record.kind],
-                      context.persistentStoreCoordinator?.managedObjectModel.entitiesByName[entity] != nil else {
-                    throw SyncEngineError.unsupportedEntity(record.kind.rawValue)
-                }
-                let feeds = try Self.feedIdentities(context)
-                let items = try Self.itemIdentities(context, feeds: feeds)
-                let request = NSFetchRequest<NSManagedObject>(entityName: entity)
-                // Canonical natural identity avoids different-device UUID collisions with local uniqueness rules.
-                let existing = try context.fetch(request).first {
-                    try Self.encode($0, kind: record.kind, feeds: feeds, items: items).id == record.id
-                }
-                let current = try existing.map { try Self.encode($0, kind: record.kind, feeds: feeds, items: items) }
-                guard syncContentEqual(current, expected) else { throw SyncEngineError.localChanged }
-                if record.deleted {
-                    if let feed = existing as? ManagedRSSFeed, !feed.items.isEmpty {
-                        // Never allow Core Data's feed cascade to erase unreviewed child changes.
-                        throw SyncEngineError.dependentRecords
+            try LithStoreWriteLock.withLock {
+                do {
+                    try self.audioCleanup?.recover(in: context)
+                    guard let entity = Self.entities[record.kind],
+                          context.persistentStoreCoordinator?.managedObjectModel.entitiesByName[entity] != nil else {
+                        throw SyncEngineError.unsupportedEntity(record.kind.rawValue)
                     }
-                    if let existing { context.delete(existing) }
-                } else {
-                    let object = existing ?? NSEntityDescription.insertNewObject(forEntityName: entity, into: context)
-                    try Self.apply(record, to: object, context: context)
+                    let feeds = try Self.feedIdentities(context)
+                    let items = try Self.itemIdentities(context, feeds: feeds)
+                    let request = NSFetchRequest<NSManagedObject>(entityName: entity)
+                    // Canonical natural identity avoids different-device UUID collisions with local uniqueness rules.
+                    let existing = try context.fetch(request).first {
+                        try Self.encode($0, kind: record.kind, feeds: feeds, items: items).id == record.id
+                    }
+                    let current = try existing.map { try Self.encode($0, kind: record.kind, feeds: feeds, items: items) }
+                    guard syncContentEqual(current, expected) else { throw SyncEngineError.localChanged }
+                    if record.deleted {
+                        if let feed = existing as? ManagedRSSFeed, !feed.items.isEmpty {
+                            // Never allow Core Data's feed cascade to erase unreviewed child changes.
+                            throw SyncEngineError.dependentRecords
+                        }
+                        if record.kind == .note, existing != nil,
+                           try Self.hasNoteDependents(record.entityID, in: context) {
+                            throw SyncEngineError.dependentRecords
+                        }
+                        if record.kind == .audio, let current {
+                            let recording = try current.decode(AudioRecording.self)
+                            guard recording.recordingState != .recording, recording.status != .processing else {
+                                throw SyncEngineError.dependentRecords
+                            }
+                            try self.audioCleanup?.prepare(recording)
+                        }
+                        if let existing { context.delete(existing) }
+                    } else {
+                        try Self.requireParents(for: record, in: context)
+                        let object = existing ?? NSEntityDescription.insertNewObject(forEntityName: entity, into: context)
+                        try Self.apply(record, to: object, context: context)
+                    }
+                    if context.hasChanges { try context.save() }
+                    // A durable intent was written before the metadata commit. If file
+                    // removal fails or the process exits, the next snapshot retries it.
+                    try self.audioCleanup?.recover(in: context)
+                } catch {
+                    context.rollback()
+                    throw error
                 }
-                if context.hasChanges { try context.save() }
-            } catch {
-                context.rollback()
-                throw error
             }
         }
     }
@@ -83,6 +112,39 @@ public final class CoreDataSyncStore: SyncLocalStore, @unchecked Sendable {
         .note: "Note", .link: "Link", .feed: "RSSFeed", .item: "RSSItem",
         .audio: "AudioRecording", .action: "ActionItem"
     ]
+    private static func hasNoteDependents(_ id: UUID, in context: NSManagedObjectContext) throws -> Bool {
+        for (entity, predicate) in [
+            ("AudioRecording", NSPredicate(format: "noteID == %@", id as CVarArg)),
+            ("ActionItem", NSPredicate(format: "sourceNoteID == %@", id as CVarArg)),
+            ("Link", NSPredicate(format: "fromNoteID == %@ OR toNoteID == %@", id as CVarArg, id as CVarArg))
+        ] where context.persistentStoreCoordinator?.managedObjectModel.entitiesByName[entity] != nil {
+            let request = NSFetchRequest<NSManagedObject>(entityName: entity)
+            request.predicate = predicate
+            request.fetchLimit = 1
+            if try context.count(for: request) > 0 { return true }
+        }
+        return false
+    }
+
+    private static func requireParents(for record: CloudRecord, in context: NSManagedObjectContext) throws {
+        let parentIDs: [UUID]
+        switch record.kind {
+        case .audio: parentIDs = [try record.decode(AudioRecording.self).noteID]
+        case .action: parentIDs = [try record.decode(ActionItem.self).sourceNoteID]
+        case .link:
+            let link = try record.decode(Link.self)
+            parentIDs = [link.fromNoteID, link.toNoteID]
+        default: return
+        }
+        for id in parentIDs {
+            let request = ManagedNote.fetchRequest()
+            request.predicate = NSPredicate(format: "id == %@", id as CVarArg)
+            request.fetchLimit = 1
+            guard try context.count(for: request) > 0 else {
+                throw SyncEngineError.configuration("A synced attachment or link is waiting for its note. Sync again.")
+            }
+        }
+    }
     private static func feedIdentities(_ context: NSManagedObjectContext) throws -> [UUID: UUID] {
         try Dictionary(uniqueKeysWithValues: context.fetch(ManagedRSSFeed.fetchRequest()).map {
             let feed = try $0.toDomainFeed()
