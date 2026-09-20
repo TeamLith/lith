@@ -82,6 +82,7 @@ Read only what matches the task:
 - `Sources/Lith/Graph`: graph models and builder logic.
 - `Sources/Lith/Sync`: versioned CloudKit mapping, opt-in sync engine, transport, local-store bridge, and conflict handling.
 - `Docs/CloudKitSchema.md`: versioned private CloudKit record mapping and migration contract.
+- `Sources/Lith/UI`: shared UI-facing view models, including `SyncSettingsViewModel` for opt-in preferences and foreground sync scheduling.
 - `Sources/Lith/UI`: shared UI-facing view models.
 - `Sources/Lith/UI/AudioServices.swift`: shared capture, playback, and transcription runtime; the app container owns one instance across windows.
 - `Sources/Lith/UI/RSSInboxViewModel.swift`: RSS feed creation, article review, and retry-safe approve-to-save workflow.
@@ -92,6 +93,7 @@ Read only what matches the task:
 - `LithApps.xcodeproj`: generated project artifact. Regenerate after structural source changes.
 - `Apps/LithApp/Sources/Shared/RootView.swift`: top-level app shell used by both platforms.
 - `Apps/LithApp/Sources/Shared/Notes`: SwiftUI note list/detail screens shared across app targets.
+- `Apps/LithApp/Sources/Shared/Settings`: iCloud settings, status, retry controls, and retained conflict review.
 - `Apps/LithApp/Sources/Shared/Audio`: recording, playback, and transcript controls embedded in note details.
 - `Apps/LithApp/Sources/Shared/Intents`: App Intents and Shortcuts entry points backed by shared capture services.
 - `Apps/LithApp/Sources/Shared/RSS`: SwiftUI feed inbox and article review screens shared across app targets.
