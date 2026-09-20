@@ -22,12 +22,41 @@ public final class AppDependencyContainer: @unchecked Sendable {
     public let actionItemRepository: ActionItemRepository
     public let actionItemExtractionService: ActionItemExtractionServiceProtocol
     public let wikiLinkService: WikiLinkServiceProtocol
+    private let bootstrapMode: AppBootstrapMode
+
+    @available(iOS 17, macOS 14, *)
+    @MainActor public lazy var syncSettings: SyncSettingsViewModel = makeSyncSettings()
+
+    @available(iOS 17, macOS 14, *)
+    @MainActor private func makeSyncSettings() -> SyncSettingsViewModel {
+        guard bootstrapMode == .live else {
+            return SyncSettingsViewModel(engine: nil, preferences: MemorySyncPreferences(),
+                                         unavailableReason: "Preview uses local, in-memory data.")
+        }
+        let preferences = UserDefaultsSyncPreferences()
+        guard let identifier = Bundle.main.object(forInfoDictionaryKey: "LithCloudKitContainerIdentifier") as? String,
+              !identifier.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
+            return SyncSettingsViewModel(engine: nil, preferences: preferences,
+                                         unavailableReason: "iCloud is unavailable in this build. A release owner must configure its iCloud container.")
+        }
+        do {
+            let transport = try AppleCloudKitTransport(containerIdentifier: identifier)
+            let stateURL = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask)[0]
+                .appendingPathComponent("Lith/Sync/checkpoint.json")
+            let engine = SyncEngine(transport: transport, local: CoreDataSyncStore(container: persistentContainer),
+                                    persistence: FileSyncStatePersistence(url: stateURL))
+            return SyncSettingsViewModel(engine: engine, preferences: preferences)
+        } catch {
+            return SyncSettingsViewModel(engine: nil, preferences: preferences, unavailableReason: error.localizedDescription)
+        }
+    }
 
     public func transcript(for noteID: UUID) async throws -> String {
         try await audioRecordingRepository.recordings(noteID: noteID).compactMap(\.transcript).joined(separator: "\n\n")
     }
 
     public init(mode: AppBootstrapMode = .live) throws {
+        self.bootstrapMode = mode
         let persistentContainer = try LithPersistentStore.makeContainer(inMemory: mode == .inMemory)
         self.persistentContainer = persistentContainer
 

@@ -57,7 +57,7 @@ private enum AppSection: String, CaseIterable, Hashable, Identifiable {
         case .search:
             return "Query filters and graph exploration will connect once the dedicated UI tasks land."
         case .settings:
-            return "Sync status, app preferences, and diagnostics will be surfaced in a later task."
+            return "Control optional iCloud sync, check progress, and review retained conflicts."
         }
     }
 }
@@ -65,6 +65,8 @@ private enum AppSection: String, CaseIterable, Hashable, Identifiable {
 struct RootView: View {
     private let dependencies: AppDependencyContainer
 
+    @Environment(\.scenePhase) private var scenePhase
+    @State private var syncSceneID = UUID()
     @State private var selectedSection: AppSection? = .notes
     @State private var noteListViewModel: NoteListViewModel
     @State private var rssInboxViewModel: RSSInboxViewModel
@@ -76,12 +78,25 @@ struct RootView: View {
             initialValue: RSSInboxViewModel(
                 repository: dependencies.rssRepository,
                 noteRepository: dependencies.noteRepository,
-                fetchService: dependencies.rssFetchService
+                fetchService: dependencies.rssFetchService,
+                wikiLinkService: dependencies.wikiLinkService
             )
         )
     }
 
     var body: some View {
+        platformBody
+            .task {
+                await dependencies.syncSettings.restoreStatus()
+                dependencies.syncSettings.setSceneActive(syncSceneID, active: scenePhase == .active)
+            }
+            .onChange(of: scenePhase) { _, phase in
+                dependencies.syncSettings.setSceneActive(syncSceneID, active: phase == .active)
+            }
+            .onDisappear { dependencies.syncSettings.setSceneActive(syncSceneID, active: false) }
+    }
+
+    private var platformBody: some View {
 #if os(macOS)
         macOSBody
 #else
@@ -186,6 +201,8 @@ private struct ShellDetailView: View {
             RSSInboxView(viewModel: rssInboxViewModel, dependencies: dependencies) {
                 await noteListViewModel.loadNotes()
             }
+        } else if section == .settings {
+            SyncSettingsView(viewModel: dependencies.syncSettings)
         } else {
             placeholderBody
         }
@@ -196,6 +213,8 @@ private struct ShellDetailView: View {
             RSSInboxView(viewModel: rssInboxViewModel, dependencies: dependencies) {
                 await noteListViewModel.loadNotes()
             }
+        } else if section == .settings {
+            SyncSettingsView(viewModel: dependencies.syncSettings)
         } else {
             placeholderBody
         }

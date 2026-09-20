@@ -15,6 +15,7 @@ public final class CoreDataNoteRepository: @unchecked Sendable, NoteRepository {
         self.context.mergePolicy = NSMergePolicy(merge: .errorMergePolicyType)
         self.context.automaticallyMergesChangesFromParent = true
         self.context.undoManager = nil
+        self.context.automaticallyMergesChangesFromParent = true
     }
 
     public init(container: NSPersistentContainer, files: AudioFileStore = AudioFileStore()) {
@@ -24,6 +25,7 @@ public final class CoreDataNoteRepository: @unchecked Sendable, NoteRepository {
         self.context.mergePolicy = NSMergePolicy(merge: .errorMergePolicyType)
         self.context.automaticallyMergesChangesFromParent = true
         self.context.undoManager = nil
+        self.context.automaticallyMergesChangesFromParent = true
     }
 
     public func upsert(_ note: Note) async throws {
