@@ -286,6 +286,7 @@ public final class SyncEngine {
         guard isEnabled, !running,
               let conflict = checkpoint.manualConflicts?.values.first(where: { $0.id == id }) else { return }
         running = true
+        status = .syncing
         defer { running = false }
         do {
             try await checkAccount()
