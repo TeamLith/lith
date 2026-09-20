@@ -19,7 +19,9 @@ This workflow reduces the gap between capture and follow-up, especially for meet
 
 ## Availability
 
-Audio transcription and action extraction are roadmap capabilities and may arrive in stages across builds.
+Audio recording infrastructure saves each capture beneath a stable note and recording identifier in the local app data folder. Recording requests microphone permission first. A denied request creates no recording. Interruptions retain available audio and record an explanatory state; an unfinished recording discovered after relaunch is marked interrupted.
+
+Recording controls, transcription, and action extraction arrive in separate stages. Audio files currently remain local; metadata uses portable relative file identities so enabling sync does not expose a device-specific filesystem path.
 
 ## Siri and Shortcuts
 

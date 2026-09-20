@@ -81,7 +81,9 @@ Read only what matches the task:
 - `Sources/Lith/Services/WikiLinkService.swift`: wikilink resolution and backlink queries.
 - `Sources/Lith/Graph`: graph models and builder logic.
 - `Sources/Lith/Sync`: sync conflict handling.
+- `Docs/CloudKitSchema.md`: versioned private CloudKit record mapping and migration contract.
 - `Sources/Lith/UI`: shared UI-facing view models.
+- `Sources/Lith/UI/RSSInboxViewModel.swift`: RSS feed creation, article review, and retry-safe approve-to-save workflow.
 
 ### App targets
 
@@ -90,6 +92,8 @@ Read only what matches the task:
 - `Apps/LithApp/Sources/Shared/RootView.swift`: top-level app shell used by both platforms.
 - `Apps/LithApp/Sources/Shared/Notes`: SwiftUI note list/detail screens shared across app targets.
 - `Apps/LithApp/Sources/Shared/Intents`: App Intents and Shortcuts entry points backed by shared capture services.
+- `Apps/LithApp/Sources/Shared/RSS`: SwiftUI feed inbox and article review screens shared across app targets.
+- `Apps/LithApp/Sources/Shared/Discovery`: search screens and note discovery UI shared across app targets.
 - `Apps/LithApp/Sources/iOS/LithiOSApp.swift`: iOS app entry point.
 - `Apps/LithApp/Sources/macOS/LithmacOSApp.swift`: macOS app entry point.
 - `Apps/LithApp/Resources`: app assets.
