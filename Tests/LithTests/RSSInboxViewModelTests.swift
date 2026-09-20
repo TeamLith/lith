@@ -4,6 +4,52 @@ import Testing
 
 @MainActor
 struct RSSInboxViewModelTests {
+    @Test func savingArticleIndexesCommentaryLinksWithoutDuplicates() async throws {
+        let feed = RSSFeed(title: "Feed", feedURL: URL(string: "https://example.com/feed")!)
+        let article = RSSItem(feedID: feed.id, title: "Article", content: "Text",
+                              linkURL: URL(string: "https://example.com/a")!, status: .approved)
+        let target = Note(title: "Target", bodyMarkdown: "")
+        let rss = InMemoryRSSRepository(seedFeeds: [feed], seedItems: [article])
+        let notes = InMemoryNoteRepository(seed: [target])
+        let links = InMemoryLinkRepository()
+        let wiki = WikiLinkService(noteRepository: notes, linkRepository: links)
+        let model = RSSInboxViewModel(repository: rss, noteRepository: notes, fetchService: EmptyRSSFetcher(), wikiLinkService: wiki)
+
+        let noteID = try #require(await model.saveAsNote(itemID: article.id, commentary: "See [[Target]] and [[Target]]"))
+        #expect(try await links.links(from: noteID).map(\.toNoteID) == [target.id])
+        #expect(try await wiki.backlinks(to: target.id).map(\.id) == [noteID])
+        #expect(await model.saveAsNote(itemID: article.id) == noteID)
+        #expect(try await notes.allNotes().count == 2)
+        #expect(try await links.links(from: noteID).count == 1)
+    }
+
+    @Test func failedLinkIndexingRetriesPersistedNoteWithoutReplacingEdits() async throws {
+        let feed = RSSFeed(title: "Feed", feedURL: URL(string: "https://example.com/feed")!)
+        let article = RSSItem(feedID: feed.id, title: "Article", content: "Text",
+                              linkURL: URL(string: "https://example.com/a")!, status: .approved)
+        let target = Note(title: "Target", bodyMarkdown: "")
+        let rss = InMemoryRSSRepository(seedFeeds: [feed], seedItems: [article])
+        let notes = InMemoryNoteRepository(seed: [target])
+        let links = InMemoryLinkRepository()
+        let wiki = WikiLinkService(noteRepository: notes, linkRepository: links)
+        let model = RSSInboxViewModel(repository: rss, noteRepository: notes, fetchService: EmptyRSSFetcher(),
+                                     wikiLinkService: FailingOnceWikiLinkService(base: wiki))
+        #expect(await model.saveAsNote(itemID: article.id, commentary: "[[Target]]") == nil)
+        #expect(model.error != nil)
+        #expect(try await rss.item(id: article.id)?.status == .approved)
+        var saved = try #require(try await notes.note(id: article.id))
+        saved.bodyMarkdown += "\nAn edit after the partial save"
+        try await notes.upsert(saved)
+
+        // Retry after recreating the inbox, using the already persisted note body.
+        let reopened = RSSInboxViewModel(repository: rss, noteRepository: notes, fetchService: EmptyRSSFetcher(), wikiLinkService: wiki)
+        #expect(await reopened.saveAsNote(itemID: article.id, commentary: "Replacement") == saved.id)
+        #expect(try await notes.note(id: saved.id)?.bodyMarkdown == saved.bodyMarkdown)
+        #expect(try await notes.allNotes().count == 2)
+        #expect(try await links.links(from: saved.id).map(\.toNoteID) == [target.id])
+        #expect(try await rss.item(id: article.id)?.status == .savedAsNote)
+    }
+
     @Test func approvalDoesNotCreateNoteAndSaveRetainsSourceLinkage() async throws {
         let feed = RSSFeed(title: "Engineering", feedURL: URL(string: "https://example.com/feed")!, category: "Tech")
         let article = RSSItem(feedID: feed.id, title: "Article", content: "Article text", author: "Writer",
@@ -107,6 +153,17 @@ private struct EmptyRSSFetcher: RSSFetchServiceProtocol {
 }
 
 private enum InboxTestError: Error { case storageFailure }
+
+private actor FailingOnceWikiLinkService: WikiLinkServiceProtocol {
+    let base: WikiLinkService
+    var shouldFail = true
+    init(base: WikiLinkService) { self.base = base }
+    func refreshLinks(for noteID: UUID) async throws -> [Link] {
+        if shouldFail { shouldFail = false; throw InboxTestError.storageFailure }
+        return try await base.refreshLinks(for: noteID)
+    }
+    func backlinks(to noteID: UUID) async throws -> [Note] { try await base.backlinks(to: noteID) }
+}
 
 private actor FailingNoteWriter: NoteRepository {
     func upsert(_ note: Note) async throws { throw InboxTestError.storageFailure }
