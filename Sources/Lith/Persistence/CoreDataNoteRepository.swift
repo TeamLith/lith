@@ -6,19 +6,24 @@ import Foundation
 public final class CoreDataNoteRepository: @unchecked Sendable, NoteRepository {
     private let container: NSPersistentContainer
     private let context: NSManagedObjectContext
+    private let files: AudioFileStore
 
     public init() throws {
+        self.files = AudioFileStore()
         self.container = try LithPersistentStore.makeContainer()
         self.context = container.newBackgroundContext()
-        self.context.mergePolicy = NSMergePolicy(merge: .mergeByPropertyObjectTrumpMergePolicyType)
+        self.context.mergePolicy = NSMergePolicy(merge: .errorMergePolicyType)
+        self.context.automaticallyMergesChangesFromParent = true
         self.context.undoManager = nil
         self.context.automaticallyMergesChangesFromParent = true
     }
 
-    public init(container: NSPersistentContainer) {
+    public init(container: NSPersistentContainer, files: AudioFileStore = AudioFileStore()) {
+        self.files = files
         self.container = container
         self.context = container.newBackgroundContext()
-        self.context.mergePolicy = NSMergePolicy(merge: .mergeByPropertyObjectTrumpMergePolicyType)
+        self.context.mergePolicy = NSMergePolicy(merge: .errorMergePolicyType)
+        self.context.automaticallyMergesChangesFromParent = true
         self.context.undoManager = nil
         self.context.automaticallyMergesChangesFromParent = true
     }
@@ -31,13 +36,43 @@ public final class CoreDataNoteRepository: @unchecked Sendable, NoteRepository {
         }
     }
 
+    public func updateExisting(_ note: Note, expected: Note) async throws {
+        try await perform {
+            guard let managed = try self.fetchManagedNote(id: note.id) else { throw NoteWriteError.missingNote }
+            guard try managed.toDomainNote() == expected else { throw NoteWriteError.conflict }
+            try managed.apply(note)
+            try self.saveIfNeeded()
+        }
+    }
+
     public func delete(noteID: UUID) async throws {
         try await perform {
-            guard let managedNote = try self.fetchManagedNote(id: noteID) else {
-                return
+            let fileManager = FileManager.default
+            let directory = self.files.root.appendingPathComponent(noteID.uuidString.lowercased(), isDirectory: true)
+            let quarantine = self.files.root.appendingPathComponent(".deleting-" + noteID.uuidString.lowercased(), isDirectory: true)
+            // A previous committed deletion may have failed its final file cleanup.
+            if fileManager.fileExists(atPath: quarantine.path) { try fileManager.removeItem(at: quarantine) }
+            let hasFiles = fileManager.fileExists(atPath: directory.path)
+            if hasFiles { try fileManager.moveItem(at: directory, to: quarantine) }
+            do {
+                if let managedNote = try self.fetchManagedNote(id: noteID) { self.context.delete(managedNote) }
+                let children: [(String, NSPredicate)] = [
+                    ("Link", NSPredicate(format: "fromNoteID == %@ OR toNoteID == %@", noteID as CVarArg, noteID as CVarArg)),
+                    ("ActionItem", NSPredicate(format: "sourceNoteID == %@", noteID as CVarArg)),
+                    ("AudioRecording", NSPredicate(format: "noteID == %@", noteID as CVarArg))
+                ]
+                for (entity, predicate) in children where self.container.managedObjectModel.entitiesByName[entity] != nil {
+                    let request = NSFetchRequest<NSManagedObject>(entityName: entity)
+                    request.predicate = predicate
+                    for object in try self.context.fetch(request) { self.context.delete(object) }
+                }
+                try self.saveIfNeeded()
+            } catch {
+                self.context.rollback()
+                if hasFiles { try fileManager.moveItem(at: quarantine, to: directory) }
+                throw error
             }
-            self.context.delete(managedNote)
-            try self.saveIfNeeded()
+            if hasFiles { try fileManager.removeItem(at: quarantine) }
         }
     }
 
@@ -62,6 +97,19 @@ public final class CoreDataNoteRepository: @unchecked Sendable, NoteRepository {
         return try context.fetch(request).first
     }
 
+    private func recoverStagedAudioDeletes() throws {
+        let manager = FileManager.default
+        guard manager.fileExists(atPath: files.root.path) else { return }
+        for staged in try manager.contentsOfDirectory(at: files.root, includingPropertiesForKeys: nil) {
+            let name = staged.lastPathComponent
+            guard name.hasPrefix(".deleting-"), let id = UUID(uuidString: String(name.dropFirst(10))) else { continue }
+            let original = files.root.appendingPathComponent(id.uuidString.lowercased(), isDirectory: true)
+            if try fetchManagedNote(id: id) != nil {
+                if !manager.fileExists(atPath: original.path) { try manager.moveItem(at: staged, to: original) }
+            } else { try manager.removeItem(at: staged) }
+        }
+    }
+
     private func saveIfNeeded() throws {
         if context.hasChanges {
             try context.save()
@@ -72,8 +120,14 @@ public final class CoreDataNoteRepository: @unchecked Sendable, NoteRepository {
         try await withCheckedThrowingContinuation { continuation in
             context.perform {
                 do {
-                    continuation.resume(returning: try work())
+                    let value = try LithStoreWriteLock.withLock {
+                        self.context.reset()
+                        try self.recoverStagedAudioDeletes()
+                        return try work()
+                    }
+                    continuation.resume(returning: value)
                 } catch {
+                    self.context.rollback()
                     continuation.resume(throwing: error)
                 }
             }

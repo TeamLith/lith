@@ -17,11 +17,13 @@
 		4CA2643DEED104B20F78F57F /* RSSInboxView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 907EDF554A424B7FD4B4DBEB /* RSSInboxView.swift */; };
 		5131A449E7DDD21BEE28EECD /* CreateNoteIntent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B849EF6DA09382F60787933 /* CreateNoteIntent.swift */; };
 		522482A082C8CE291267CE77 /* SyncSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7F3C753F050D94D3FEE094B /* SyncSettingsView.swift */; };
+		7CF1E8687327BA77E8629E9D /* MarkdownPreview.swift in Sources */ = {isa = PBXBuildFile; fileRef = 098F3E665939AC4A2DFBC459 /* MarkdownPreview.swift */; };
 		7D5EDB250F82B5133B0B349C /* NoteListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8030DC0FD62B167304E8CC8 /* NoteListView.swift */; };
 		9313D62CB486A4EF81948D2D /* ActionItemsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27948C837338A798706C7939 /* ActionItemsView.swift */; };
 		A3D006E9269F2DC9329B505B /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A59A6C1A5D68DF5B7EBF2AD8 /* Assets.xcassets */; };
 		A5FE0B8AC59685DABCDF60E2 /* AppLaunchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B55FFE1AB8BA1A065290CA0F /* AppLaunchView.swift */; };
 		ABDA9B9BEBB9BB816D4D8BDA /* NoteDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8A3E60B88EBCBB104E4438C /* NoteDetailView.swift */; };
+		AD56E8656431152C32870A94 /* MarkdownPreview.swift in Sources */ = {isa = PBXBuildFile; fileRef = 098F3E665939AC4A2DFBC459 /* MarkdownPreview.swift */; };
 		B617A5DAF1A710E43AACBC5B /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B66636C8B07EDF7EB10EE8E /* RootView.swift */; };
 		B72263F82885621EFE08449F /* RSSInboxView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 907EDF554A424B7FD4B4DBEB /* RSSInboxView.swift */; };
 		BB0023684094C66ED5959E00 /* CriticalNavigationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4249B0DDA4845512E18A713B /* CriticalNavigationTests.swift */; };
@@ -57,6 +59,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		098F3E665939AC4A2DFBC459 /* MarkdownPreview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarkdownPreview.swift; sourceTree = "<group>"; };
 		0B849EF6DA09382F60787933 /* CreateNoteIntent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateNoteIntent.swift; sourceTree = "<group>"; };
 		20342FFE2E34CB1EBAB03E1D /* GraphView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GraphView.swift; sourceTree = "<group>"; };
 		27948C837338A798706C7939 /* ActionItemsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionItemsView.swift; sourceTree = "<group>"; };
@@ -203,6 +206,7 @@
 			isa = PBXGroup;
 			children = (
 				27948C837338A798706C7939 /* ActionItemsView.swift */,
+				098F3E665939AC4A2DFBC459 /* MarkdownPreview.swift */,
 				A8A3E60B88EBCBB104E4438C /* NoteDetailView.swift */,
 				E8030DC0FD62B167304E8CC8 /* NoteListView.swift */,
 			);
@@ -399,6 +403,7 @@
 				2A2936FA32D5135376AC6A84 /* CreateNoteIntent.swift in Sources */,
 				4A3FBE40C7698FD6A9929EEC /* GraphView.swift in Sources */,
 				2973F43614DAD15650F1FD6B /* LithiOSApp.swift in Sources */,
+				7CF1E8687327BA77E8629E9D /* MarkdownPreview.swift in Sources */,
 				ABDA9B9BEBB9BB816D4D8BDA /* NoteDetailView.swift in Sources */,
 				FF99E821F7BE4B13EDAA3C2C /* NoteListView.swift in Sources */,
 				4CA2643DEED104B20F78F57F /* RSSInboxView.swift in Sources */,
@@ -426,6 +431,7 @@
 				5131A449E7DDD21BEE28EECD /* CreateNoteIntent.swift in Sources */,
 				DFBC70FD6AFCC543687BA359 /* GraphView.swift in Sources */,
 				04F64ED69C42450BB12D1797 /* LithmacOSApp.swift in Sources */,
+				AD56E8656431152C32870A94 /* MarkdownPreview.swift in Sources */,
 				CEE34ABB9A6AED4C894B2C6E /* NoteDetailView.swift in Sources */,
 				7D5EDB250F82B5133B0B349C /* NoteListView.swift in Sources */,
 				B72263F82885621EFE08449F /* RSSInboxView.swift in Sources */,
@@ -490,7 +496,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
-				CURRENT_PROJECT_VERSION = 23;
+				CURRENT_PROJECT_VERSION = 26;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = Lith;
 				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
@@ -655,7 +661,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 23;
+				CURRENT_PROJECT_VERSION = 26;
 				DEVELOPMENT_TEAM = 3KG4D4R466;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = Lith;
@@ -682,7 +688,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 23;
+				CURRENT_PROJECT_VERSION = 26;
 				DEVELOPMENT_TEAM = 3KG4D4R466;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = Lith;
@@ -723,7 +729,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
-				CURRENT_PROJECT_VERSION = 23;
+				CURRENT_PROJECT_VERSION = 26;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = Lith;
 				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;

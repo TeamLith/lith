@@ -30,6 +30,7 @@ import Testing
 
 private enum CaptureTestError: Error { case storage }
 private struct FailingCaptureRepository: NoteRepository {
+    func updateExisting(_ note: Note, expected: Note) async throws { try await upsert(note) }
     func upsert(_ note: Note) async throws { throw CaptureTestError.storage }
     func delete(noteID: UUID) async throws {}
     func allNotes() async throws -> [Note] { [] }

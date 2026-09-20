@@ -73,7 +73,7 @@ struct RootView: View {
 
     init(dependencies: AppDependencyContainer) {
         self.dependencies = dependencies
-        self._noteListViewModel = State(initialValue: NoteListViewModel(repository: dependencies.noteRepository))
+        self._noteListViewModel = State(initialValue: NoteListViewModel(repository: dependencies.noteRepository, wikiLinkService: dependencies.wikiLinkService))
         self._rssInboxViewModel = State(
             initialValue: RSSInboxViewModel(
                 repository: dependencies.rssRepository,

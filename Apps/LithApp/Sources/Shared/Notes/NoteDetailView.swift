@@ -1,4 +1,5 @@
 import SwiftUI
+import UniformTypeIdentifiers
 import Lith
 
 @available(iOS 17, macOS 14, *)
@@ -8,8 +9,12 @@ struct NoteDetailView: View {
     let onNoteChanged: @MainActor () async -> Void
 
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.scenePhase) private var scenePhase
 
     @State private var isEditing = false
+    @State private var exporting = false
+    @State private var exportDocument: MarkdownFile?
+    @State private var exportError: String?
     @State private var viewModel: NoteDetailViewModel
     @State private var actionItemsViewModel: ActionItemsViewModel?
 
@@ -17,6 +22,7 @@ struct NoteDetailView: View {
         repository: NoteRepository,
         wikiLinkService: WikiLinkServiceProtocol,
         noteID: UUID,
+        initiallyEditing: Bool = false,
         actionItemRepository: ActionItemRepository? = nil,
         actionReviewService: ActionItemReviewService? = nil,
         transcriptProvider: (@Sendable (UUID) async throws -> String)? = nil,
@@ -24,6 +30,7 @@ struct NoteDetailView: View {
         audioServices: AudioServices? = nil,
         onNoteChanged: @escaping @MainActor () async -> Void = {}
     ) {
+        self._isEditing = State(initialValue: initiallyEditing)
         self.audioServices = audioServices
         self.audioRepository = audioRepository
         self.onNoteChanged = onNoteChanged
@@ -65,7 +72,14 @@ struct NoteDetailView: View {
 #endif
         .task { await viewModel.loadNote() }
         .onDisappear {
-            Task { await onNoteChanged() }
+            let model = viewModel
+            Task { _ = await model.saveNow(); await onNoteChanged() }
+        }
+        .onChange(of: scenePhase) { _, phase in
+            if phase != .active {
+                let model = viewModel
+                Task { _ = await model.saveNow() }
+            }
         }
         .onChange(of: viewModel.title) { _, _ in
             viewModel.scheduleAutosave()
@@ -77,6 +91,14 @@ struct NoteDetailView: View {
             viewModel.scheduleAutosave()
         }
         .toolbar { toolbarContent }
+        .fileExporter(isPresented: $exporting, document: exportDocument,
+                      contentType: UTType(filenameExtension: "md") ?? .plainText,
+                      defaultFilename: viewModel.title.isEmpty ? "Untitled" : viewModel.title.replacingOccurrences(of: "/", with: "-")) { result in
+            if case let .failure(error) = result { exportError = error.localizedDescription }
+        }
+        .alert("Could Not Export", isPresented: Binding(get: { exportError != nil }, set: { if !$0 { exportError = nil } })) {
+            Button("OK") { exportError = nil }
+        } message: { Text(exportError ?? "") }
     }
 
     private var content: some View {
@@ -100,9 +122,7 @@ struct NoteDetailView: View {
                         .foregroundStyle(.secondary)
                         .italic()
                 } else {
-                    Text(LocalizedStringKey(viewModel.bodyMarkdown))
-                        .textSelection(.enabled)
-                        .frame(maxWidth: .infinity, alignment: .leading)
+                    MarkdownPreview(markdown: viewModel.bodyMarkdown)
                 }
 
                 if let saveError = viewModel.saveError {
@@ -227,7 +247,7 @@ struct NoteDetailView: View {
             Button(isEditing ? "Done" : "Edit") {
                 Task {
                     if isEditing {
-                        _ = await viewModel.saveNow()
+                        guard await viewModel.saveNow() != nil else { return }
                         await onNoteChanged()
                     }
                     isEditing.toggle()
@@ -237,6 +257,21 @@ struct NoteDetailView: View {
 
         ToolbarItem(placement: .secondaryAction) {
             Menu("Actions") {
+                Button("Export Markdown", systemImage: "square.and.arrow.up") {
+                    do {
+                        exportDocument = MarkdownFile(data: try MarkdownNoteService().export(title: viewModel.title, body: viewModel.bodyMarkdown))
+                        exporting = true
+                    } catch { exportError = error.localizedDescription }
+                }
+                if viewModel.isArchived || viewModel.isTrashed {
+                    Button("Restore", systemImage: "arrow.uturn.backward") {
+                        Task {
+                            guard await viewModel.restore() != nil else { return }
+                            await onNoteChanged()
+                            dismiss()
+                        }
+                    }
+                }
                 Button {
                     Task {
                         guard await viewModel.archive() != nil else {

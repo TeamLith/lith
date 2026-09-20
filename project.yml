@@ -34,7 +34,7 @@ targets:
         INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone: UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight
         INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad: UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight
         INFOPLIST_KEY_ITSAppUsesNonExemptEncryption: NO
-        CURRENT_PROJECT_VERSION: 23
+        CURRENT_PROJECT_VERSION: 26
         MARKETING_VERSION: 0.2.0
         INFOPLIST_KEY_NSMicrophoneUsageDescription: Record audio attached to your notes.
         INFOPLIST_KEY_NSSpeechRecognitionUsageDescription: Transcribe your recordings on this device.
@@ -62,7 +62,7 @@ targets:
         CODE_SIGN_STYLE: Automatic
         DEVELOPMENT_TEAM: 3KG4D4R466
         PROVISIONING_PROFILE_SPECIFIER: ""
-        CURRENT_PROJECT_VERSION: 23
+        CURRENT_PROJECT_VERSION: 26
         MARKETING_VERSION: 0.2.0
   LithiOSUITests:
     type: bundle.ui-testing

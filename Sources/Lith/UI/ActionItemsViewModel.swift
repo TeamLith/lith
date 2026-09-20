@@ -51,13 +51,14 @@ public final class ActionItemsViewModel {
     public func update(id: UUID, task: String, assignee: String?, dueDate: Date?) async -> Bool {
         await perform {
             var item = try await self.existing(id)
+            let expected = item
             item.task = task.trimmingCharacters(in: .whitespacesAndNewlines)
             guard !item.task.isEmpty else { throw ActionItemReviewError.emptyTask }
             let name = assignee?.trimmingCharacters(in: .whitespacesAndNewlines)
             item.assignee = name?.isEmpty == false ? name : nil
             item.dueDate = dueDate
             item.updatedAt = Date()
-            try await self.repository.upsert(item)
+            try await self.repository.updateExisting(item, expected: expected)
             self.items = try await self.repository.items(noteID: self.noteID)
         }
     }
@@ -65,9 +66,10 @@ public final class ActionItemsViewModel {
     public func setCompleted(id: UUID, completed: Bool) async {
         await perform {
             var item = try await self.existing(id)
+            let expected = item
             item.status = completed ? .done : .open
             item.updatedAt = Date()
-            try await self.repository.upsert(item)
+            try await self.repository.updateExisting(item, expected: expected)
             self.items = try await self.repository.items(noteID: self.noteID)
         }
     }

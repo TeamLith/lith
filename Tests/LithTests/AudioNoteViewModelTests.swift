@@ -87,12 +87,12 @@ import CoreData
 @Test @MainActor func sharedAudioRuntimeKeepsLiveCaptureWhenAnotherWindowLoads() async throws {
     let files = AudioFileStore(root: FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString))
     defer { try? FileManager.default.removeItem(at: files.root) }
-    let repository = CoreDataAudioRecordingRepository(container: try LithPersistentStore.makeContainer(inMemory: true), files: files)
+    let repository = CoreDataAudioRecordingRepository(container: try makeAudioTestContainer(noteIDs: [audioTestNoteID, UUID(uuidString: "CCCCCCCC-CCCC-CCCC-CCCC-CCCCCCCCCCCC")!]), files: files)
     let capture = UIAudioCaptureDriver(), playback = UIAudioPlaybackDriver()
     let recorder = AudioRecorderService(repository: repository, files: files, driver: capture)
     let services = AudioServices(repository: repository, recorder: recorder, playback: playback)
-    let first = AudioNoteViewModel(noteID: UUID(), services: services)
-    let second = AudioNoteViewModel(noteID: UUID(), services: services)
+    let first = AudioNoteViewModel(noteID: audioTestNoteID, services: services)
+    let second = AudioNoteViewModel(noteID: UUID(uuidString: "CCCCCCCC-CCCC-CCCC-CCCC-CCCCCCCCCCCC")!, services: services)
     await first.load()
     await first.startRecording()
     let id = try #require(first.activeRecordingID)
@@ -118,10 +118,10 @@ import CoreData
 
 @MainActor private func audioUIFixture() throws -> (AudioNoteViewModel, UIAudioCaptureDriver, UIAudioPlaybackDriver, CoreDataAudioRecordingRepository, AudioFileStore) {
     let files = AudioFileStore(root: FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString))
-    let repository = CoreDataAudioRecordingRepository(container: try LithPersistentStore.makeContainer(inMemory: true), files: files)
+    let repository = CoreDataAudioRecordingRepository(container: try makeAudioTestContainer(noteIDs: [audioTestNoteID, UUID(uuidString: "CCCCCCCC-CCCC-CCCC-CCCC-CCCCCCCCCCCC")!]), files: files)
     let capture = UIAudioCaptureDriver(), playback = UIAudioPlaybackDriver()
     let recorder = AudioRecorderService(repository: repository, files: files, driver: capture)
-    let model = AudioNoteViewModel(noteID: UUID(), repository: repository, recorder: recorder,
+    let model = AudioNoteViewModel(noteID: audioTestNoteID, repository: repository, recorder: recorder,
                                   transcription: UITranscriptionService(repository: repository), playback: playback)
     return (model, capture, playback, repository, files)
 }
@@ -169,6 +169,82 @@ private actor UITranscriptionService: TranscriptionServiceProtocol {
         try await repository.upsert(value)
         await onUpdate(.init(text: value.transcript, isFinal: true))
         return value
+    }
+}
+
+@Test @MainActor func sharedTranscriptionBlocksCorrectionsAndDeletionFromAnotherWindow() async throws {
+    let files = AudioFileStore(root: FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString))
+    defer { try? FileManager.default.removeItem(at: files.root) }
+    let repository = CoreDataAudioRecordingRepository(container: try makeAudioTestContainer(), files: files)
+    let speech = ControlledAudioSpeechDriver()
+    let recorder = AudioRecorderService(repository: repository, files: files, driver: UIAudioCaptureDriver())
+    let services = AudioServices(repository: repository, recorder: recorder,
+                                 transcription: TranscriptionService(repository: repository, driver: speech), playback: UIAudioPlaybackDriver())
+    let first = AudioNoteViewModel(noteID: audioTestNoteID, services: services)
+    let second = AudioNoteViewModel(noteID: audioTestNoteID, services: services)
+    await first.load()
+    await first.startRecording()
+    await first.stopRecording()
+    let recording = try #require(first.recordings.first)
+    let task = try #require(first.startTranscription(recording))
+    await speech.waitUntilStarted()
+    await second.saveTranscript(recordingID: recording.id, text: "Correction")
+    #expect(second.errorMessage?.contains("already") == true)
+    await second.delete(recording)
+    #expect(try await repository.recording(id: recording.id) != nil)
+    #expect(FileManager.default.fileExists(atPath: recording.fileURL.path))
+    speech.continuation?.yield(.init(text: "Recognized", isFinal: true))
+    await task.value
+    await second.saveTranscript(recordingID: recording.id, text: "Correction")
+    #expect(try await repository.recording(id: recording.id)?.transcript == "Correction")
+    await second.delete(recording)
+    #expect(try await repository.recording(id: recording.id) == nil)
+}
+
+@Test @MainActor func noteDeletionCancelsTranscriptionAndInvalidatesPendingMicrophonePermission() async throws {
+    let files = AudioFileStore(root: FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString))
+    defer { try? FileManager.default.removeItem(at: files.root) }
+    let repository = CoreDataAudioRecordingRepository(container: try makeAudioTestContainer(), files: files)
+    let speech = ControlledAudioSpeechDriver(), capture = UIAudioCaptureDriver()
+    let recorder = AudioRecorderService(repository: repository, files: files, driver: capture)
+    let services = AudioServices(repository: repository, recorder: recorder,
+                                 transcription: TranscriptionService(repository: repository, driver: speech), playback: UIAudioPlaybackDriver())
+    let model = AudioNoteViewModel(noteID: audioTestNoteID, services: services)
+    await model.load()
+    await model.startRecording()
+    await model.stopRecording()
+    let recording = try #require(model.recordings.first)
+    let task = try #require(model.startTranscription(recording))
+    await speech.waitUntilStarted()
+    try await services.prepareForNoteDeletion(noteID: audioTestNoteID)
+    try await repository.delete(recordingID: recording.id)
+    services.finishNoteDeletion(noteID: audioTestNoteID)
+    speech.continuation?.yield(.init(text: "Too late", isFinal: true))
+    await task.value
+    #expect(try await repository.recording(id: recording.id) == nil)
+    capture.delayPermission = true
+    let (requested, signal) = AsyncStream<Void>.makeStream()
+    capture.onPermissionRequest = { signal.yield(()); signal.finish() }
+    let start = Task { await model.startRecording() }
+    for await _ in requested { break }
+    try await services.prepareForNoteDeletion(noteID: audioTestNoteID)
+    services.finishNoteDeletion(noteID: audioTestNoteID)
+    capture.permissionContinuation?.resume(returning: true)
+    await start.value
+    #expect(!capture.capturing)
+    #expect(try await repository.recordings(noteID: audioTestNoteID).isEmpty)
+}
+
+@MainActor private final class ControlledAudioSpeechDriver: SpeechTranscriptionDriver {
+    var continuation: AsyncThrowingStream<TranscriptionUpdate, Error>.Continuation?
+    private let started = AsyncStream<Void>.makeStream()
+    func waitUntilStarted() async { for await _ in started.stream { break } }
+    func updates(for fileURL: URL) async throws -> AsyncThrowingStream<TranscriptionUpdate, Error> {
+        let pair = AsyncThrowingStream<TranscriptionUpdate, Error>.makeStream()
+        continuation = pair.continuation
+        started.continuation.yield(())
+        started.continuation.finish()
+        return pair.stream
     }
 }
 #endif

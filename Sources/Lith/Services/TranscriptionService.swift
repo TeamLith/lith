@@ -50,10 +50,12 @@ public actor TranscriptionService: TranscriptionServiceProtocol {
         defer { processing.remove(recording.id) }
         guard var current = try await repository.recording(id: recording.id) else { throw TranscriptionError.missingRecording }
         guard current.recordingState != .recording else { throw TranscriptionError.recordingInProgress }
+        var persistedAt = current.updatedAt
         current.status = .processing
         current.errorMessage = nil
         current.updatedAt = Date()
-        try await repository.upsert(current)
+        try await repository.update(current, ifUnchangedSince: persistedAt)
+        persistedAt = current.updatedAt
         do {
             try Task.checkCancellation()
             guard FileManager.default.fileExists(atPath: current.fileURL.path) else { throw TranscriptionError.missingAudio }
@@ -63,7 +65,8 @@ public actor TranscriptionService: TranscriptionServiceProtocol {
                 current.transcript = update.text
                 current.status = update.isFinal ? .complete : .processing
                 current.updatedAt = Date()
-                try await repository.upsert(current)
+                try await repository.update(current, ifUnchangedSince: persistedAt)
+                persistedAt = current.updatedAt
                 await onUpdate(update)
                 if update.isFinal { return current }
             }
@@ -73,7 +76,8 @@ public actor TranscriptionService: TranscriptionServiceProtocol {
             current.status = .failed
             current.errorMessage = error is CancellationError ? "Transcription was cancelled. You can retry." : error.localizedDescription
             current.updatedAt = Date()
-            try await repository.upsert(current)
+            // Do not overwrite a correction or recreate a recording deleted during recognition.
+            try? await repository.update(current, ifUnchangedSince: persistedAt)
             throw error
         }
     }
@@ -82,10 +86,11 @@ public actor TranscriptionService: TranscriptionServiceProtocol {
     public func recoverInterruptedTranscriptions() async throws {
         for var recording in try await repository.recordings(noteID: nil)
         where recording.status == .processing && !processing.contains(recording.id) {
+            let persistedAt = recording.updatedAt
             recording.status = .failed
             recording.errorMessage = "Transcription stopped when Lith closed. You can retry."
             recording.updatedAt = Date()
-            try await repository.upsert(recording)
+            try await repository.update(recording, ifUnchangedSince: persistedAt)
         }
     }
 }

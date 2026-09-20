@@ -25,6 +25,7 @@ struct CriticalFlowTests {
         _ = await detail.archive()
         await search.search()
         #expect(search.results.isEmpty)
+        await list.moveToTrash(noteID: created.id)
         await list.delete(noteID: created.id)
         #expect(try await dependencies.noteRepository.note(id: created.id) == nil)
         #expect(try await dependencies.noteRepository.note(id: destination.id) != nil)
@@ -37,7 +38,7 @@ struct CriticalFlowTests {
         try await dependencies.rssRepository.addFeed(feed)
         try await dependencies.rssRepository.upsertItems([article])
         let inbox = RSSInboxViewModel(repository: dependencies.rssRepository, noteRepository: dependencies.noteRepository,
-                                      fetchService: dependencies.rssFetchService)
+                                      fetchService: dependencies.rssFetchService, wikiLinkService: dependencies.wikiLinkService)
         await inbox.load()
         #expect(await inbox.saveAsNote(itemID: article.id) == nil)
         #expect(try await dependencies.noteRepository.allNotes().isEmpty)

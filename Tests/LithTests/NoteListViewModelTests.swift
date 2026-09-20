@@ -119,6 +119,7 @@ struct NoteListViewModelTests {
         let repo = InMemoryNoteRepository(seed: [note])
         let vm = NoteListViewModel(repository: repo)
 
+        await vm.moveToTrash(noteID: note.id)
         await vm.delete(noteID: note.id)
 
         #expect(try await repo.note(id: note.id) == nil)
