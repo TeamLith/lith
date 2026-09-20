@@ -81,6 +81,7 @@ Read only what matches the task:
 - `Sources/Lith/Services/WikiLinkService.swift`: wikilink resolution and backlink queries.
 - `Sources/Lith/Graph`: graph models and builder logic.
 - `Sources/Lith/Sync`: sync conflict handling.
+- `Docs/CloudKitSchema.md`: versioned private CloudKit record mapping and migration contract.
 - `Sources/Lith/UI`: shared UI-facing view models.
 
 ### App targets
