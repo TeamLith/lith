@@ -48,6 +48,7 @@ public struct SyncCheckpoint: Codable, Sendable {
     public var conflicts: [SyncConflictCopy] = []
     public var lastSuccessfulSync: Date?
     public var retryNotBefore: Date?
+    public var manualConflicts: [String: SyncConflictCopy]? = [:]
     public init() {}
 }
 
@@ -71,12 +72,14 @@ public struct FileSyncStatePersistence: SyncStatePersistence {
 
 public enum SyncEngineError: Error, LocalizedError, Sendable {
     case accountUnavailable, accountChanged, localChanged, disabled, tokenExpired
+    case dependentRecords
     case retryable(String, delay: TimeInterval)
     case serverConflict(SyncRemoteRecord)
     case unsupportedEntity(String)
     case configuration(String)
     public var errorDescription: String? {
         switch self {
+        case .dependentRecords: "This feed still has local articles. Keep the local feed to preserve them, or remove its articles before accepting deletion."
         case .accountUnavailable: "Sign in to iCloud to sync. Your local data is available."
         case .accountChanged: "The iCloud account changed. Sync is paused to prevent mixing accounts."
         case .localChanged: "An item changed while syncing. Your edit was kept; sync again."
@@ -104,6 +107,7 @@ public final class SyncEngine {
     public private(set) var lastSuccessfulSync: Date?
     public private(set) var conflicts: [SyncConflictCopy] = []
     public private(set) var nextRetryAt: Date?
+    public var unresolvedConflicts: [SyncConflictCopy] { Array((checkpoint.manualConflicts ?? [:]).values) }
     private let transport: SyncTransport
     private let local: SyncLocalStore
     private let persistence: SyncStatePersistence
@@ -157,6 +161,7 @@ public final class SyncEngine {
             checkpoint.accountID = account
             try await persist()
             try await retry { try await self.transport.prepareZone() }
+            try await refreshManualConflicts()
             var more = true
             var fetched: [SyncRemoteRecord] = []
             var nextToken = checkpoint.token
@@ -186,8 +191,17 @@ public final class SyncEngine {
                 try ensureEnabled()
                 let baseline = checkpoint.baseline[id]
                 let value = try localCandidate(byID[id], baseline: baseline?.record)
-                guard let value, !syncContentEqual(value, baseline?.record) else { continue }
+                guard let value, !syncContentEqual(value, baseline?.record),
+                      checkpoint.manualConflicts?[id] == nil else { continue }
+                if value.kind == .item, let item = try? value.decode(RSSItem.self),
+                   checkpoint.manualConflicts?.values.contains(where: {
+                       $0.local.kind == .feed && $0.local.entityID == item.feedID
+                   }) == true { continue }
                 try await push(value, revision: baseline?.revision)
+            }
+            if !(checkpoint.manualConflicts ?? [:]).isEmpty {
+                status = .failed("Some sync conflicts need review. Both versions were kept.")
+                return
             }
             checkpoint.lastSuccessfulSync = now()
             try await persist()
@@ -207,6 +221,10 @@ public final class SyncEngine {
         if let candidate, locallyChanged, !syncContentEqual(candidate, remote.record) {
             let remotelyChanged = !syncContentEqual(remote.record, baseline)
             if remotelyChanged { try await retainConflict(local: candidate, remote: remote.record) }
+            if checkpoint.manualConflicts?[candidate.id] != nil || (remotelyChanged && !Self.hasReliableClock(candidate)) {
+                try await retainManualConflict(local: candidate, remote: remote)
+                return
+            }
             if !remotelyChanged || candidate.modifiedAt > remote.record.modifiedAt {
                 try await push(candidate, revision: remote.revision)
                 return
@@ -214,10 +232,15 @@ public final class SyncEngine {
         }
         if !syncContentEqual(current, remote.record), !(current == nil && remote.record.deleted) {
             try ensureEnabled()
-            try await local.apply(remote.record, ifUnchanged: current)
+            do { try await local.apply(remote.record, ifUnchanged: current) }
+            catch SyncEngineError.dependentRecords {
+                if let current { try await retainManualConflict(local: current, remote: remote) }
+                return
+            }
         }
         checkpoint.baseline[remote.record.id] = remote
         checkpoint.pending.removeValue(forKey: remote.record.id)
+        checkpoint.manualConflicts?.removeValue(forKey: remote.record.id)
         try await persist()
     }
 
@@ -227,7 +250,7 @@ public final class SyncEngine {
             if let pending = checkpoint.pending[current.id], syncContentEqual(current, pending) { return pending }
             var changed = current
             // Notes carry their actual edit time. Other legacy entities lack an edit clock.
-            if current.kind != .note { changed.modifiedAt = now() }
+            if !Self.hasReliableClock(current) { changed.modifiedAt = now() }
             checkpoint.pending[current.id] = changed
             return changed
         }
@@ -241,9 +264,13 @@ public final class SyncEngine {
 
     private func push(_ record: CloudRecord, revision: Data?) async throws {
         try await persist() // Persist deletion clocks and pending changes before network I/O.
-        try await checkAccount()
         do {
-            let saved = try await retry { try await self.transport.save(record, revision: revision) }
+            let saved = try await retry {
+                // Authentication can change while backing off; validate every individual upload.
+                let account = try await self.transport.accountID()
+                guard account == self.checkpoint.accountID else { throw SyncEngineError.accountChanged }
+                return try await self.transport.save(record, revision: revision)
+            }
             checkpoint.baseline[record.id] = saved
             checkpoint.pending.removeValue(forKey: record.id)
             try await persist()
@@ -252,6 +279,66 @@ public final class SyncEngine {
             // Never automatically resubmit with a new change tag after a race.
             throw SyncEngineError.serverConflict(server)
         }
+    }
+
+    /// Explicitly choose a retained version. Never implicitly resolve records without an edit clock.
+    public func resolveConflict(_ id: UUID, keepLocal: Bool) async {
+        guard isEnabled, !running,
+              let conflict = checkpoint.manualConflicts?.values.first(where: { $0.id == id }) else { return }
+        running = true
+        defer { running = false }
+        do {
+            try await checkAccount()
+            let current = try await local.snapshot().first { $0.id == conflict.local.id }
+            guard syncContentEqual(current, conflict.local) || (current == nil && conflict.local.deleted) else {
+                throw SyncEngineError.localChanged
+            }
+            if keepLocal {
+                var value = conflict.local
+                value.modifiedAt = now()
+                try await push(value, revision: checkpoint.baseline[value.id]?.revision)
+            } else {
+                try await local.apply(conflict.remote, ifUnchanged: current)
+            }
+            checkpoint.manualConflicts?.removeValue(forKey: conflict.local.id)
+            checkpoint.pending.removeValue(forKey: conflict.local.id)
+            try await persist()
+            status = .offline
+        } catch { status = .failed(error.localizedDescription) }
+    }
+
+    private static func hasReliableClock(_ record: CloudRecord) -> Bool {
+        if record.deleted { return false }
+        if record.kind == .note || record.kind == .link { return true }
+        guard record.kind == .audio || record.kind == .action,
+              let object = try? JSONSerialization.jsonObject(with: record.payload) as? [String: Any],
+              object["updatedAt"] is Double else { return false }
+        return true
+    }
+
+    private func refreshManualConflicts() async throws {
+        let snapshots = try await local.snapshot()
+        for (id, conflict) in checkpoint.manualConflicts ?? [:] {
+            guard let remote = checkpoint.baseline[id],
+                  let current = try localCandidate(snapshots.first { $0.id == id }, baseline: remote.record) else { continue }
+            if syncContentEqual(current, remote.record) {
+                checkpoint.manualConflicts?.removeValue(forKey: id)
+                checkpoint.pending.removeValue(forKey: id)
+                try await persist()
+            } else if !syncContentEqual(current, conflict.local) {
+                // A user can edit while reviewing conflicts even if no new cloud events arrive.
+                try await retainManualConflict(local: current, remote: remote)
+            }
+        }
+    }
+
+    private func retainManualConflict(local: CloudRecord, remote: SyncRemoteRecord) async throws {
+        try await retainConflict(local: local, remote: remote.record)
+        let copy = checkpoint.conflicts.last { $0.local == local && $0.remote == remote.record }!
+        if checkpoint.manualConflicts == nil { checkpoint.manualConflicts = [:] }
+        checkpoint.manualConflicts?[local.id] = copy
+        checkpoint.baseline[local.id] = remote
+        try await persist()
     }
 
     private func retainConflict(local: CloudRecord, remote: CloudRecord) async throws {
@@ -293,7 +380,7 @@ public final class SyncEngine {
     }
     private static func recordOrder(_ lhs: SyncRemoteRecord, _ rhs: SyncRemoteRecord) -> Bool {
         func rank(_ record: CloudRecord) -> Int {
-            if record.deleted { return 10 }
+            if record.deleted { return record.kind == .feed ? 12 : 10 }
             switch record.kind { case .note, .feed: return 0; default: return 1 }
         }
         return rank(lhs.record) == rank(rhs.record) ? lhs.record.id < rhs.record.id : rank(lhs.record) < rank(rhs.record)

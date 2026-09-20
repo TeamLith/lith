@@ -76,6 +76,8 @@ struct SyncEngineTests {
         await fixture.transport.seed(try record(note("Older remote edit", id: original.id, time: 20)))
         await fixture.engine.synchronize()
         #expect(try await fixture.local.snapshot().isEmpty)
+        let deletionConflict = try #require(fixture.engine.unresolvedConflicts.first)
+        await fixture.engine.resolveConflict(deletionConflict.id, keepLocal: true)
         #expect(await fixture.transport.allRecords().first?.record.deleted == true)
         await fixture.engine.synchronize()
         #expect(try await fixture.local.snapshot().isEmpty)
@@ -172,14 +174,19 @@ struct SyncEngineTests {
         let item = RSSItem(feedID: feed.id, title: "Article", content: "Content",
                            linkURL: URL(string: "https://example.com/article")!, status: .ignored)
         // First page has an item referencing a feed in the second page.
+        let source = try LithPersistentStore.makeContainer(inMemory: true)
+        let sourceRSS = CoreDataRSSRepository(container: source)
+        try await sourceRSS.addFeed(feed)
+        try await sourceRSS.upsertItems([item])
+        let wireRecords = try await CoreDataSyncStore(container: source).snapshot()
         await fixture.transport.setPageSize(1)
-        await fixture.transport.seed(try CloudRecord.encode(item, kind: .item, id: item.id, modifiedAt: Date(timeIntervalSince1970: 20)))
-        await fixture.transport.seed(try CloudRecord.encode(feed, kind: .feed, id: feed.id, modifiedAt: Date(timeIntervalSince1970: 10)))
+        await fixture.transport.seed(try #require(wireRecords.first { $0.kind == .item }))
+        await fixture.transport.seed(try #require(wireRecords.first { $0.kind == .feed }))
         fixture.engine.setEnabled(true)
         await fixture.engine.synchronize()
         let rss = CoreDataRSSRepository(container: fixture.container)
-        #expect(try await rss.item(id: item.id)?.status == .ignored)
-        #expect(try await rss.feed(id: feed.id)?.category == "Engineering")
+        #expect(try await rss.items().first?.status == .ignored)
+        #expect(try await rss.feeds().first?.category == "Engineering")
         #expect(await fixture.transport.saveCount == 0)
     }
 
@@ -193,6 +200,137 @@ struct SyncEngineTests {
         await fixture.engine.synchronize()
         #expect(try await fixture.local.snapshot().isEmpty)
         #expect(fixture.engine.conflicts.isEmpty)
+    }
+
+    @Test func uploadRetryRechecksAccountAfterBackoff() async throws {
+        let fixture = try SyncFixture()
+        try await fixture.notes.upsert(note("Account A private note", time: 10))
+        await fixture.transport.failNextSave()
+        let engine = SyncEngine(transport: fixture.transport, local: fixture.local, persistence: fixture.persistence,
+                                sleep: { _ in await fixture.transport.changeAccount("account-B") })
+        engine.setEnabled(true)
+        await engine.synchronize()
+        #expect(await fixture.transport.saveCount == 1)
+        #expect(await fixture.transport.allRecords().isEmpty)
+        if case .failed(let message) = engine.status { #expect(message.contains("account changed")) }
+        else { Issue.record("Expected account protection on retry") }
+    }
+
+    @Test func remoteFeedDeletionRetainsUnsyncedChildrenUntilExplicitResolution() async throws {
+        let fixture = try SyncFixture()
+        let rss = CoreDataRSSRepository(container: fixture.container)
+        let feed = RSSFeed(title: "Feed", feedURL: URL(string: "https://example.com/rss")!)
+        try await rss.addFeed(feed)
+        fixture.engine.setEnabled(true)
+        await fixture.engine.synchronize()
+        let wireFeed = try #require(await fixture.transport.allRecords().first?.record)
+        let child = RSSItem(feedID: feed.id, title: "Unsynced article", content: "Keep me",
+                            linkURL: URL(string: "https://example.com/new")!, status: .approved)
+        try await rss.upsertItems([child])
+        await fixture.transport.seed(try wireFeed.tombstone(at: Date(timeIntervalSince1970: 300)))
+        await fixture.engine.synchronize()
+        #expect(try await rss.items().count == 1)
+        #expect(try await rss.feeds().count == 1)
+        let conflict = try #require(fixture.engine.unresolvedConflicts.first)
+        await fixture.engine.resolveConflict(conflict.id, keepLocal: true)
+        await fixture.engine.synchronize()
+        #expect(fixture.engine.unresolvedConflicts.isEmpty)
+        #expect(await fixture.transport.allRecords().filter { !$0.record.deleted }.count == 2)
+    }
+
+    @Test func independentlyCreatedNaturalKeysConvergeWithoutUUIDCollisions() async throws {
+        let first = try SyncFixture()
+        let second = try SyncFixture()
+        let noteA = UUID(), noteB = UUID()
+        for fixture in [first, second] {
+            let rss = CoreDataRSSRepository(container: fixture.container)
+            let feed = RSSFeed(title: "Same Feed", feedURL: URL(string: "https://example.com/rss")!)
+            try await rss.addFeed(feed)
+            try await rss.upsertItems([RSSItem(feedID: feed.id, title: "Same article", content: "Body",
+                linkURL: URL(string: "https://example.com/article")!, status: .approved)])
+            try await CoreDataLinkRepository(container: fixture.container).replaceLinks(from: noteA,
+                with: [Link(fromNoteID: noteA, toNoteID: noteB, type: .wikilink, createdAt: Date(timeIntervalSince1970: 10))])
+        }
+        first.engine.setEnabled(true)
+        await first.engine.synchronize()
+        let secondEngine = SyncEngine(transport: first.transport, local: second.local, persistence: second.persistence)
+        secondEngine.setEnabled(true)
+        await secondEngine.synchronize()
+        #expect(try await first.local.snapshot().count == 3)
+        #expect(try await second.local.snapshot().count == 3)
+        #expect(await first.transport.allRecords().count == 3)
+        #expect(secondEngine.unresolvedConflicts.isEmpty)
+        let rss = CoreDataRSSRepository(container: second.container)
+        #expect(try await rss.items().first?.status == .approved)
+        let storedFeeds = try await rss.feeds()
+        #expect(try await rss.items().first?.feedID == storedFeeds.first?.id)
+    }
+
+    @Test func canonicalRSSReferencesTranslateBackToExistingLocalIDs() async throws {
+        let fixture = try SyncFixture()
+        let rss = CoreDataRSSRepository(container: fixture.container)
+        let feed = RSSFeed(title: "Feed", feedURL: URL(string: "https://example.com/rss")!)
+        let item = RSSItem(feedID: feed.id, title: "Article", content: "Body", linkURL: URL(string: "https://example.com/article")!)
+        try await rss.addFeed(feed)
+        try await rss.upsertItems([item])
+        let canonicalFeed = SyncIdentity.feed(feed.feedURL)
+        let canonicalItem = SyncIdentity.item(feedID: canonicalFeed, url: item.linkURL)
+        let imported = Note(title: "Imported note", bodyMarkdown: "Body", source: .rss,
+                            metadata: ["rssFeedID": canonicalFeed.uuidString, "rssItemID": canonicalItem.uuidString])
+        try await fixture.local.apply(record(imported), ifUnchanged: nil)
+        let stored = try #require(await fixture.notes.note(id: imported.id))
+        #expect(stored.metadata["rssFeedID"] == feed.id.uuidString)
+        #expect(stored.metadata["rssItemID"] == item.id.uuidString)
+        let exported = try #require(await fixture.local.snapshot().first { $0.kind == .note })
+        #expect(try exported.decode(Note.self).metadata["rssFeedID"] == canonicalFeed.uuidString)
+        #expect(try exported.decode(Note.self).metadata["rssItemID"] == canonicalItem.uuidString)
+    }
+
+    @Test func legacyFeedConflictRequiresChoiceInsteadOfUsingSyncTimeAsEditTime() async throws {
+        let fixture = try SyncFixture()
+        let rss = CoreDataRSSRepository(container: fixture.container)
+        var feed = RSSFeed(title: "Feed", feedURL: URL(string: "https://example.com/rss")!, category: "Original")
+        try await rss.addFeed(feed)
+        fixture.engine.setEnabled(true)
+        await fixture.engine.synchronize()
+        let initial = try #require(await fixture.transport.allRecords().first?.record)
+        feed.category = "Old offline edit"
+        try await rss.addFeed(feed)
+        var remoteFeed = try initial.decode(RSSFeed.self)
+        remoteFeed.category = "Newer cloud edit"
+        await fixture.transport.seed(try .encode(remoteFeed, kind: .feed, id: remoteFeed.id, modifiedAt: Date(timeIntervalSince1970: 90)))
+        await fixture.engine.synchronize()
+        #expect(fixture.engine.unresolvedConflicts.count == 1)
+        #expect(try await rss.feeds().first?.category == "Old offline edit")
+        #expect(try await fixture.transport.allRecords().first?.record.decode(RSSFeed.self).category == "Newer cloud edit")
+        await fixture.engine.resolveConflict(fixture.engine.unresolvedConflicts[0].id, keepLocal: false)
+        #expect(try await CoreDataRSSRepository(container: fixture.container).feeds().first?.category == "Newer cloud edit")
+    }
+
+    @Test func editingAnUnresolvedConflictRefreshesItsSnapshotWithoutNewCloudEvents() async throws {
+        let fixture = try SyncFixture()
+        let rss = CoreDataRSSRepository(container: fixture.container)
+        var feed = RSSFeed(title: "Feed", feedURL: URL(string: "https://example.com/rss")!, category: "Original")
+        try await rss.addFeed(feed)
+        fixture.engine.setEnabled(true)
+        await fixture.engine.synchronize()
+        let original = try #require(await fixture.transport.allRecords().first?.record)
+        feed.category = "Local edit"
+        try await rss.addFeed(feed)
+        var remote = try original.decode(RSSFeed.self)
+        remote.category = "Remote edit"
+        await fixture.transport.seed(try .encode(remote, kind: .feed, id: remote.id, modifiedAt: Date(timeIntervalSince1970: 90)))
+        await fixture.engine.synchronize()
+        let staleID = try #require(fixture.engine.unresolvedConflicts.first?.id)
+        feed.category = "Local correction during review"
+        try await rss.addFeed(feed)
+        await fixture.engine.synchronize()
+        let refreshed = try #require(fixture.engine.unresolvedConflicts.first)
+        #expect(refreshed.id != staleID)
+        #expect(try refreshed.local.decode(RSSFeed.self).category == "Local correction during review")
+        await fixture.engine.resolveConflict(refreshed.id, keepLocal: true)
+        #expect(fixture.engine.unresolvedConflicts.isEmpty)
+        #expect(try await fixture.transport.allRecords().first?.record.decode(RSSFeed.self).category == "Local correction during review")
     }
 
     @Test func fileCheckpointRetainsTokenAndConflictsAcrossReload() async throws {
@@ -266,6 +404,8 @@ private actor TestSyncTransport: SyncTransport {
     private var records: [String: SyncRemoteRecord] = [:]
     private var changes: [SyncRemoteRecord] = []
     private var conflictingRecord: CloudRecord?
+    private var failSave = false
+    func failNextSave() { failSave = true }
     func accountID() async throws -> String {
         calls += 1
         if failures > 0 { failures -= 1; throw SyncEngineError.retryable("Throttled", delay: retryDelay) }
@@ -292,6 +432,7 @@ private actor TestSyncTransport: SyncTransport {
     }
     func save(_ record: CloudRecord, revision: Data?) async throws -> SyncRemoteRecord {
         saveCount += 1
+        if failSave { failSave = false; throw SyncEngineError.retryable("Temporary upload failure", delay: 1) }
         if let conflictingRecord {
             self.conflictingRecord = nil
             seed(conflictingRecord)

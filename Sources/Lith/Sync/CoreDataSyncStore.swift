@@ -11,16 +11,39 @@ public final class CoreDataSyncStore: SyncLocalStore, @unchecked Sendable {
         let context = container.newBackgroundContext()
         return try await context.perform {
             var result: [CloudRecord] = []
+            let feeds = try Self.feedIdentities(context)
+            let items = try Self.itemIdentities(context, feeds: feeds)
             for (kind, entity) in Self.entities where context.persistentStoreCoordinator?.managedObjectModel.entitiesByName[entity] != nil {
                 let request = NSFetchRequest<NSManagedObject>(entityName: entity)
-                for object in try context.fetch(request) { result.append(try Self.encode(object, kind: kind)) }
+                for object in try context.fetch(request) { result.append(try Self.encode(object, kind: kind, feeds: feeds, items: items)) }
             }
-            return result
+            var unique: [String: CloudRecord] = [:]
+            for record in result {
+                if let previous = unique[record.id], !syncContentEqual(previous, record) {
+                    throw SyncEngineError.configuration("Duplicate local RSS identities have different content. Resolve the duplicate feeds before syncing.")
+                }
+                unique[record.id] = record
+            }
+            return Array(unique.values)
         }
     }
 
     public func apply(_ record: CloudRecord, ifUnchanged expected: CloudRecord?) async throws {
         try record.validate()
+        if !record.deleted {
+            let naturalID: UUID
+            switch record.kind {
+            case .feed: naturalID = SyncIdentity.feed(try record.decode(RSSFeed.self).feedURL)
+            case .item:
+                let item = try record.decode(RSSItem.self)
+                naturalID = SyncIdentity.item(feedID: item.feedID, url: item.linkURL)
+            case .link:
+                let link = try record.decode(Link.self)
+                naturalID = SyncIdentity.link(from: link.fromNoteID, to: link.toNoteID, type: link.type)
+            default: naturalID = record.entityID
+            }
+            guard naturalID == record.entityID else { throw CloudRecordError.invalidRecord }
+        }
         let context = container.newBackgroundContext()
         context.mergePolicy = NSErrorMergePolicy
         try await context.perform {
@@ -29,12 +52,20 @@ public final class CoreDataSyncStore: SyncLocalStore, @unchecked Sendable {
                       context.persistentStoreCoordinator?.managedObjectModel.entitiesByName[entity] != nil else {
                     throw SyncEngineError.unsupportedEntity(record.kind.rawValue)
                 }
+                let feeds = try Self.feedIdentities(context)
+                let items = try Self.itemIdentities(context, feeds: feeds)
                 let request = NSFetchRequest<NSManagedObject>(entityName: entity)
-                request.predicate = NSPredicate(format: "id == %@", record.entityID as CVarArg)
-                let existing = try context.fetch(request).first
-                let current = try existing.map { try Self.encode($0, kind: record.kind) }
+                // Canonical natural identity avoids different-device UUID collisions with local uniqueness rules.
+                let existing = try context.fetch(request).first {
+                    try Self.encode($0, kind: record.kind, feeds: feeds, items: items).id == record.id
+                }
+                let current = try existing.map { try Self.encode($0, kind: record.kind, feeds: feeds, items: items) }
                 guard syncContentEqual(current, expected) else { throw SyncEngineError.localChanged }
                 if record.deleted {
+                    if let feed = existing as? ManagedRSSFeed, !feed.items.isEmpty {
+                        // Never allow Core Data's feed cascade to erase unreviewed child changes.
+                        throw SyncEngineError.dependentRecords
+                    }
                     if let existing { context.delete(existing) }
                 } else {
                     let object = existing ?? NSEntityDescription.insertNewObject(forEntityName: entity, into: context)
@@ -52,44 +83,102 @@ public final class CoreDataSyncStore: SyncLocalStore, @unchecked Sendable {
         .note: "Note", .link: "Link", .feed: "RSSFeed", .item: "RSSItem",
         .audio: "AudioRecording", .action: "ActionItem"
     ]
-    private static func encode(_ object: NSManagedObject, kind: CloudRecord.Kind) throws -> CloudRecord {
+    private static func feedIdentities(_ context: NSManagedObjectContext) throws -> [UUID: UUID] {
+        try Dictionary(uniqueKeysWithValues: context.fetch(ManagedRSSFeed.fetchRequest()).map {
+            let feed = try $0.toDomainFeed()
+            return (feed.id, SyncIdentity.feed(feed.feedURL))
+        })
+    }
+    private static func itemIdentities(_ context: NSManagedObjectContext, feeds: [UUID: UUID]) throws -> [UUID: UUID] {
+        try Dictionary(uniqueKeysWithValues: context.fetch(ManagedRSSItem.fetchRequest()).map {
+            let item = try $0.toDomainItem()
+            guard let feed = feeds[item.feedID] else { throw CloudRecordError.invalidRecord }
+            return (item.id, SyncIdentity.item(feedID: feed, url: item.linkURL))
+        })
+    }
+    private static func rewrite<T: Encodable>(_ value: T, kind: CloudRecord.Kind, id: UUID,
+                                               fields: [String: Any] = [:], date: Date) throws -> CloudRecord {
+        var object = try JSONSerialization.jsonObject(with: JSONEncoder().encode(value)) as! [String: Any]
+        object["id"] = id.uuidString
+        for (key, value) in fields { object[key] = value }
+        return try CloudRecord(kind: kind, entityID: id, modifiedAt: date,
+                               payload: JSONSerialization.data(withJSONObject: object, options: [.sortedKeys]))
+    }
+    private static func encode(_ object: NSManagedObject, kind: CloudRecord.Kind, feeds: [UUID: UUID], items: [UUID: UUID]) throws -> CloudRecord {
         switch kind {
         case .note:
-            let note = try (object as! ManagedNote).toDomainNote()
+            var note = try (object as! ManagedNote).toDomainNote()
+            if let text = note.metadata["rssFeedID"], let id = UUID(uuidString: text), let canonical = feeds[id] {
+                note.metadata["rssFeedID"] = canonical.uuidString
+            }
+            if let text = note.metadata["rssItemID"], let id = UUID(uuidString: text), let canonical = items[id] {
+                note.metadata["rssItemID"] = canonical.uuidString
+            }
             return try .encode(note, kind: kind, id: note.id, modifiedAt: note.updatedAt)
         case .link:
             let link = try (object as! ManagedLink).toDomainLink()
-            return try .encode(link, kind: kind, id: link.id, modifiedAt: link.createdAt)
+            return try rewrite(link, kind: kind, id: SyncIdentity.link(from: link.fromNoteID, to: link.toNoteID, type: link.type), date: link.createdAt)
         case .feed:
             let feed = try (object as! ManagedRSSFeed).toDomainFeed()
-            return try .encode(feed, kind: kind, id: feed.id, modifiedAt: .distantPast)
+            // Refresh time is device-local operational state, not an edit to feed configuration.
+            return try rewrite(feed, kind: kind, id: SyncIdentity.feed(feed.feedURL),
+                               fields: ["lastFetchedAt": NSNull()], date: .distantPast)
         case .item:
             let item = try (object as! ManagedRSSItem).toDomainItem()
-            return try .encode(item, kind: kind, id: item.id, modifiedAt: .distantPast)
+            guard let feedID = feeds[item.feedID] else { throw CloudRecordError.invalidRecord }
+            return try rewrite(item, kind: kind, id: SyncIdentity.item(feedID: feedID, url: item.linkURL),
+                               fields: ["feedID": feedID.uuidString], date: .distantPast)
         case .audio, .action:
             guard let id = object.value(forKey: "id") as? UUID,
                   let data = object.value(forKey: "payload") as? Data else { throw CloudRecordError.invalidRecord }
             let json = try JSONSerialization.jsonObject(with: data)
             let canonical = try JSONSerialization.data(withJSONObject: json, options: [.sortedKeys])
-            return try CloudRecord(kind: kind, entityID: id, modifiedAt: .distantPast, payload: canonical)
+            let date = (json as? [String: Any])?["updatedAt"] as? Double
+            return try CloudRecord(kind: kind, entityID: id,
+                                   modifiedAt: date.map(Date.init(timeIntervalSinceReferenceDate:)) ?? .distantPast,
+                                   payload: canonical)
         case .tag: throw SyncEngineError.unsupportedEntity(kind.rawValue)
         }
     }
     private static func apply(_ record: CloudRecord, to object: NSManagedObject, context: NSManagedObjectContext) throws {
         switch record.kind {
-        case .note: try (object as! ManagedNote).apply(record.decode(Note.self))
+        case .note:
+            var note = try record.decode(Note.self)
+            let feeds = try feedIdentities(context)
+            let items = try itemIdentities(context, feeds: feeds)
+            if let text = note.metadata["rssFeedID"], let id = UUID(uuidString: text), let local = feeds.first(where: { $0.value == id })?.key {
+                note.metadata["rssFeedID"] = local.uuidString
+            }
+            if let text = note.metadata["rssItemID"], let id = UUID(uuidString: text), let local = items.first(where: { $0.value == id })?.key {
+                note.metadata["rssItemID"] = local.uuidString
+            }
+            try (object as! ManagedNote).apply(note)
         case .link:
             let value = try record.decode(Link.self)
-            try (object as! ManagedLink).apply(value, id: value.id, createdAt: value.createdAt)
-        case .feed: (object as! ManagedRSSFeed).apply(try record.decode(RSSFeed.self))
+            let localID = object.isInserted ? value.id : (object as! ManagedLink).id
+            try (object as! ManagedLink).apply(value, id: localID, createdAt: value.createdAt)
+        case .feed:
+            var value = try record.decode(RSSFeed.self)
+            if !object.isInserted {
+                let local = object as! ManagedRSSFeed
+                value = RSSFeed(id: local.id, title: value.title, feedURL: value.feedURL, category: value.category,
+                                lastFetchedAt: local.lastFetchedAt, isActive: value.isActive,
+                                refreshIntervalSeconds: value.refreshIntervalSeconds)
+            }
+            (object as! ManagedRSSFeed).apply(value)
         case .item:
             let value = try record.decode(RSSItem.self)
             let request = ManagedRSSFeed.fetchRequest()
-            request.predicate = NSPredicate(format: "id == %@", value.feedID as CVarArg)
-            guard let feed = try context.fetch(request).first else {
+            guard let feed = try context.fetch(request).first(where: {
+                SyncIdentity.feed(try $0.toDomainFeed().feedURL) == value.feedID
+            }) else {
                 throw SyncEngineError.configuration("An RSS article is waiting for its feed. Sync again.")
             }
-            try (object as! ManagedRSSItem).apply(value, feed: feed)
+            let localID = object.isInserted ? value.id : (object as! ManagedRSSItem).id
+            let localValue = RSSItem(id: localID, feedID: feed.id, title: value.title, content: value.content,
+                                    author: value.author, publishedAt: value.publishedAt, linkURL: value.linkURL,
+                                    status: value.status, savedNoteID: value.savedNoteID)
+            try (object as! ManagedRSSItem).apply(localValue, feed: feed)
         case .audio, .action:
             // These entities keep their portable Codable model in payload. Detect them dynamically so
             // the sync engine can precede their additive schema migrations.
