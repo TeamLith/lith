@@ -11,6 +11,9 @@ import Lith
 /// and pushes `NoteDetailView` via `NavigationLink`.
 @available(iOS 17, macOS 14, *)
 struct NoteListView: View {
+    let actionItemRepository: ActionItemRepository?
+    let actionReviewService: ActionItemReviewService?
+    let transcriptProvider: (@Sendable (UUID) async throws -> String)?
     let audioServices: AudioServices?
     let audioRepository: AudioRecordingRepository?
     let repository: NoteRepository
@@ -27,10 +30,16 @@ struct NoteListView: View {
         repository: NoteRepository,
         wikiLinkService: WikiLinkServiceProtocol,
         viewModel: NoteListViewModel,
+        actionItemRepository: ActionItemRepository? = nil,
+        actionReviewService: ActionItemReviewService? = nil,
+        transcriptProvider: (@Sendable (UUID) async throws -> String)? = nil,
         audioRepository: AudioRecordingRepository? = nil,
         audioServices: AudioServices? = nil,
         selectedNoteID: Binding<UUID?>
     ) {
+        self.actionItemRepository = actionItemRepository
+        self.actionReviewService = actionReviewService
+        self.transcriptProvider = transcriptProvider
         self.audioServices = audioServices
         self.audioRepository = audioRepository
         self.repository = repository
@@ -39,7 +48,10 @@ struct NoteListView: View {
         self._selectedNoteID = selectedNoteID
     }
 #else
-    init(repository: NoteRepository, wikiLinkService: WikiLinkServiceProtocol, viewModel: NoteListViewModel, audioRepository: AudioRecordingRepository? = nil, audioServices: AudioServices? = nil) {
+    init(repository: NoteRepository, wikiLinkService: WikiLinkServiceProtocol, viewModel: NoteListViewModel, actionItemRepository: ActionItemRepository? = nil, actionReviewService: ActionItemReviewService? = nil, transcriptProvider: (@Sendable (UUID) async throws -> String)? = nil, audioRepository: AudioRecordingRepository? = nil, audioServices: AudioServices? = nil) {
+        self.actionItemRepository = actionItemRepository
+        self.actionReviewService = actionReviewService
+        self.transcriptProvider = transcriptProvider
         self.audioServices = audioServices
         self.audioRepository = audioRepository
         self.repository = repository
@@ -165,7 +177,7 @@ struct NoteListView: View {
             .contextMenu { noteActions(for: note) }
 #else
         NavigationLink {
-            NoteDetailView(repository: repository, wikiLinkService: wikiLinkService, noteID: note.id, audioRepository: audioRepository, audioServices: audioServices) {
+            NoteDetailView(repository: repository, wikiLinkService: wikiLinkService, noteID: note.id, actionItemRepository: actionItemRepository, actionReviewService: actionReviewService, transcriptProvider: transcriptProvider, audioRepository: audioRepository, audioServices: audioServices) {
                 await viewModel.loadNotes()
             }
         } label: {

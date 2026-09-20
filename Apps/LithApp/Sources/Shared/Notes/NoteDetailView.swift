@@ -15,11 +15,15 @@ struct NoteDetailView: View {
     @State private var exportDocument: MarkdownFile?
     @State private var exportError: String?
     @State private var viewModel: NoteDetailViewModel
+    @State private var actionItemsViewModel: ActionItemsViewModel?
 
     init(
         repository: NoteRepository,
         wikiLinkService: WikiLinkServiceProtocol,
         noteID: UUID,
+        actionItemRepository: ActionItemRepository? = nil,
+        actionReviewService: ActionItemReviewService? = nil,
+        transcriptProvider: (@Sendable (UUID) async throws -> String)? = nil,
         audioRepository: AudioRecordingRepository? = nil,
         audioServices: AudioServices? = nil,
         onNoteChanged: @escaping @MainActor () async -> Void = {}
@@ -27,6 +31,10 @@ struct NoteDetailView: View {
         self.audioServices = audioServices
         self.audioRepository = audioRepository
         self.onNoteChanged = onNoteChanged
+        self._actionItemsViewModel = State(initialValue: actionItemRepository.map {
+            ActionItemsViewModel(noteID: noteID, repository: $0, notes: repository,
+                                 reviewService: actionReviewService, transcriptProvider: transcriptProvider)
+        })
         self._viewModel = State(
             initialValue: NoteDetailViewModel(
                 noteID: noteID,
@@ -109,6 +117,11 @@ struct NoteDetailView: View {
 
                 if let saveError = viewModel.saveError {
                     saveErrorBanner(saveError)
+                }
+
+                if let actionItemsViewModel {
+                    ActionItemsView(viewModel: actionItemsViewModel, bodyText: viewModel.bodyMarkdown,
+                                    referenceDate: viewModel.updatedAt ?? Date())
                 }
 
                 if let audioServices {

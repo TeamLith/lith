@@ -16,6 +16,7 @@
 		4CA2643DEED104B20F78F57F /* RSSInboxView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 907EDF554A424B7FD4B4DBEB /* RSSInboxView.swift */; };
 		5131A449E7DDD21BEE28EECD /* CreateNoteIntent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B849EF6DA09382F60787933 /* CreateNoteIntent.swift */; };
 		7D5EDB250F82B5133B0B349C /* NoteListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8030DC0FD62B167304E8CC8 /* NoteListView.swift */; };
+		9313D62CB486A4EF81948D2D /* ActionItemsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27948C837338A798706C7939 /* ActionItemsView.swift */; };
 		A3D006E9269F2DC9329B505B /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A59A6C1A5D68DF5B7EBF2AD8 /* Assets.xcassets */; };
 		ABDA9B9BEBB9BB816D4D8BDA /* NoteDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8A3E60B88EBCBB104E4438C /* NoteDetailView.swift */; };
 		B617A5DAF1A710E43AACBC5B /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B66636C8B07EDF7EB10EE8E /* RootView.swift */; };
@@ -28,17 +29,19 @@
 		E0BFB93D264DA2618F6F223C /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B66636C8B07EDF7EB10EE8E /* RootView.swift */; };
 		E78EA3D22CF06DE879EC4FFD /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A59A6C1A5D68DF5B7EBF2AD8 /* Assets.xcassets */; };
 		F962795E1F8245448FFAD67F /* Lith in Frameworks */ = {isa = PBXBuildFile; productRef = C71C05C8516C2A960CBB47FF /* Lith */; };
+		F9D90ADEC8ADB6FDADCE794C /* ActionItemsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27948C837338A798706C7939 /* ActionItemsView.swift */; };
 		FF99E821F7BE4B13EDAA3C2C /* NoteListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8030DC0FD62B167304E8CC8 /* NoteListView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		0B849EF6DA09382F60787933 /* CreateNoteIntent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateNoteIntent.swift; sourceTree = "<group>"; };
 		20342FFE2E34CB1EBAB03E1D /* GraphView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GraphView.swift; sourceTree = "<group>"; };
-		6EBF900D6E0186B8E7316090 /* Notes + ToDo */ = {isa = PBXFileReference; lastKnownFileType = folder; name = "Notes + ToDo"; path = .; sourceTree = SOURCE_ROOT; };
+		27948C837338A798706C7939 /* ActionItemsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionItemsView.swift; sourceTree = "<group>"; };
 		4B66636C8B07EDF7EB10EE8E /* RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
 		5C1D318FCAD055AB7D9F562E /* LithmacOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = LithmacOS.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		7626ACF91503F717997B7EEA /* SearchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchView.swift; sourceTree = "<group>"; };
 		892C5C70121A16A76B70F652 /* LithmacOS.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = LithmacOS.entitlements; sourceTree = "<group>"; };
+		6EBF900D6E0186B8E7316090 /* Notes + ToDo */ = {isa = PBXFileReference; lastKnownFileType = folder; name = "Notes + ToDo"; path = .; sourceTree = SOURCE_ROOT; };
 		907EDF554A424B7FD4B4DBEB /* RSSInboxView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RSSInboxView.swift; sourceTree = "<group>"; };
 		90C95CBFF3A4C5BD199E9AEA /* AudioNoteSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioNoteSection.swift; sourceTree = "<group>"; };
 		A59A6C1A5D68DF5B7EBF2AD8 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -153,6 +156,7 @@
 		E69C0373E5068FCABD71F4C6 /* Notes */ = {
 			isa = PBXGroup;
 			children = (
+				27948C837338A798706C7939 /* ActionItemsView.swift */,
 				A8A3E60B88EBCBB104E4438C /* NoteDetailView.swift */,
 				E8030DC0FD62B167304E8CC8 /* NoteListView.swift */,
 			);
@@ -283,6 +287,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F9D90ADEC8ADB6FDADCE794C /* ActionItemsView.swift in Sources */,
 				4909293EB94E7DBB36A6ECC3 /* AudioNoteSection.swift in Sources */,
 				2A2936FA32D5135376AC6A84 /* CreateNoteIntent.swift in Sources */,
 				4A3FBE40C7698FD6A9929EEC /* GraphView.swift in Sources */,
@@ -299,6 +304,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9313D62CB486A4EF81948D2D /* ActionItemsView.swift in Sources */,
 				03388667D4176B3B172B077D /* AudioNoteSection.swift in Sources */,
 				5131A449E7DDD21BEE28EECD /* CreateNoteIntent.swift in Sources */,
 				DFBC70FD6AFCC543687BA359 /* GraphView.swift in Sources */,
@@ -319,7 +325,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
-				CURRENT_PROJECT_VERSION = 16;
+				CURRENT_PROJECT_VERSION = 18;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = Lith;
 				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
@@ -333,7 +339,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 0.1.15;
+				MARKETING_VERSION = 0.1.17;
 				PRODUCT_BUNDLE_IDENTIFIER = me.lith.ios;
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -465,7 +471,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = Apps/LithApp/Sources/macOS/LithmacOS.entitlements;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 16;
+				CURRENT_PROJECT_VERSION = 18;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = Lith;
 				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
@@ -476,7 +482,7 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				MARKETING_VERSION = 0.1.15;
+				MARKETING_VERSION = 0.1.17;
 				PRODUCT_BUNDLE_IDENTIFIER = me.lith.macos;
 				SDKROOT = macosx;
 				CODE_SIGN_IDENTITY = "Apple Development";
@@ -492,7 +498,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = Apps/LithApp/Sources/macOS/LithmacOS.entitlements;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 16;
+				CURRENT_PROJECT_VERSION = 18;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = Lith;
 				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
@@ -503,7 +509,7 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				MARKETING_VERSION = 0.1.15;
+				MARKETING_VERSION = 0.1.17;
 				PRODUCT_BUNDLE_IDENTIFIER = me.lith.macos;
 				SDKROOT = macosx;
 				CODE_SIGN_IDENTITY = "Apple Development";
@@ -518,7 +524,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
-				CURRENT_PROJECT_VERSION = 16;
+				CURRENT_PROJECT_VERSION = 18;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = Lith;
 				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
@@ -532,7 +538,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 0.1.15;
+				MARKETING_VERSION = 0.1.17;
 				PRODUCT_BUNDLE_IDENTIFIER = me.lith.ios;
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
