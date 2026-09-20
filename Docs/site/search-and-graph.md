@@ -19,6 +19,14 @@ Open **Search & Graph** and type in the search field. Results include the title,
 
 Search matches titles, body text, tags, and stored metadata. Basic `AND`, `OR`, and `NOT` expressions are supported. A failed search shows a retry button. An invalid date range shows an explanation instead of running the search.
 
+## Saved searches
+
+Set the query and filters, then choose **Save current search** and enter a name. The **Saved searches** section lists your named searches. Select one to restore the query, source, tags, and date controls and immediately run it.
+
+Use the menu beside a saved search to rename or delete it. Names must be unique (ignoring letter case), 1–80 characters long, and on one line. Invalid dates must be corrected before saving. Deleting a saved search never deletes notes.
+
+Saved searches remain on this device across app launches. They do not sync through iCloud. Storage failures appear in the saved-search section; use **Reload saved searches** to retry. A damaged saved-search file is kept intact rather than overwritten.
+
 ## Graph
 
 Graph data is built from your saved notes and links. Global mode includes all active notes, including unlinked notes. Local mode starts from one note and follows both incoming and outgoing links up to the selected number of hops. Zero hops includes only the selected note. Archived and trashed notes are excluded, along with links to missing or hidden notes.
