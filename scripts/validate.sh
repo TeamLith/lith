@@ -126,7 +126,7 @@ if [[ $package_only -eq 1 ]]; then
   app_sources=()
   while IFS= read -r -d '' file; do app_sources+=("$file"); done < <(rg --files -0 -g '*.swift' Apps/LithApp/Sources/Shared Apps/LithApp/Sources/macOS)
   modules="$(swift build --show-bin-path)/Modules"
-  run_logged_step macos-source-typecheck swiftc -typecheck -parse-as-library -I "$modules" -target "$(uname -m)-apple-macosx14.0" "${app_sources[@]}"
+  run_logged_step macos-source-typecheck swiftc -typecheck -swift-version 6 -parse-as-library -I "$modules" -target "$(uname -m)-apple-macosx14.0" "${app_sources[@]}"
   echo "Package validation passed. Xcode app builds, iOS compilation, signing, and UI tests were not run."
 else
   run_logged_step xcodebuild-macos xcodebuild -scheme LithmacOS -project LithApps.xcodeproj -configuration Debug -destination "platform=macOS" CODE_SIGNING_ALLOWED=NO build-for-testing
