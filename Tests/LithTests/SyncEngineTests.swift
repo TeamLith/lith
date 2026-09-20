@@ -6,6 +6,156 @@ import CoreData
 
 @MainActor
 struct SyncEngineTests {
+    @Test func audioAndNoteTombstonesRemoveBinaryBeforeDeletingParentWithoutConflict() async throws {
+        let files = AudioFileStore(root: FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString))
+        defer { try? FileManager.default.removeItem(at: files.root) }
+        let fixture = try SyncFixture(audioFiles: files)
+        let parent = note("Recorded", time: 10)
+        try await fixture.notes.upsert(parent)
+        let audio = AudioRecording(noteID: parent.id, fileURL: files.root, recordedAt: Date(timeIntervalSince1970: 10))
+        let repository = CoreDataAudioRecordingRepository(container: fixture.container, files: files)
+        try await repository.upsert(audio)
+        let file = try files.prepare(noteID: parent.id, recordingID: audio.id)
+        try Data("recorded audio".utf8).write(to: file)
+        fixture.engine.setEnabled(true)
+        await fixture.engine.synchronize()
+        let records = try await fixture.local.snapshot()
+        // Parent arrives first, but reconciliation must remove children first.
+        await fixture.transport.seed(try #require(records.first { $0.kind == .note }).tombstone(at: Date()))
+        await fixture.transport.seed(try #require(records.first { $0.kind == .audio }).tombstone(at: Date()))
+        await fixture.engine.synchronize()
+        #expect(fixture.engine.unresolvedConflicts.isEmpty)
+        #expect(try await fixture.local.snapshot().isEmpty)
+        #expect(!FileManager.default.fileExists(atPath: file.path))
+    }
+
+    @Test func noteTombstoneRetainsUnsyncedAudioAndActionsUntilParentIsResolved() async throws {
+        let fixture = try SyncFixture()
+        let parent = note("Parent", time: 10)
+        try await fixture.notes.upsert(parent)
+        fixture.engine.setEnabled(true)
+        await fixture.engine.synchronize()
+        let audio = AudioRecording(noteID: parent.id, fileURL: URL(fileURLWithPath: "/unused"))
+        let action = ActionItem(sourceNoteID: parent.id, task: "Unsynced action", updatedAt: Date())
+        try await CoreDataAudioRecordingRepository(container: fixture.container).upsert(audio)
+        try await CoreDataActionItemRepository(container: fixture.container).upsert(action)
+        await fixture.transport.seed(try record(parent).tombstone(at: Date()))
+        await fixture.engine.synchronize()
+        #expect(try await fixture.local.snapshot().count == 3)
+        #expect(await fixture.transport.allRecords().count == 1)
+        let conflict = try #require(fixture.engine.unresolvedConflicts.first)
+        #expect(conflict.local.kind == .note)
+        await fixture.engine.resolveConflict(conflict.id, keepLocal: true)
+        await fixture.engine.synchronize()
+        #expect(fixture.engine.unresolvedConflicts.isEmpty)
+        #expect(await fixture.transport.allRecords().filter { !$0.record.deleted }.count == 3)
+    }
+
+    @Test func newerRemoteAudioDeletionStillRequiresReviewOfUnsyncedLocalEdit() async throws {
+        let fixture = try SyncFixture()
+        let parent = note("Parent", time: 10)
+        try await fixture.notes.upsert(parent)
+        var audio = AudioRecording(noteID: parent.id, fileURL: URL(fileURLWithPath: "/unused"), recordedAt: Date(timeIntervalSince1970: 10))
+        let repository = CoreDataAudioRecordingRepository(container: fixture.container)
+        try await repository.upsert(audio)
+        fixture.engine.setEnabled(true)
+        await fixture.engine.synchronize()
+        let wire = try #require(await fixture.local.snapshot().first { $0.kind == .audio })
+        audio.transcript = "Unsynced local transcript"
+        audio.updatedAt = Date(timeIntervalSince1970: 20)
+        try await repository.upsert(audio)
+        await fixture.transport.seed(try wire.tombstone(at: Date(timeIntervalSince1970: 30)))
+        await fixture.engine.synchronize()
+        #expect(try await repository.recording(id: audio.id)?.transcript == audio.transcript)
+        #expect(fixture.engine.unresolvedConflicts.first?.local.kind == .audio)
+    }
+
+    @Test func audioCleanupJournalRecoversCommittedDeletionButPreservesFailedTransaction() async throws {
+        let files = AudioFileStore(root: FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString))
+        defer { try? FileManager.default.removeItem(at: files.root) }
+        let fixture = try SyncFixture(audioFiles: files)
+        let parent = note("Parent", time: 10)
+        try await fixture.notes.upsert(parent)
+        let audio = AudioRecording(noteID: parent.id, fileURL: files.root)
+        let repository = CoreDataAudioRecordingRepository(container: fixture.container, files: files)
+        try await repository.upsert(audio)
+        let file = try files.prepare(noteID: parent.id, recordingID: audio.id)
+        try Data("audio".utf8).write(to: file)
+        let journal = SyncAudioDeletionJournal(files: files)
+        // Crash before metadata commit: the pending intent must not delete audio.
+        try journal.prepare(audio)
+        _ = try await CoreDataSyncStore(container: fixture.container, audioFiles: files).snapshot()
+        #expect(FileManager.default.fileExists(atPath: file.path))
+        // Crash after metadata commit: a restarted store completes file cleanup.
+        try journal.prepare(audio)
+        try await repository.delete(recordingID: audio.id)
+        _ = try await CoreDataSyncStore(container: fixture.container, audioFiles: files).snapshot()
+        #expect(!FileManager.default.fileExists(atPath: file.path))
+    }
+
+    @Test func failedCleanupIntentWritePreservesMetadataAndRecordingFile() async throws {
+        let files = AudioFileStore(root: FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString))
+        defer { try? FileManager.default.removeItem(at: files.root) }
+        let fixture = try SyncFixture(audioFiles: files)
+        let parent = note("Parent", time: 10)
+        try await fixture.notes.upsert(parent)
+        let audio = AudioRecording(noteID: parent.id, fileURL: files.root)
+        let repository = CoreDataAudioRecordingRepository(container: fixture.container, files: files)
+        try await repository.upsert(audio)
+        let file = try files.prepare(noteID: parent.id, recordingID: audio.id)
+        try Data("audio".utf8).write(to: file)
+        let wire = try #require(await fixture.local.snapshot().first { $0.kind == .audio })
+        // An obstructing file makes durable cleanup intent creation fail.
+        try Data().write(to: files.root.appendingPathComponent(".sync-deletions"))
+        await #expect(throws: (any Error).self) {
+            try await fixture.local.apply(wire.tombstone(at: Date()), ifUnchanged: wire)
+        }
+        #expect(try await repository.recording(id: audio.id) != nil)
+        #expect(FileManager.default.fileExists(atPath: file.path))
+    }
+
+    @Test func remoteAttachmentsRequireParentAndPreserveActualPayloadTimestamps() async throws {
+        let fixture = try SyncFixture()
+        let parent = note("Parent", time: 10)
+        let audio = AudioRecording(noteID: parent.id, fileURL: URL(fileURLWithPath: "/unused"), recordedAt: Date(timeIntervalSince1970: 20))
+        let action = ActionItem(sourceNoteID: parent.id, task: "Action", createdAt: Date(timeIntervalSince1970: 15), updatedAt: Date(timeIntervalSince1970: 30))
+        let audioWire = try CloudRecord.encode(audio, kind: .audio, id: audio.id, modifiedAt: audio.updatedAt)
+        let actionWire = try CloudRecord.encode(action, kind: .action, id: action.id, modifiedAt: action.updatedAt!)
+        for wire in [audioWire, actionWire] {
+            await #expect(throws: SyncEngineError.self) { try await fixture.local.apply(wire, ifUnchanged: nil) }
+        }
+        try await fixture.notes.upsert(parent)
+        try await fixture.local.apply(audioWire, ifUnchanged: nil)
+        try await fixture.local.apply(actionWire, ifUnchanged: nil)
+        let storedAudio = try #require(await CoreDataAudioRecordingRepository(container: fixture.container).recording(id: audio.id))
+        let storedAction = try #require(await CoreDataActionItemRepository(container: fixture.container).item(id: action.id))
+        #expect(storedAudio.noteID == parent.id && storedAudio.updatedAt == audio.updatedAt)
+        #expect(storedAction == action)
+        let snapshot = try await fixture.local.snapshot()
+        #expect(snapshot.first { $0.kind == .audio }?.modifiedAt == audio.updatedAt)
+        #expect(snapshot.first { $0.kind == .action }?.modifiedAt == action.updatedAt)
+    }
+
+    @Test func activeAudioCannotBeDeletedAndLateUpdateCannotResurrectDeletedMetadata() async throws {
+        let fixture = try SyncFixture()
+        let parent = note("Parent", time: 10)
+        try await fixture.notes.upsert(parent)
+        var audio = AudioRecording(noteID: parent.id, fileURL: URL(fileURLWithPath: "/unused"), recordingState: .recording)
+        let repository = CoreDataAudioRecordingRepository(container: fixture.container)
+        try await repository.upsert(audio)
+        var wire = try #require(await fixture.local.snapshot().first { $0.kind == .audio })
+        await #expect(throws: SyncEngineError.self) {
+            try await fixture.local.apply(wire.tombstone(at: Date()), ifUnchanged: wire)
+        }
+        audio.recordingState = .complete
+        audio.updatedAt = audio.updatedAt.addingTimeInterval(1)
+        try await repository.update(audio)
+        wire = try #require(await fixture.local.snapshot().first { $0.kind == .audio })
+        try await fixture.local.apply(wire.tombstone(at: Date()), ifUnchanged: wire)
+        await #expect(throws: AudioRecordingPersistenceError.self) { try await repository.update(audio) }
+        #expect(try await fixture.local.snapshot().allSatisfy { $0.kind != .audio })
+    }
+
     @Test func disabledSyncNeverContactsCloudOrChangesLocalNotes() async throws {
         let fixture = try SyncFixture()
         let note = Note(title: "Local", bodyMarkdown: "Offline")
@@ -366,9 +516,9 @@ private func record(_ note: Note) throws -> CloudRecord {
     let persistence = MemorySyncPersistence()
     let sleeper = SyncSleeper()
     let engine: SyncEngine
-    init() throws {
+    init(audioFiles: AudioFileStore? = nil) throws {
         container = try LithPersistentStore.makeContainer(inMemory: true)
-        local = CoreDataSyncStore(container: container)
+        local = CoreDataSyncStore(container: container, audioFiles: audioFiles)
         notes = CoreDataNoteRepository(container: container)
         let sleeper = self.sleeper
         engine = SyncEngine(transport: transport, local: local, persistence: persistence,
