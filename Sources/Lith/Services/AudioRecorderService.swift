@@ -30,6 +30,14 @@ public final class AudioRecorderService: AudioCaptureAdapter {
     private let files: AudioFileStore
     private let driver: AudioRecordingDriver
     private var busy = false
+    private var blockedNoteIDs: Set<UUID> = []
+    private var deletionGenerations: [UUID: Int] = [:]
+
+    public func blockRecording(noteID: UUID) {
+        blockedNoteIDs.insert(noteID)
+        deletionGenerations[noteID, default: 0] += 1
+    }
+    public func unblockRecording(noteID: UUID) { blockedNoteIDs.remove(noteID) }
 
     public init(repository: AudioRecordingRepository, files: AudioFileStore = AudioFileStore(), driver: AudioRecordingDriver) {
         self.repository = repository
@@ -45,16 +53,23 @@ public final class AudioRecorderService: AudioCaptureAdapter {
     }
 
     public func startRecording(noteID: UUID) async throws -> AudioRecording {
+        guard !blockedNoteIDs.contains(noteID) else { throw AudioRecordingPersistenceError.missingRecording }
         guard activeRecording == nil, !busy else { throw AudioRecordingError.alreadyRecording }
         busy = true
+        let generation = deletionGenerations[noteID, default: 0]
         defer { busy = false }
         guard await driver.requestPermission() else { throw AudioRecordingError.permissionDenied }
         try Task.checkCancellation()
+        guard !blockedNoteIDs.contains(noteID), generation == deletionGenerations[noteID, default: 0] else { throw AudioRecordingPersistenceError.missingRecording }
         let id = UUID()
         let url = try files.prepare(noteID: noteID, recordingID: id)
         var recording = AudioRecording(id: id, noteID: noteID, fileURL: url, recordingState: .recording)
         // Save before capture, so a crash never leaves an untracked recording file.
         try await repository.upsert(recording)
+        guard !blockedNoteIDs.contains(noteID), generation == deletionGenerations[noteID, default: 0] else {
+            try await repository.delete(recordingID: id)
+            throw AudioRecordingPersistenceError.missingRecording
+        }
         do {
             try driver.start(at: url)
             activeRecording = recording
@@ -65,7 +80,7 @@ public final class AudioRecorderService: AudioCaptureAdapter {
             recording.recordingState = .failed
             recording.errorMessage = error.localizedDescription
             recording.updatedAt = Date()
-            try await repository.upsert(recording)
+            try await repository.update(recording, ifUnchangedSince: nil)
             throw error
         }
     }
@@ -86,7 +101,12 @@ public final class AudioRecorderService: AudioCaptureAdapter {
         }
         driver.stop()
         activeRecording = recording // Retain metadata if persistence fails; Stop can retry saving.
-        try await repository.upsert(recording)
+        do { try await repository.update(recording, ifUnchangedSince: nil) }
+        catch AudioRecordingPersistenceError.missingRecording {
+            activeRecording = nil
+            try? files.remove(recording)
+            throw AudioRecordingPersistenceError.missingRecording
+        }
         activeRecording = nil
         lastError = recording.errorMessage
         return recording
@@ -105,7 +125,7 @@ public final class AudioRecorderService: AudioCaptureAdapter {
             recording.recordingState = .interrupted
             recording.errorMessage = "Recording ended when Lith closed. The available audio has been retained."
             recording.updatedAt = Date()
-            try await repository.upsert(recording)
+            try await repository.update(recording, ifUnchangedSince: nil)
         }
     }
 

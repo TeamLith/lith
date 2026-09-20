@@ -2,9 +2,21 @@ import Foundation
 
 public protocol AudioRecordingRepository: Sendable {
     func upsert(_ recording: AudioRecording) async throws
+    /// Atomically updates a saved recording; never inserts a deleted identifier.
+    func update(_ recording: AudioRecording, ifUnchangedSince: Date?) async throws
     func recordings(noteID: UUID?) async throws -> [AudioRecording]
     func recording(id: UUID) async throws -> AudioRecording?
     func delete(recordingID: UUID) async throws
+}
+
+public enum AudioRecordingPersistenceError: LocalizedError {
+    case missingRecording, changedRecording
+    public var errorDescription: String? {
+        switch self {
+        case .missingRecording: "This recording no longer exists."
+        case .changedRecording: "This recording changed in another window or device. Reload it before trying again."
+        }
+    }
 }
 
 public enum RecordingState: String, Codable, Sendable {
