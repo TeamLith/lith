@@ -235,6 +235,7 @@ private enum ModelCache {
             + LithPersistentStore.makeRSSEntities()
             + LithPersistentStore.makeLinkEntities()
             + LithPersistentStore.makeActionItemEntities()
+            + LithPersistentStore.makeAudioEntities()
         return model
     }()
 }

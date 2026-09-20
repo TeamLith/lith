@@ -3,63 +3,61 @@ import Foundation
 public struct GraphBuilder: Sendable {
     public init() {}
 
+    /// Local traversal follows both incoming and outgoing links. Zero or negative
+    /// depth returns only the center; an absent/hidden center returns an empty graph.
     public func build(notes: [Note], links: [Link], mode: GraphMode) -> NoteGraph {
+        let visibleNotes = notes.filter { !$0.isArchived && !$0.isTrashed }.sorted {
+            let lhs = $0.title.lowercased()
+            let rhs = $1.title.lowercased()
+            return lhs == rhs ? $0.id.uuidString < $1.id.uuidString : lhs < rhs
+        }
+        let visibleIDs = Set(visibleNotes.map(\.id))
+        // Multiple persisted link kinds between the same endpoints draw one edge.
+        let edges = Set(links.compactMap { link -> GraphEdge? in
+            guard visibleIDs.contains(link.fromNoteID), visibleIDs.contains(link.toNoteID) else { return nil }
+            return GraphEdge(sourceID: link.fromNoteID, targetID: link.toNoteID)
+        }).sorted {
+            if $0.sourceID != $1.sourceID { return $0.sourceID.uuidString < $1.sourceID.uuidString }
+            return $0.targetID.uuidString < $1.targetID.uuidString
+        }
+
         switch mode {
-        case let .local(center, depth):
-            return buildLocal(notes: notes, links: links, centerID: center, depth: max(depth, 1))
         case .global:
-            return buildGlobal(notes: notes, links: links)
-        }
-    }
-
-    private func buildLocal(notes: [Note], links: [Link], centerID: UUID, depth: Int) -> NoteGraph {
-        let adjacency = adjacencyMap(links: links)
-        var visited: Set<UUID> = [centerID]
-        var frontier: Set<UUID> = [centerID]
-
-        for _ in 0..<depth {
-            var next: Set<UUID> = []
-            for node in frontier {
-                for neighbor in adjacency[node] ?? [] where !visited.contains(neighbor) {
-                    visited.insert(neighbor)
-                    next.insert(neighbor)
-                }
+            return project(notes: visibleNotes, edges: edges)
+        case let .local(center, depth):
+            guard visibleIDs.contains(center) else { return NoteGraph(nodes: [], edges: []) }
+            var adjacency: [UUID: Set<UUID>] = [:]
+            for edge in edges {
+                adjacency[edge.sourceID, default: []].insert(edge.targetID)
+                adjacency[edge.targetID, default: []].insert(edge.sourceID)
             }
-            frontier = next
-            if frontier.isEmpty { break }
+            var visited: Set<UUID> = [center]
+            var frontier: Set<UUID> = [center]
+            // A simple path can never visit more than N-1 hops; cap untrusted depth.
+            for _ in 0..<min(max(depth, 0), max(visibleNotes.count - 1, 0)) {
+                var next: Set<UUID> = []
+                for node in frontier {
+                    for neighbor in adjacency[node] ?? [] where visited.insert(neighbor).inserted {
+                        next.insert(neighbor)
+                    }
+                }
+                frontier = next
+                if frontier.isEmpty { break }
+            }
+            return project(
+                notes: visibleNotes.filter { visited.contains($0.id) },
+                edges: edges.filter { visited.contains($0.sourceID) && visited.contains($0.targetID) }
+            )
         }
-
-        let filteredNotes = notes.filter { visited.contains($0.id) }.sorted { $0.title.localizedCaseInsensitiveCompare($1.title) == .orderedAscending }
-        let filteredEdges = links
-            .filter { visited.contains($0.fromNoteID) && visited.contains($0.toNoteID) }
-            .map { GraphEdge(sourceID: $0.fromNoteID, targetID: $0.toNoteID) }
-
-        return NoteGraph(nodes: nodesWithDegree(notes: filteredNotes, edges: filteredEdges), edges: filteredEdges)
     }
 
-    private func buildGlobal(notes: [Note], links: [Link]) -> NoteGraph {
-        // Bounded-force strategy placeholder: data output supports a force-layout UI layer.
-        let edges = links.map { GraphEdge(sourceID: $0.fromNoteID, targetID: $0.toNoteID) }
-        return NoteGraph(nodes: nodesWithDegree(notes: notes, edges: edges), edges: edges)
-    }
-
-    private func nodesWithDegree(notes: [Note], edges: [GraphEdge]) -> [GraphNode] {
+    private func project(notes: [Note], edges: [GraphEdge]) -> NoteGraph {
         var degree: [UUID: Int] = [:]
         for edge in edges {
             degree[edge.sourceID, default: 0] += 1
             degree[edge.targetID, default: 0] += 1
         }
-        return notes.map { note in
-            GraphNode(id: note.id, title: note.title, degree: degree[note.id, default: 0])
-        }
-    }
-
-    private func adjacencyMap(links: [Link]) -> [UUID: Set<UUID>] {
-        var map: [UUID: Set<UUID>] = [:]
-        for link in links {
-            map[link.fromNoteID, default: []].insert(link.toNoteID)
-            map[link.toNoteID, default: []].insert(link.fromNoteID)
-        }
-        return map
+        let nodes = notes.map { GraphNode(id: $0.id, title: $0.title, degree: degree[$0.id, default: 0]) }
+        return NoteGraph(nodes: nodes, edges: edges)
     }
 }
