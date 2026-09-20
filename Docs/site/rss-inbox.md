@@ -23,6 +23,8 @@ Open an article to read its downloaded content or choose **Read Original Article
 
 Saved notes include the article's source URL, author and publication date when supplied, feed title/category, and an RSS tag. Lith retains the relationship between the inbox article and its note. Repeating a save or retrying after an interrupted save reuses that note instead of creating a duplicate or replacing your edits. A saved article offers **Open Saved Note**.
 
+Wikilinks such as `[[Project Notes]]` in your commentary or article text connect the saved note to matching notes in backlinks and the graph. If indexing those links fails, the article remains approved and the error stays visible. Retry **Save as Note** to finish indexing the already saved note; its content and any edits are preserved.
+
 Choose **Ignore** to set an article aside, or **Mark New** to return an ignored or approved article to the new list. Refresh preserves these decisions. Saved articles keep their saved state; manage the note from Notes.
 
 If a save fails, the error stays visible and you can retry. Article content is displayed as downloaded text; HTML markup supplied by a feed may be visible. No article is converted to a note without your explicit save action.
