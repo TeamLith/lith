@@ -21,8 +21,9 @@ Search matches titles, body text, tags, and stored metadata. Basic `AND`, `OR`, 
 
 ## Graph
 
-- Visualize how notes connect through wikilinks.
-- Explore related notes without tracing every link by hand.
+Graph data is built from your saved notes and links. Global mode includes all active notes, including unlinked notes. Local mode starts from one note and follows both incoming and outgoing links up to the selected number of hops. Zero hops includes only the selected note. Archived and trashed notes are excluded, along with links to missing or hidden notes.
+
+The interactive graph screen is still in progress.
 
 ## Availability
 
