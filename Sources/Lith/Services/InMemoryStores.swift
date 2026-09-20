@@ -160,6 +160,13 @@ public actor InMemoryRSSRepository: RSSRepository {
         itemsByID[id]
     }
 
+    public func updateItemWorkflow(itemID: UUID, status: RSSItemStatus, savedNoteID: UUID?) async throws {
+        guard var item = itemsByID[itemID] else { throw RSSInboxError.missingItem }
+        item.status = status
+        item.savedNoteID = savedNoteID
+        storeItem(item)
+    }
+
     private func storeFeed(_ feed: RSSFeed) {
         feedsByID[feed.id] = feed
         feedIDsByURL[normalizedURL(feed.feedURL)] = feed.id

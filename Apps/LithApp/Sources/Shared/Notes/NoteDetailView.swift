@@ -3,20 +3,34 @@ import Lith
 
 @available(iOS 17, macOS 14, *)
 struct NoteDetailView: View {
+    let audioServices: AudioServices?
+    let audioRepository: AudioRecordingRepository?
     let onNoteChanged: @MainActor () async -> Void
 
     @Environment(\.dismiss) private var dismiss
 
     @State private var isEditing = false
     @State private var viewModel: NoteDetailViewModel
+    @State private var actionItemsViewModel: ActionItemsViewModel?
 
     init(
         repository: NoteRepository,
         wikiLinkService: WikiLinkServiceProtocol,
         noteID: UUID,
+        actionItemRepository: ActionItemRepository? = nil,
+        actionReviewService: ActionItemReviewService? = nil,
+        transcriptProvider: (@Sendable (UUID) async throws -> String)? = nil,
+        audioRepository: AudioRecordingRepository? = nil,
+        audioServices: AudioServices? = nil,
         onNoteChanged: @escaping @MainActor () async -> Void = {}
     ) {
+        self.audioServices = audioServices
+        self.audioRepository = audioRepository
         self.onNoteChanged = onNoteChanged
+        self._actionItemsViewModel = State(initialValue: actionItemRepository.map {
+            ActionItemsViewModel(noteID: noteID, repository: $0, notes: repository,
+                                 reviewService: actionReviewService, transcriptProvider: transcriptProvider)
+        })
         self._viewModel = State(
             initialValue: NoteDetailViewModel(
                 noteID: noteID,
@@ -93,6 +107,19 @@ struct NoteDetailView: View {
 
                 if let saveError = viewModel.saveError {
                     saveErrorBanner(saveError)
+                }
+
+                if let actionItemsViewModel {
+                    ActionItemsView(viewModel: actionItemsViewModel, bodyText: viewModel.bodyMarkdown,
+                                    referenceDate: viewModel.updatedAt ?? Date())
+                }
+
+                if let audioServices {
+                    AudioNoteSection(noteID: viewModel.noteID, services: audioServices)
+                        .id(viewModel.noteID)
+                } else if let audioRepository {
+                    AudioNoteSection(noteID: viewModel.noteID, repository: audioRepository)
+                        .id(viewModel.noteID)
                 }
 
                 if !viewModel.backlinks.isEmpty {

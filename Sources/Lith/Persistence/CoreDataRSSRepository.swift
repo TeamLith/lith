@@ -107,6 +107,15 @@ public final class CoreDataRSSRepository: @unchecked Sendable, RSSRepository {
         }
     }
 
+    public func updateItemWorkflow(itemID: UUID, status: RSSItemStatus, savedNoteID: UUID?) async throws {
+        try await perform {
+            guard let item = try self.fetchManagedItem(id: itemID) else { throw RSSInboxError.missingItem }
+            item.statusRawValue = status.rawValue
+            item.savedNoteID = savedNoteID
+            try self.saveIfNeeded()
+        }
+    }
+
     private func fetchManagedFeed(id: UUID) throws -> ManagedRSSFeed? {
         let request = ManagedRSSFeed.fetchRequest()
         request.fetchLimit = 1
@@ -164,6 +173,7 @@ public final class CoreDataRSSRepository: @unchecked Sendable, RSSRepository {
                 do {
                     continuation.resume(returning: try work())
                 } catch {
+                    self.context.rollback()
                     continuation.resume(throwing: error)
                 }
             }
