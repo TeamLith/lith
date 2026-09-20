@@ -25,6 +25,15 @@ Suggestions can include a named assignee and an interpreted due date. Supported 
 
 Nothing is saved until you accept a draft. Accepting an already accepted suggestion preserves its existing edits and completion state. Repeating extraction hides previously accepted suggestions. Action storage is local; extraction does not create reminders or send anything to another app.
 
-## Availability
+## Review and manage actions
 
-The extraction and acceptance services are available. The transcript review/checklist interface and audio workflow may arrive in stages across builds.
+In a note’s reading view, the **Action items** section lists accepted tasks. Select **Find action suggestions** to inspect the note text and any available linked transcript. This does not save the suggestions.
+
+For each suggestion, select **Review and accept**, check or edit its task, assignee, and due date, then select **Accept action**. You can dismiss a suggestion without saving it. Dismissed suggestions can return if you run extraction again.
+
+- Select the circle beside an accepted action to mark it done; select it again to reopen it.
+- Select **Edit** to change its task, assignee, or due date. Turn off **Due date** to remove the date.
+- Select the trash button and confirm to delete an accepted action. Extracting its original text again can suggest it again.
+- Select **Review accepted actions for sharing**, inspect the checklist, then select **Share accepted actions** to open the system share sheet. Unaccepted suggestions are never included. Sharing does not automatically create reminders or send messages.
+
+Changes are saved locally. If a save fails, an error appears and the existing checklist remains available for retry. Suggestion dates are heuristics; check them before acceptance.

@@ -9,14 +9,22 @@ struct NoteDetailView: View {
 
     @State private var isEditing = false
     @State private var viewModel: NoteDetailViewModel
+    @State private var actionItemsViewModel: ActionItemsViewModel?
 
     init(
         repository: NoteRepository,
         wikiLinkService: WikiLinkServiceProtocol,
         noteID: UUID,
+        actionItemRepository: ActionItemRepository? = nil,
+        actionReviewService: ActionItemReviewService? = nil,
+        transcriptProvider: (@Sendable (UUID) async throws -> String)? = nil,
         onNoteChanged: @escaping @MainActor () async -> Void = {}
     ) {
         self.onNoteChanged = onNoteChanged
+        self._actionItemsViewModel = State(initialValue: actionItemRepository.map {
+            ActionItemsViewModel(noteID: noteID, repository: $0, notes: repository,
+                                 reviewService: actionReviewService, transcriptProvider: transcriptProvider)
+        })
         self._viewModel = State(
             initialValue: NoteDetailViewModel(
                 noteID: noteID,
@@ -93,6 +101,11 @@ struct NoteDetailView: View {
 
                 if let saveError = viewModel.saveError {
                     saveErrorBanner(saveError)
+                }
+
+                if let actionItemsViewModel {
+                    ActionItemsView(viewModel: actionItemsViewModel, bodyText: viewModel.bodyMarkdown,
+                                    referenceDate: viewModel.updatedAt ?? Date())
                 }
 
                 if !viewModel.backlinks.isEmpty {
