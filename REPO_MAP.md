@@ -80,7 +80,7 @@ Read only what matches the task:
 - `Sources/Lith/Services`: search, RSS conversion, wiki links, action extraction, and test/in-memory support.
 - `Sources/Lith/Services/WikiLinkService.swift`: wikilink resolution and backlink queries.
 - `Sources/Lith/Graph`: graph models and builder logic.
-- `Sources/Lith/Sync`: sync conflict handling.
+- `Sources/Lith/Sync`: versioned CloudKit mapping, opt-in sync engine, transport, local-store bridge, and conflict handling.
 - `Docs/CloudKitSchema.md`: versioned private CloudKit record mapping and migration contract.
 - `Sources/Lith/UI`: shared UI-facing view models.
 

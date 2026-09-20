@@ -12,6 +12,7 @@ public final class CoreDataLinkRepository: @unchecked Sendable, LinkRepository {
         self.context = container.newBackgroundContext()
         self.context.mergePolicy = NSMergePolicy(merge: .mergeByPropertyObjectTrumpMergePolicyType)
         self.context.undoManager = nil
+        self.context.automaticallyMergesChangesFromParent = true
     }
 
     public init(container: NSPersistentContainer) {
@@ -19,6 +20,7 @@ public final class CoreDataLinkRepository: @unchecked Sendable, LinkRepository {
         self.context = container.newBackgroundContext()
         self.context.mergePolicy = NSMergePolicy(merge: .mergeByPropertyObjectTrumpMergePolicyType)
         self.context.undoManager = nil
+        self.context.automaticallyMergesChangesFromParent = true
     }
 
     public func replaceLinks(from sourceNoteID: UUID, with links: [Link]) async throws {
