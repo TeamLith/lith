@@ -1,18 +1,6 @@
 import Foundation
 import Observation
 
-/// Search inputs are a value so SwiftUI can cancel/restart work when any filter changes.
-public struct SearchInput: Hashable, Sendable {
-    public var query = ""
-    public var source: NoteSource?
-    public var tags = ""
-    public var restrictDates = false
-    public var startDate = Date()
-    public var endDate = Date()
-
-    public init() {}
-}
-
 @Observable
 @MainActor
 public final class SearchViewModel {
@@ -20,11 +8,16 @@ public final class SearchViewModel {
     public private(set) var results: [Note] = []
     public private(set) var isLoading = false
     public private(set) var errorMessage: String?
+    public private(set) var savedSearches: [SavedSearch] = []
+    public private(set) var savedSearchError: String?
+    public private(set) var isSavingSearch = false
+    private let savedRepository: SavedSearchRepository?
     private let service: SearchServiceProtocol
     private var generation = 0
 
-    public init(service: SearchServiceProtocol) {
+    public init(service: SearchServiceProtocol, savedRepository: SavedSearchRepository? = nil) {
         self.service = service
+        self.savedRepository = savedRepository
     }
 
     public func search(calendar: Calendar = .current) async {
@@ -38,27 +31,8 @@ public final class SearchViewModel {
             if generation == requestGeneration { isLoading = false }
         }
 
-        var range: ClosedRange<Date>?
-        if request.restrictDates {
-            let start = calendar.startOfDay(for: request.startDate)
-            let end = calendar.startOfDay(for: request.endDate)
-            guard start <= end,
-                  let nextDay = calendar.date(byAdding: .day, value: 1, to: end) else {
-                errorMessage = "The start date must be on or before the end date."
-                return
-            }
-            // Include every instant on the selected final day, without including tomorrow.
-            range = start...Date(timeIntervalSinceReferenceDate: nextDay.timeIntervalSinceReferenceDate.nextDown)
-        }
-        let tags = Set(request.tags.split(separator: ",")
-            .map { $0.trimmingCharacters(in: .whitespacesAndNewlines).lowercased() }
-            .filter { !$0.isEmpty })
-        let filters = SearchFilter(
-            sources: request.source.map { [$0] } ?? Set(NoteSource.allCases),
-            tags: tags,
-            dateRange: range
-        )
         do {
+            let filters = try request.filters(calendar: calendar)
             let matches = try await service.search(
                 query: request.query.trimmingCharacters(in: .whitespacesAndNewlines), filters: filters
             )
@@ -71,6 +45,63 @@ public final class SearchViewModel {
             guard generation == requestGeneration, input == request, !Task.isCancelled else { return }
             errorMessage = error.localizedDescription
         }
+    }
+
+    public func loadSavedSearches() async {
+        do {
+            savedSearches = try await savedRepository?.all() ?? []
+            savedSearchError = nil
+        } catch { savedSearchError = error.localizedDescription }
+    }
+
+    @discardableResult
+    public func saveSearch(name: String, calendar: Calendar = .current) async -> Bool {
+        guard let savedRepository, !isSavingSearch else { return false }
+        isSavingSearch = true
+        defer { isSavingSearch = false }
+        do {
+            let saved = SavedSearch(name: name, query: input.query, filter: try input.filters(calendar: calendar), input: input)
+            try await savedRepository.save(saved)
+            await loadSavedSearches()
+            return savedSearchError == nil
+        } catch { savedSearchError = error.localizedDescription; return false }
+    }
+
+    public func applySavedSearch(_ saved: SavedSearch, calendar: Calendar = .current) async {
+        if let snapshot = saved.input { input = snapshot }
+        else {
+            var restored = SearchInput()
+            restored.query = saved.query
+            restored.source = saved.filter.sources.count == 1 ? saved.filter.sources.first : nil
+            restored.tags = saved.filter.tags.sorted().joined(separator: ", ")
+            if let range = saved.filter.dateRange {
+                restored.restrictDates = true
+                restored.startDate = range.lowerBound
+                restored.endDate = range.upperBound
+            }
+            input = restored
+        }
+        await search(calendar: calendar)
+    }
+
+    @discardableResult
+    public func renameSavedSearch(id: UUID, name: String) async -> Bool {
+        guard let savedRepository, !isSavingSearch else { return false }
+        isSavingSearch = true
+        defer { isSavingSearch = false }
+        do {
+            try await savedRepository.rename(id: id, name: name)
+            await loadSavedSearches()
+            return savedSearchError == nil
+        } catch { savedSearchError = error.localizedDescription; return false }
+    }
+
+    public func deleteSavedSearch(id: UUID) async {
+        guard let savedRepository, !isSavingSearch else { return }
+        isSavingSearch = true
+        defer { isSavingSearch = false }
+        do { try await savedRepository.delete(id: id); await loadSavedSearches() }
+        catch { savedSearchError = error.localizedDescription }
     }
 
     public func clearFilters() {
