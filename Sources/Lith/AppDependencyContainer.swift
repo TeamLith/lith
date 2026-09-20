@@ -29,9 +29,9 @@ public final class AppDependencyContainer: @unchecked Sendable {
         let linkRepository = CoreDataLinkRepository(container: persistentContainer)
         let rssRepository = CoreDataRSSRepository(container: persistentContainer)
 
+        self.audioRecordingRepository = CoreDataAudioRecordingRepository(container: persistentContainer)
         self.noteRepository = noteRepository
         self.linkRepository = linkRepository
-        self.audioRecordingRepository = CoreDataAudioRecordingRepository(container: persistentContainer)
         self.rssRepository = rssRepository
         self.searchService = SearchService(repository: noteRepository)
         self.rssConversionService = RSSConversionService()
