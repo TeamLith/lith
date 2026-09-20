@@ -82,6 +82,7 @@ Read only what matches the task:
 - `Sources/Lith/Graph`: graph models and builder logic.
 - `Sources/Lith/Sync`: sync conflict handling.
 - `Sources/Lith/UI`: shared UI-facing view models.
+- `Sources/Lith/UI/AudioServices.swift`: shared capture, playback, and transcription runtime; the app container owns one instance across windows.
 
 ### App targets
 
@@ -89,6 +90,7 @@ Read only what matches the task:
 - `LithApps.xcodeproj`: generated project artifact. Regenerate after structural source changes.
 - `Apps/LithApp/Sources/Shared/RootView.swift`: top-level app shell used by both platforms.
 - `Apps/LithApp/Sources/Shared/Notes`: SwiftUI note list/detail screens shared across app targets.
+- `Apps/LithApp/Sources/Shared/Audio`: recording, playback, and transcript controls embedded in note details.
 - `Apps/LithApp/Sources/iOS/LithiOSApp.swift`: iOS app entry point.
 - `Apps/LithApp/Sources/macOS/LithmacOSApp.swift`: macOS app entry point.
 - `Apps/LithApp/Resources`: app assets.

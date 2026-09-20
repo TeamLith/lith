@@ -12,11 +12,13 @@ public final class AudioNoteViewModel {
     public private(set) var playbackTime: TimeInterval = 0
     public private(set) var transcribingID: UUID?
     public private(set) var isBusy = false
+    public private(set) var isRecordingElsewhere = false
     public private(set) var errorMessage: String?
     private let repository: AudioRecordingRepository
     private let recorder: AudioRecorderService
     private let transcription: TranscriptionServiceProtocol
     private let playback: AudioPlaybackDriver
+    private var services: AudioServices?
     private var navigationGeneration = 0
     private var transcriptionTask: Task<Void, Never>?
 
@@ -28,23 +30,34 @@ public final class AudioNoteViewModel {
         self.transcription = transcription
         self.playback = playback
     }
+    public convenience init(noteID: UUID, services: AudioServices) {
+        self.init(noteID: noteID, repository: services.repository, recorder: services.recorder,
+                  transcription: services.transcription, playback: services.playback)
+        self.services = services
+    }
     public func load() async {
         do {
-            try await recorder.recoverInterruptedRecordings()
-            if let service = transcription as? TranscriptionService { try await service.recoverInterruptedTranscriptions() }
+            if let services { try await services.prepare() }
+            else {
+                try await recorder.recoverInterruptedRecordings()
+                if let service = transcription as? TranscriptionService { try await service.recoverInterruptedTranscriptions() }
+            }
             try await reload()
             errorMessage = nil
         } catch { errorMessage = error.localizedDescription }
     }
     public func startRecording() async {
-        guard !isBusy, activeRecordingID == nil, transcribingID == nil else { return }
+        guard !isBusy, recorder.activeRecording == nil, transcribingID == nil else { return }
         isBusy = true
         let generation = navigationGeneration
         defer { isBusy = false }
         playback.stop()
+        services?.playingRecordingID = nil
+        services?.playingNoteID = nil
         playingID = nil
         isPlaying = false
         do {
+            try await services?.prepare()
             let recording = try await recorder.startRecording(noteID: noteID)
             activeRecordingID = recording.id
             if generation != navigationGeneration {
@@ -68,9 +81,13 @@ public final class AudioNoteViewModel {
         } catch { errorMessage = error.localizedDescription }
     }
     public func tick() async {
-        recordingDuration = recorder.duration
-        playbackTime = playback.currentTime
-        isPlaying = playback.isPlaying
+        isRecordingElsewhere = recorder.activeRecording != nil && recorder.activeRecording?.id != activeRecordingID
+        recordingDuration = activeRecordingID == nil ? 0 : recorder.duration
+        if let services {
+            playingID = services.playingNoteID == noteID ? services.playingRecordingID : nil
+        }
+        playbackTime = playingID == nil ? 0 : playback.currentTime
+        isPlaying = playingID != nil && playback.isPlaying
         if activeRecordingID != nil && recorder.activeRecording == nil {
             activeRecordingID = nil
             errorMessage = recorder.lastError
@@ -78,13 +95,15 @@ public final class AudioNoteViewModel {
         }
     }
     public func togglePlayback(_ recording: AudioRecording) {
-        guard activeRecordingID == nil else { return }
+        guard recorder.activeRecording == nil else { return }
         do {
             if playingID == recording.id, playback.isPlaying { playback.pause() }
             else {
                 if playingID != recording.id { playback.stop() }
                 try playback.play(url: recording.fileURL)
                 playingID = recording.id
+                services?.playingRecordingID = recording.id
+                services?.playingNoteID = noteID
             }
             isPlaying = playback.isPlaying
             errorMessage = nil
@@ -92,7 +111,7 @@ public final class AudioNoteViewModel {
     }
     @discardableResult
     public func startTranscription(_ recording: AudioRecording) -> Task<Void, Never>? {
-        guard transcribingID == nil, activeRecordingID == nil, !isBusy else { return nil }
+        guard transcribingID == nil, recorder.activeRecording == nil, !isBusy else { return nil }
         transcribingID = recording.id
         errorMessage = nil
         let task = Task { [weak self] in
@@ -128,7 +147,10 @@ public final class AudioNoteViewModel {
     public func delete(_ recording: AudioRecording) async {
         guard transcribingID != recording.id, activeRecordingID != recording.id else { return }
         do {
-            if playingID == recording.id { playback.stop(); playingID = nil; isPlaying = false }
+            if playingID == recording.id {
+                playback.stop(); playingID = nil; isPlaying = false
+                services?.playingRecordingID = nil; services?.playingNoteID = nil
+            }
             try await recorder.delete(recording)
             try await reload()
             errorMessage = nil
@@ -138,7 +160,11 @@ public final class AudioNoteViewModel {
         navigationGeneration += 1
         await stopRecording()
         transcriptionTask?.cancel()
-        playback.stop()
+        if services == nil || services?.playingNoteID == noteID {
+            playback.stop()
+            services?.playingRecordingID = nil
+            services?.playingNoteID = nil
+        }
         isPlaying = false
         playingID = nil
     }

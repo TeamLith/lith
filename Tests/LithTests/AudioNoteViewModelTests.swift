@@ -84,6 +84,38 @@ import CoreData
     #expect(!capture.capturing)
 }
 
+@Test @MainActor func sharedAudioRuntimeKeepsLiveCaptureWhenAnotherWindowLoads() async throws {
+    let files = AudioFileStore(root: FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString))
+    defer { try? FileManager.default.removeItem(at: files.root) }
+    let repository = CoreDataAudioRecordingRepository(container: try LithPersistentStore.makeContainer(inMemory: true), files: files)
+    let capture = UIAudioCaptureDriver(), playback = UIAudioPlaybackDriver()
+    let recorder = AudioRecorderService(repository: repository, files: files, driver: capture)
+    let services = AudioServices(repository: repository, recorder: recorder, playback: playback)
+    let first = AudioNoteViewModel(noteID: UUID(), services: services)
+    let second = AudioNoteViewModel(noteID: UUID(), services: services)
+    await first.load()
+    await first.startRecording()
+    let id = try #require(first.activeRecordingID)
+    await second.load()
+    await second.tick()
+    #expect(second.isRecordingElsewhere)
+    #expect(try await repository.recording(id: id)?.recordingState == .recording)
+    await second.startRecording()
+    #expect(second.activeRecordingID == nil)
+    await second.stopForNavigation()
+    #expect(capture.capturing)
+    await first.stopRecording()
+    let recording = try #require(first.recordings.first)
+    first.togglePlayback(recording)
+    #expect(playback.isPlaying)
+    await second.stopForNavigation()
+    #expect(playback.isPlaying)
+    await second.startRecording()
+    #expect(!playback.isPlaying)
+    #expect(second.activeRecordingID != nil)
+    await second.stopRecording()
+}
+
 @MainActor private func audioUIFixture() throws -> (AudioNoteViewModel, UIAudioCaptureDriver, UIAudioPlaybackDriver, CoreDataAudioRecordingRepository, AudioFileStore) {
     let files = AudioFileStore(root: FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString))
     let repository = CoreDataAudioRecordingRepository(container: try LithPersistentStore.makeContainer(inMemory: true), files: files)

@@ -12,6 +12,9 @@ struct AudioNoteSection: View {
             transcription: TranscriptionService(repository: repository, driver: AppleSpeechTranscriptionDriver()),
             playback: AppleAudioPlaybackDriver()))
     }
+    init(noteID: UUID, services: AudioServices) {
+        self._model = State(initialValue: AudioNoteViewModel(noteID: noteID, services: services))
+    }
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
             Label("Audio recordings", systemImage: "waveform").font(.headline)
@@ -22,11 +25,12 @@ struct AudioNoteSection: View {
                     Text(Self.duration(model.recordingDuration)).monospacedDigit()
                 } else {
                     Button("Record audio", systemImage: "mic.fill") { Task { await model.startRecording() } }
-                        .disabled(model.transcribingID != nil)
+                        .disabled(model.transcribingID != nil || model.isRecordingElsewhere)
                 }
                 if model.isBusy { ProgressView().controlSize(.small) }
             }
             .disabled(model.isBusy)
+            if model.isRecordingElsewhere { Text("Recording in another note or window.").font(.caption).foregroundStyle(.secondary) }
             if let error = model.errorMessage {
                 Text(error).font(.caption).foregroundStyle(.red)
                 Button("Reload recordings") { Task { await model.load() } }
@@ -80,7 +84,7 @@ private struct AudioRecordingRow: View {
                            systemImage: model.playingID == recording.id && model.isPlaying ? "pause.fill" : "play.fill") {
                         model.togglePlayback(recording)
                     }
-                    .disabled(model.activeRecordingID != nil)
+                    .disabled(model.activeRecordingID != nil || model.isRecordingElsewhere)
                     if model.playingID == recording.id {
                         Text(AudioNoteSection.duration(model.playbackTime)).font(.caption).monospacedDigit()
                     }
@@ -91,7 +95,7 @@ private struct AudioRecordingRow: View {
                         Button(recording.status == .failed ? "Retry transcription" : "Transcribe") {
                             model.startTranscription(recording)
                         }
-                        .disabled(model.transcribingID != nil || model.activeRecordingID != nil || editing)
+                        .disabled(model.transcribingID != nil || model.activeRecordingID != nil || model.isRecordingElsewhere || editing)
                     }
                     Spacer()
                     Button("Delete recording", systemImage: "trash", role: .destructive) { confirmDelete = true }
