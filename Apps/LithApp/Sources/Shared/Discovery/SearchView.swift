@@ -67,6 +67,13 @@ struct SearchView: View {
             }
         }
         .navigationTitle("Search")
+        .toolbar {
+            ToolbarItem(placement: .primaryAction) {
+                NavigationLink { GraphView(dependencies: dependencies) } label: {
+                    Label("Graph", systemImage: "point.3.connected.trianglepath")
+                }
+            }
+        }
         .searchable(text: $model.input.query, prompt: "Search notes, tags, and metadata")
         .task(id: model.input) { await model.search() }
     }

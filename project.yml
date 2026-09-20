@@ -38,8 +38,6 @@ targets:
         MARKETING_VERSION: 0.1.15
         INFOPLIST_KEY_NSMicrophoneUsageDescription: Record audio attached to your notes.
         INFOPLIST_KEY_NSSpeechRecognitionUsageDescription: Transcribe your recordings on this device.
-        CURRENT_PROJECT_VERSION: 16
-        MARKETING_VERSION: 0.1.15
   LithmacOS:
     type: application
     platform: macOS

@@ -12,6 +12,7 @@
 		2973F43614DAD15650F1FD6B /* LithiOSApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = F709463628A953739878AC1A /* LithiOSApp.swift */; };
 		2A2936FA32D5135376AC6A84 /* CreateNoteIntent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B849EF6DA09382F60787933 /* CreateNoteIntent.swift */; };
 		4909293EB94E7DBB36A6ECC3 /* AudioNoteSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90C95CBFF3A4C5BD199E9AEA /* AudioNoteSection.swift */; };
+		4A3FBE40C7698FD6A9929EEC /* GraphView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20342FFE2E34CB1EBAB03E1D /* GraphView.swift */; };
 		4CA2643DEED104B20F78F57F /* RSSInboxView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 907EDF554A424B7FD4B4DBEB /* RSSInboxView.swift */; };
 		5131A449E7DDD21BEE28EECD /* CreateNoteIntent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B849EF6DA09382F60787933 /* CreateNoteIntent.swift */; };
 		7D5EDB250F82B5133B0B349C /* NoteListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8030DC0FD62B167304E8CC8 /* NoteListView.swift */; };
@@ -23,6 +24,7 @@
 		CEE34ABB9A6AED4C894B2C6E /* NoteDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8A3E60B88EBCBB104E4438C /* NoteDetailView.swift */; };
 		CF4E94E25D042335D653BD11 /* SearchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7626ACF91503F717997B7EEA /* SearchView.swift */; };
 		D70DBE69C2CC6CE217890F2E /* Lith in Frameworks */ = {isa = PBXBuildFile; productRef = B3308A8885192CB6856F7DB8 /* Lith */; };
+		DFBC70FD6AFCC543687BA359 /* GraphView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20342FFE2E34CB1EBAB03E1D /* GraphView.swift */; };
 		E0BFB93D264DA2618F6F223C /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B66636C8B07EDF7EB10EE8E /* RootView.swift */; };
 		E78EA3D22CF06DE879EC4FFD /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A59A6C1A5D68DF5B7EBF2AD8 /* Assets.xcassets */; };
 		F962795E1F8245448FFAD67F /* Lith in Frameworks */ = {isa = PBXBuildFile; productRef = C71C05C8516C2A960CBB47FF /* Lith */; };
@@ -31,6 +33,7 @@
 
 /* Begin PBXFileReference section */
 		0B849EF6DA09382F60787933 /* CreateNoteIntent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateNoteIntent.swift; sourceTree = "<group>"; };
+		20342FFE2E34CB1EBAB03E1D /* GraphView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GraphView.swift; sourceTree = "<group>"; };
 		6EBF900D6E0186B8E7316090 /* Notes + ToDo */ = {isa = PBXFileReference; lastKnownFileType = folder; name = "Notes + ToDo"; path = .; sourceTree = SOURCE_ROOT; };
 		4B66636C8B07EDF7EB10EE8E /* RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
 		5C1D318FCAD055AB7D9F562E /* LithmacOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = LithmacOS.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -97,6 +100,7 @@
 		602CCAEDF4D7C54316746C10 /* Discovery */ = {
 			isa = PBXGroup;
 			children = (
+				20342FFE2E34CB1EBAB03E1D /* GraphView.swift */,
 				7626ACF91503F717997B7EEA /* SearchView.swift */,
 			);
 			path = Discovery;
@@ -281,6 +285,7 @@
 			files = (
 				4909293EB94E7DBB36A6ECC3 /* AudioNoteSection.swift in Sources */,
 				2A2936FA32D5135376AC6A84 /* CreateNoteIntent.swift in Sources */,
+				4A3FBE40C7698FD6A9929EEC /* GraphView.swift in Sources */,
 				2973F43614DAD15650F1FD6B /* LithiOSApp.swift in Sources */,
 				ABDA9B9BEBB9BB816D4D8BDA /* NoteDetailView.swift in Sources */,
 				FF99E821F7BE4B13EDAA3C2C /* NoteListView.swift in Sources */,
@@ -296,6 +301,7 @@
 			files = (
 				03388667D4176B3B172B077D /* AudioNoteSection.swift in Sources */,
 				5131A449E7DDD21BEE28EECD /* CreateNoteIntent.swift in Sources */,
+				DFBC70FD6AFCC543687BA359 /* GraphView.swift in Sources */,
 				04F64ED69C42450BB12D1797 /* LithmacOSApp.swift in Sources */,
 				CEE34ABB9A6AED4C894B2C6E /* NoteDetailView.swift in Sources */,
 				7D5EDB250F82B5133B0B349C /* NoteListView.swift in Sources */,
