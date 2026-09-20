@@ -13,6 +13,7 @@ public final class AppDependencyContainer: @unchecked Sendable {
     public let noteRepository: NoteRepository
     public let linkRepository: LinkRepository
     public let rssRepository: RSSRepository
+    public let audioRecordingRepository: AudioRecordingRepository
     public let searchService: SearchServiceProtocol
     public let rssConversionService: RSSConversionServiceProtocol
     public let rssFetchService: RSSFetchServiceProtocol
@@ -27,6 +28,7 @@ public final class AppDependencyContainer: @unchecked Sendable {
         let linkRepository = CoreDataLinkRepository(container: persistentContainer)
         let rssRepository = CoreDataRSSRepository(container: persistentContainer)
 
+        self.audioRecordingRepository = CoreDataAudioRecordingRepository(container: persistentContainer)
         self.noteRepository = noteRepository
         self.linkRepository = linkRepository
         self.rssRepository = rssRepository
