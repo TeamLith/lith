@@ -112,11 +112,14 @@ public final class AudioNoteViewModel {
     @discardableResult
     public func startTranscription(_ recording: AudioRecording) -> Task<Void, Never>? {
         guard transcribingID == nil, recorder.activeRecording == nil, !isBusy else { return nil }
+        guard services?.claim(recordingID: recording.id, noteID: noteID) != false else {
+            errorMessage = TranscriptionError.alreadyProcessing.localizedDescription
+            return nil
+        }
         transcribingID = recording.id
         errorMessage = nil
-        let task = Task { [weak self] in
-            guard let self else { return }
-            defer { self.transcribingID = nil; self.transcriptionTask = nil }
+        let task = Task { [self] in
+            defer { self.services?.release(recordingID: recording.id); self.transcribingID = nil; self.transcriptionTask = nil }
             do {
                 _ = try await self.transcription.transcribe(recording: recording) { [weak self] _ in
                     await self?.refreshProgress()
@@ -127,25 +130,37 @@ public final class AudioNoteViewModel {
                 await self.refreshProgress()
             }
         }
+        services?.trackTranscription(task, recordingID: recording.id)
         transcriptionTask = task
         return task
     }
     public func cancelTranscription() { transcriptionTask?.cancel() }
     public func saveTranscript(recordingID: UUID, text: String) async {
         guard transcribingID != recordingID else { return }
+        guard services?.claim(recordingID: recordingID, noteID: noteID) != false else {
+            errorMessage = TranscriptionError.alreadyProcessing.localizedDescription
+            return
+        }
+        defer { services?.release(recordingID: recordingID) }
         do {
             guard var recording = try await repository.recording(id: recordingID) else { throw TranscriptionError.missingRecording }
+            let persistedAt = recording.updatedAt
             recording.transcript = text
             recording.status = .complete
             recording.errorMessage = nil
             recording.updatedAt = Date()
-            try await repository.upsert(recording)
+            try await repository.update(recording, ifUnchangedSince: persistedAt)
             try await reload()
             errorMessage = nil
         } catch { errorMessage = error.localizedDescription }
     }
     public func delete(_ recording: AudioRecording) async {
         guard transcribingID != recording.id, activeRecordingID != recording.id else { return }
+        guard services?.claim(recordingID: recording.id, noteID: noteID) != false else {
+            errorMessage = TranscriptionError.alreadyProcessing.localizedDescription
+            return
+        }
+        defer { services?.release(recordingID: recording.id) }
         do {
             if playingID == recording.id {
                 playback.stop(); playingID = nil; isPlaying = false
