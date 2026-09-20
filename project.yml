@@ -34,8 +34,9 @@ targets:
         INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone: UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight
         INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad: UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight
         INFOPLIST_KEY_ITSAppUsesNonExemptEncryption: NO
-        CURRENT_PROJECT_VERSION: 10
-        MARKETING_VERSION: 0.1.9
+        INFOPLIST_KEY_NSMicrophoneUsageDescription: Record audio attached to your notes.
+        CURRENT_PROJECT_VERSION: 11
+        MARKETING_VERSION: 0.1.10
   LithmacOS:
     type: application
     platform: macOS
@@ -53,9 +54,10 @@ targets:
         INFOPLIST_KEY_CFBundleDisplayName: Lith
         INFOPLIST_KEY_LSApplicationCategoryType: public.app-category.productivity
         INFOPLIST_KEY_ITSAppUsesNonExemptEncryption: NO
+        INFOPLIST_KEY_NSMicrophoneUsageDescription: Record audio attached to your notes.
         CODE_SIGN_ENTITLEMENTS: Apps/LithApp/Sources/macOS/LithmacOS.entitlements
-        CURRENT_PROJECT_VERSION: 10
-        MARKETING_VERSION: 0.1.9
+        CURRENT_PROJECT_VERSION: 11
+        MARKETING_VERSION: 0.1.10
 schemes:
   LithiOS:
     shared: true
