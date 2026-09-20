@@ -35,3 +35,5 @@ UI test files and generated schemes are checked in, but their presence is not ev
 Retain checks for Markdown round trips, backlinks and metadata integrity; sync under offline/concurrent edits/rejoin; app restart and permission recovery; supported OS versions; Dynamic Type, VoiceOver, keyboard operation and Reduce Motion; and performance against the product's documented targets. Never contact production CloudKit or erase a user's library as part of an automated fixture. Signing, TestFlight upload, and production CloudKit schema verification require the release owner's configured accounts.
 
 Full validation compiles both app and UI-test bundles with `build-for-testing`. Use `--ui-tests` to execute the navigation tests on a Mac and an installed iOS simulator.
+
+Pull requests build the user guide without requiring an existing GitHub Pages site. Deployment still requires the repository owner to enable GitHub Pages; validation does not change that account setting.
