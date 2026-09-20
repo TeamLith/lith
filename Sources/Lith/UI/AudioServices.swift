@@ -10,6 +10,41 @@ public final class AudioServices {
     public let playback: AudioPlaybackDriver
     public var playingRecordingID: UUID?
     public var playingNoteID: UUID?
+    private var operations: [UUID: UUID] = [:]
+    private var transcriptionTasks: [UUID: Task<Void, Never>] = [:]
+    private var blockedNoteIDs: Set<UUID> = []
+
+    func claim(recordingID: UUID, noteID: UUID) -> Bool {
+        guard !blockedNoteIDs.contains(noteID), operations[recordingID] == nil else { return false }
+        operations[recordingID] = noteID
+        return true
+    }
+    func release(recordingID: UUID) {
+        operations.removeValue(forKey: recordingID)
+        transcriptionTasks.removeValue(forKey: recordingID)
+    }
+    func trackTranscription(_ task: Task<Void, Never>, recordingID: UUID) {
+        transcriptionTasks[recordingID] = task
+    }
+    public func prepareForNoteDeletion(noteID: UUID) async throws {
+        blockedNoteIDs.insert(noteID)
+        recorder.blockRecording(noteID: noteID)
+        let tasks = transcriptionTasks.filter { operations[$0.key] == noteID }.map(\.value)
+        tasks.forEach { $0.cancel() }
+        for task in tasks { await task.value }
+        if let recording = recorder.activeRecording, recording.noteID == noteID {
+            _ = try await recorder.stopRecording(recordingID: recording.id)
+        }
+        if playingNoteID == noteID {
+            playback.stop()
+            playingRecordingID = nil
+            playingNoteID = nil
+        }
+    }
+    public func finishNoteDeletion(noteID: UUID) {
+        blockedNoteIDs.remove(noteID)
+        recorder.unblockRecording(noteID: noteID)
+    }
     private var preparation: Task<Void, Error>?
 
     public init(repository: AudioRecordingRepository, recorder: AudioRecorderService? = nil,
