@@ -34,13 +34,8 @@ targets:
         INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone: UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight
         INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad: UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight
         INFOPLIST_KEY_ITSAppUsesNonExemptEncryption: NO
-<<<<<<< HEAD
         CURRENT_PROJECT_VERSION: 23
         MARKETING_VERSION: 0.2.0
-=======
-        CURRENT_PROJECT_VERSION: 21
-        MARKETING_VERSION: 0.1.20
->>>>>>> origin/codex/complete-product-backlog
         INFOPLIST_KEY_NSMicrophoneUsageDescription: Record audio attached to your notes.
         INFOPLIST_KEY_NSSpeechRecognitionUsageDescription: Transcribe your recordings on this device.
   LithmacOS:
@@ -63,7 +58,6 @@ targets:
         INFOPLIST_KEY_NSMicrophoneUsageDescription: Record audio attached to your notes.
         INFOPLIST_KEY_NSSpeechRecognitionUsageDescription: Transcribe your recordings on this device.
         CODE_SIGN_ENTITLEMENTS: Apps/LithApp/Sources/macOS/LithmacOS.entitlements
-<<<<<<< HEAD
         CODE_SIGN_IDENTITY: Apple Development
         CODE_SIGN_STYLE: Automatic
         DEVELOPMENT_TEAM: 3KG4D4R466
@@ -94,10 +88,6 @@ targets:
         PRODUCT_BUNDLE_IDENTIFIER: me.lith.macos.uitests
         GENERATE_INFOPLIST_FILE: YES
         TEST_TARGET_NAME: LithmacOS
-=======
-        CURRENT_PROJECT_VERSION: 21
-        MARKETING_VERSION: 0.1.20
->>>>>>> origin/codex/complete-product-backlog
 schemes:
   LithiOS:
     shared: true
