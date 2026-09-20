@@ -8,6 +8,7 @@ public final class CoreDataAudioRecordingRepository: @unchecked Sendable, AudioR
     public init(container: NSPersistentContainer, files: AudioFileStore = AudioFileStore()) {
         context = container.newBackgroundContext()
         context.mergePolicy = NSMergePolicy(merge: .mergeByPropertyObjectTrumpMergePolicyType)
+        context.automaticallyMergesChangesFromParent = true
         context.undoManager = nil
         self.files = files
     }
