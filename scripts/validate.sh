@@ -107,19 +107,19 @@ fi
 
 # Standalone Command Line Tools ships Testing outside SwiftPM's default search path.
 # Full Xcode selects its own framework paths and does not need this override.
-swift_flags=()
+swift_flags=(--jobs "${LITH_BUILD_JOBS:-2}")
 developer_dir="$(xcode-select -p)"
 if [[ "$developer_dir" == */CommandLineTools ]]; then
   testing_frameworks="$developer_dir/Library/Developer/Frameworks"
   testing_libraries="$developer_dir/Library/Developer/usr/lib"
   if [[ -d "$testing_frameworks/Testing.framework" ]]; then
-    swift_flags=(-Xswiftc "-F$testing_frameworks" -Xlinker "-F$testing_frameworks"
+    swift_flags+=(-Xswiftc "-F$testing_frameworks" -Xlinker "-F$testing_frameworks"
       -Xlinker -rpath -Xlinker "$testing_frameworks"
       -Xlinker -rpath -Xlinker "$testing_libraries")
   fi
 fi
-run_logged_step swift-build swift build --jobs "${LITH_BUILD_JOBS:-2}" "${swift_flags[@]}"
-run_logged_step swift-test swift test --jobs "${LITH_BUILD_JOBS:-2}" "${swift_flags[@]}"
+run_logged_step swift-build swift build "${swift_flags[@]}"
+run_logged_step swift-test swift test "${swift_flags[@]}"
 
 if [[ $package_only -eq 1 ]]; then
   require_tool rg
