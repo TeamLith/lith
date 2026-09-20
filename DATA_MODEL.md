@@ -80,11 +80,14 @@ All entities are Core Data backed. IDs are UUID unless noted.
 - Fields:
   - `id: UUID`
   - `noteId: UUID`
-  - `audioFileUrl: URL`
+  - `relativeFilePath: String` (derived from note/recording UUIDs; resolved locally to `fileURL`)
   - `durationSeconds: Double`
   - `transcript: String?`
   - `transcriptionStatus: String` (`notStarted|processing|complete|failed`)
   - `recordedAt: Date`
+  - `updatedAt: Date`
+  - `recordingState: String` (`recording|complete|interrupted|failed`)
+  - `errorMessage: String?`
 - Relationships:
   - to-one `note`
 - CloudKit sync: Metadata yes; binary file path points to iCloud/local file store

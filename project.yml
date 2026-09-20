@@ -36,6 +36,7 @@ targets:
         INFOPLIST_KEY_ITSAppUsesNonExemptEncryption: NO
         CURRENT_PROJECT_VERSION: 13
         MARKETING_VERSION: 0.1.12
+        INFOPLIST_KEY_NSMicrophoneUsageDescription: Record audio attached to your notes.
   LithmacOS:
     type: application
     platform: macOS
@@ -53,6 +54,7 @@ targets:
         INFOPLIST_KEY_CFBundleDisplayName: Lith
         INFOPLIST_KEY_LSApplicationCategoryType: public.app-category.productivity
         INFOPLIST_KEY_ITSAppUsesNonExemptEncryption: NO
+        INFOPLIST_KEY_NSMicrophoneUsageDescription: Record audio attached to your notes.
         CODE_SIGN_ENTITLEMENTS: Apps/LithApp/Sources/macOS/LithmacOS.entitlements
         CURRENT_PROJECT_VERSION: 13
         MARKETING_VERSION: 0.1.12
