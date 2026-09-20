@@ -52,3 +52,5 @@ Audio files currently remain local; metadata uses portable relative file identit
 ## Siri and Shortcuts
 
 The **Create Note** action is available in Shortcuts on iPhone, iPad and Mac. Supply a title and optional text, or say “Create a note in Lith” to Siri. Lith saves locally and confirms only after the note is stored. Empty notes are rejected. The action does not require iCloud. Siri availability and indexing depend on your device settings and installing a signed app build.
+
+Recording operations are shared across app windows. While a recording is being transcribed, another window cannot edit its transcript or delete it; wait for completion or cancel recognition in the originating window. A late recognition result cannot overwrite a newer transcript correction or restore a deleted recording. Permanently deleting a note stops its active recording and transcription before removing its audio.

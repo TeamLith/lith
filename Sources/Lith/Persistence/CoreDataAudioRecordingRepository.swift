@@ -7,19 +7,40 @@ public final class CoreDataAudioRecordingRepository: @unchecked Sendable, AudioR
     private let files: AudioFileStore
     public init(container: NSPersistentContainer, files: AudioFileStore = AudioFileStore()) {
         context = container.newBackgroundContext()
-        context.mergePolicy = NSMergePolicy(merge: .mergeByPropertyObjectTrumpMergePolicyType)
+        context.mergePolicy = NSMergePolicy(merge: .errorMergePolicyType)
+        context.automaticallyMergesChangesFromParent = true
         context.undoManager = nil
         self.files = files
     }
     public func upsert(_ recording: AudioRecording) async throws {
         try await context.perform {
-            let object = try self.fetch(id: recording.id) ?? NSManagedObject(entity: self.context.persistentStoreCoordinator!.managedObjectModel.entitiesByName["AudioRecording"]!, insertInto: self.context)
-            object.setValue(recording.id, forKey: "id")
-            object.setValue(recording.noteID, forKey: "noteID")
-            object.setValue(recording.recordedAt, forKey: "recordedAt")
-            object.setValue(try JSONEncoder().encode(recording), forKey: "payload")
-            do { try self.context.save() }
-            catch { self.context.rollback(); throw error }
+            try LithStoreWriteLock.withLock {
+                self.context.refreshAllObjects()
+                try self.requireParent(noteID: recording.noteID)
+                let object = try self.fetch(id: recording.id) ?? NSManagedObject(entity: self.context.persistentStoreCoordinator!.managedObjectModel.entitiesByName["AudioRecording"]!, insertInto: self.context)
+                object.setValue(recording.id, forKey: "id")
+                object.setValue(recording.noteID, forKey: "noteID")
+                object.setValue(recording.recordedAt, forKey: "recordedAt")
+                object.setValue(try JSONEncoder().encode(recording), forKey: "payload")
+                do { try self.context.save() }
+                catch { self.context.rollback(); throw error }
+            }
+        }
+    }
+    public func update(_ recording: AudioRecording, ifUnchangedSince: Date? = nil) async throws {
+        try await context.perform {
+            try LithStoreWriteLock.withLock {
+                // Refresh registered objects so another repository's deletion or correction is visible.
+                self.context.refreshAllObjects()
+                try self.requireParent(noteID: recording.noteID)
+                guard let object = try self.fetch(id: recording.id) else { throw AudioRecordingPersistenceError.missingRecording }
+                if let ifUnchangedSince, try self.decode(object).updatedAt != ifUnchangedSince {
+                    throw AudioRecordingPersistenceError.changedRecording
+                }
+                object.setValue(try JSONEncoder().encode(recording), forKey: "payload")
+                do { try self.context.save() }
+                catch { self.context.rollback(); throw error }
+            }
         }
     }
     public func recordings(noteID: UUID? = nil) async throws -> [AudioRecording] {
@@ -35,12 +56,21 @@ public final class CoreDataAudioRecordingRepository: @unchecked Sendable, AudioR
     }
     public func delete(recordingID: UUID) async throws {
         try await context.perform {
-            if let object = try self.fetch(id: recordingID) {
-                self.context.delete(object)
-                do { try self.context.save() }
-            catch { self.context.rollback(); throw error }
+            try LithStoreWriteLock.withLock {
+                self.context.refreshAllObjects()
+                if let object = try self.fetch(id: recordingID) {
+                    self.context.delete(object)
+                    do { try self.context.save() }
+                    catch { self.context.rollback(); throw error }
+                }
             }
         }
+    }
+    private func requireParent(noteID: UUID) throws {
+        let request = NSFetchRequest<NSManagedObject>(entityName: "Note")
+        request.predicate = NSPredicate(format: "id == %@", noteID as CVarArg)
+        request.fetchLimit = 1
+        guard try context.count(for: request) > 0 else { throw AudioRecordingPersistenceError.missingRecording }
     }
     private func fetch(id: UUID) throws -> NSManagedObject? {
         let request = NSFetchRequest<NSManagedObject>(entityName: "AudioRecording")
