@@ -2,6 +2,7 @@ import Foundation
 
 public protocol ActionItemRepository: Sendable {
     func upsert(_ item: ActionItem) async throws
+    func updateExisting(_ item: ActionItem, expected: ActionItem) async throws
     func items(noteID: UUID?) async throws -> [ActionItem]
     func item(id: UUID) async throws -> ActionItem?
     func delete(itemID: UUID) async throws

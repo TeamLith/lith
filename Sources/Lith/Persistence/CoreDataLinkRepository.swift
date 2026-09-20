@@ -10,14 +10,16 @@ public final class CoreDataLinkRepository: @unchecked Sendable, LinkRepository {
     public init() throws {
         self.container = try LithPersistentStore.makeContainer()
         self.context = container.newBackgroundContext()
-        self.context.mergePolicy = NSMergePolicy(merge: .mergeByPropertyObjectTrumpMergePolicyType)
+        self.context.mergePolicy = NSMergePolicy(merge: .errorMergePolicyType)
+        self.context.automaticallyMergesChangesFromParent = true
         self.context.undoManager = nil
     }
 
     public init(container: NSPersistentContainer) {
         self.container = container
         self.context = container.newBackgroundContext()
-        self.context.mergePolicy = NSMergePolicy(merge: .mergeByPropertyObjectTrumpMergePolicyType)
+        self.context.mergePolicy = NSMergePolicy(merge: .errorMergePolicyType)
+        self.context.automaticallyMergesChangesFromParent = true
         self.context.undoManager = nil
     }
 
@@ -28,7 +30,10 @@ public final class CoreDataLinkRepository: @unchecked Sendable, LinkRepository {
                 uniqueKeysWithValues: existingLinks.map { (ManagedLinkIdentity(link: $0), $0) }
             )
 
-            let deduplicatedLinks = links.reduce(into: [ManagedLinkIdentity: Link]()) { result, link in
+            let notes = try self.context.fetch(ManagedNote.fetchRequest())
+            let validIDs = Set(notes.map(\.id))
+            let validLinks = links.filter { $0.fromNoteID == sourceNoteID && validIDs.contains($0.fromNoteID) && validIDs.contains($0.toNoteID) }
+            let deduplicatedLinks = validLinks.reduce(into: [ManagedLinkIdentity: Link]()) { result, link in
                 let identity = ManagedLinkIdentity(link: link)
                 if result[identity] == nil {
                     result[identity] = link
@@ -101,8 +106,13 @@ public final class CoreDataLinkRepository: @unchecked Sendable, LinkRepository {
         try await withCheckedThrowingContinuation { continuation in
             context.perform {
                 do {
-                    continuation.resume(returning: try work())
+                    let value = try LithStoreWriteLock.withLock {
+                        self.context.reset()
+                        return try work()
+                    }
+                    continuation.resume(returning: value)
                 } catch {
+                    self.context.rollback()
                     continuation.resume(throwing: error)
                 }
             }

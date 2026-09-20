@@ -59,7 +59,9 @@ struct ActionItemsViewModelTests {
         #expect(!(await vm.update(id: item.id, task: "  ", assignee: nil, dueDate: nil)))
         #expect(vm.errorMessage != nil)
         #expect(vm.items == [item])
-        let other = ActionItem(sourceNoteID: UUID(), task: "Other")
+        let otherNote = Note(title: "Other note", bodyMarkdown: "")
+        try await dependencies.noteRepository.upsert(otherNote)
+        let other = ActionItem(sourceNoteID: otherNote.id, task: "Other")
         try await dependencies.actionItemRepository.upsert(other)
         await vm.delete(id: other.id)
         #expect(try await dependencies.actionItemRepository.item(id: other.id) == other)
@@ -100,6 +102,7 @@ struct ActionItemsViewModelTests {
 
 private enum ActionChecklistError: Error { case failed }
 private actor FailingActionRepository: ActionItemRepository {
+    func updateExisting(_ item: ActionItem, expected: ActionItem) async throws { try await upsert(item) }
     private var stored: ActionItem
     private var fails = true
     init(item: ActionItem) { stored = item }

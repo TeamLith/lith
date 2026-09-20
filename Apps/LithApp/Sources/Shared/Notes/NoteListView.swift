@@ -22,6 +22,11 @@ struct NoteListView: View {
     @State private var importing = false
     @State private var importError: String?
     @State private var pendingDeletion: Note?
+    @State private var creatingNote = false
+#if os(iOS)
+    @State private var openedNote: Note?
+    @State private var openInEditor = false
+#endif
 
 #if os(macOS)
     @Binding var selectedNoteID: UUID?
@@ -68,6 +73,15 @@ struct NoteListView: View {
             noteListContent
         }
             .navigationTitle(viewModel.collection.rawValue)
+#if os(iOS)
+            .navigationDestination(item: $openedNote) { note in
+                NoteDetailView(repository: repository, wikiLinkService: wikiLinkService, noteID: note.id,
+                               initiallyEditing: openInEditor,
+                               actionItemRepository: actionItemRepository, actionReviewService: actionReviewService,
+                               transcriptProvider: transcriptProvider, audioRepository: audioRepository, audioServices: audioServices,
+                               onNoteChanged: { await viewModel.loadNotes() })
+            }
+#endif
             .task(id: viewModel.collection) { await viewModel.loadNotes() }
             .fileImporter(isPresented: $importing, allowedContentTypes: MarkdownFile.readableContentTypes) { result in
                 Task {
@@ -79,6 +93,8 @@ struct NoteListView: View {
                         let imported = await viewModel.importMarkdown(data: data, filename: url.lastPathComponent, wikiLinkService: wikiLinkService)
 #if os(macOS)
                         if let imported { selectedNoteID = imported.id }
+#elseif os(iOS)
+                        if let imported { openInEditor = false; openedNote = imported }
 #endif
                     } catch { importError = error.localizedDescription }
                 }
@@ -98,17 +114,22 @@ struct NoteListView: View {
                 }
                 ToolbarItem(placement: .primaryAction) {
                     Button {
+                        creatingNote = true
                         Task {
+                            defer { creatingNote = false }
                             guard let note = await viewModel.createNote() else {
                                 return
                             }
 #if os(macOS)
                             selectedNoteID = note.id
+#elseif os(iOS)
+                            openInEditor = true
+                            openedNote = note
 #endif
                         }
                     } label: {
                         Label("New Note", systemImage: "plus")
-                    }
+                    }.disabled(creatingNote || viewModel.isLoading)
                 }
             }
     }

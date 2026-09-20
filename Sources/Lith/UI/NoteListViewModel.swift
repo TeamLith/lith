@@ -27,9 +27,11 @@ public final class NoteListViewModel {
     public private(set) var loadError: Error?
 
     private let repository: NoteRepository
+    private let wikiLinkService: WikiLinkServiceProtocol?
 
-    public init(repository: NoteRepository) {
+    public init(repository: NoteRepository, wikiLinkService: WikiLinkServiceProtocol? = nil) {
         self.repository = repository
+        self.wikiLinkService = wikiLinkService
     }
 
     /// Reload all notes from the repository and split into pinned / recent buckets.
@@ -69,6 +71,7 @@ public final class NoteListViewModel {
 
         do {
             try await repository.upsert(note)
+            try await wikiLinkService?.refreshAllLinks()
             collection = .active
             await loadNotes()
             return note
@@ -123,6 +126,7 @@ public final class NoteListViewModel {
             guard let note = try await repository.note(id: noteID) else { return }
             guard note.isTrashed else { throw NoteManagementError.notTrashed }
             try await repository.delete(noteID: noteID)
+            try await wikiLinkService?.refreshAllLinks()
             await loadNotes()
         } catch {
             loadError = error
@@ -135,7 +139,8 @@ public final class NoteListViewModel {
                 return
             }
 
-            try await repository.upsert(mutate(note))
+            try await repository.updateExisting(mutate(note), expected: note)
+            try await wikiLinkService?.refreshAllLinks()
             await loadNotes()
         } catch {
             loadError = error

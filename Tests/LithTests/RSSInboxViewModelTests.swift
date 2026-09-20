@@ -109,6 +109,7 @@ private struct EmptyRSSFetcher: RSSFetchServiceProtocol {
 private enum InboxTestError: Error { case storageFailure }
 
 private actor FailingNoteWriter: NoteRepository {
+    func updateExisting(_ note: Note, expected: Note) async throws { try await upsert(note) }
     func upsert(_ note: Note) async throws { throw InboxTestError.storageFailure }
     func delete(noteID: UUID) async throws {}
     func allNotes() async throws -> [Note] { [] }

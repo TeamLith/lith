@@ -9,6 +9,7 @@ struct NoteDetailView: View {
     let onNoteChanged: @MainActor () async -> Void
 
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.scenePhase) private var scenePhase
 
     @State private var isEditing = false
     @State private var exporting = false
@@ -21,6 +22,7 @@ struct NoteDetailView: View {
         repository: NoteRepository,
         wikiLinkService: WikiLinkServiceProtocol,
         noteID: UUID,
+        initiallyEditing: Bool = false,
         actionItemRepository: ActionItemRepository? = nil,
         actionReviewService: ActionItemReviewService? = nil,
         transcriptProvider: (@Sendable (UUID) async throws -> String)? = nil,
@@ -28,6 +30,7 @@ struct NoteDetailView: View {
         audioServices: AudioServices? = nil,
         onNoteChanged: @escaping @MainActor () async -> Void = {}
     ) {
+        self._isEditing = State(initialValue: initiallyEditing)
         self.audioServices = audioServices
         self.audioRepository = audioRepository
         self.onNoteChanged = onNoteChanged
@@ -69,7 +72,14 @@ struct NoteDetailView: View {
 #endif
         .task { await viewModel.loadNote() }
         .onDisappear {
-            Task { await onNoteChanged() }
+            let model = viewModel
+            Task { _ = await model.saveNow(); await onNoteChanged() }
+        }
+        .onChange(of: scenePhase) { _, phase in
+            if phase != .active {
+                let model = viewModel
+                Task { _ = await model.saveNow() }
+            }
         }
         .onChange(of: viewModel.title) { _, _ in
             viewModel.scheduleAutosave()
@@ -235,7 +245,7 @@ struct NoteDetailView: View {
             Button(isEditing ? "Done" : "Edit") {
                 Task {
                     if isEditing {
-                        _ = await viewModel.saveNow()
+                        guard await viewModel.saveNow() != nil else { return }
                         await onNoteChanged()
                     }
                     isEditing.toggle()

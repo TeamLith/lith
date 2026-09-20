@@ -9,7 +9,7 @@ Lith starts with fast text notes that stay readable, portable, and easy to conne
 
 ## Notes
 
-Create a note with **New Note**, then use **Edit** to write Markdown. The reading view renders headings, paragraphs, bulleted and numbered lists, quotes, fenced code, and inline formatting. Code blocks keep their literal text. Other Markdown remains readable as text; this is a basic preview rather than a full publishing renderer.
+Create a note with **New Note**. On iPhone and iPad, it opens directly in the editor; existing notes open in the reading view, where **Edit** lets you write Markdown. The reading view renders headings, paragraphs, bulleted and numbered lists, quotes, fenced code, and inline formatting. Code blocks keep their literal text. Other Markdown remains readable as text; this is a basic preview rather than a full publishing renderer.
 
 ## Organize and recover notes
 
@@ -22,7 +22,7 @@ Use the **Notes**, **Archive**, and **Trash** picker above the list. Pinned note
 
 ## Import and export Markdown
 
-Choose **Import Markdown** in the note-list toolbar, then select a UTF-8 `.md` or text file in the system file picker. Every import creates a new note, even if the title matches an existing note. A top-level Markdown heading supplies the title when available; otherwise the filename does. Imported wikilinks are resolved against saved notes.
+Choose **Import Markdown** in the note-list toolbar, then select a UTF-8 `.md` or text file in the system file picker. Every import creates and opens a new note, even if the title matches an existing note. A top-level Markdown heading supplies the title when available; otherwise the filename does. Imported wikilinks are resolved against saved notes.
 
 In a note, choose **Actions → Export Markdown** and select a destination in the system save dialog. Export includes the current title and exact Markdown body. Lith stores the title as standard front matter, so reimporting its export restores the title and body. Tags, app flags, source metadata, audio files, and structured action records are not part of the Markdown file.
 
