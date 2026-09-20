@@ -43,7 +43,8 @@ struct SearchView: View {
                             NoteDetailView(
                                 repository: dependencies.noteRepository,
                                 wikiLinkService: dependencies.wikiLinkService,
-                                noteID: note.id
+                                noteID: note.id,
+                                audioServices: dependencies.audioServices
                             ) { await model.search() }
                         } label: {
                             VStack(alignment: .leading, spacing: 6) {

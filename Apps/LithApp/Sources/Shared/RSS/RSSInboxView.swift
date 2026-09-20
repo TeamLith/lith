@@ -182,7 +182,7 @@ private struct RSSArticleView: View {
                 NavigationStack {
                     NoteDetailView(repository: dependencies.noteRepository,
                                    wikiLinkService: dependencies.wikiLinkService,
-                                   noteID: savedNoteID, onNoteChanged: onNoteChanged)
+                                   noteID: savedNoteID, audioServices: dependencies.audioServices, onNoteChanged: onNoteChanged)
                     .toolbar {
                         ToolbarItem(placement: .cancellationAction) {
                             Button("Done") { self.savedNoteID = nil }

@@ -12,8 +12,9 @@ public final class AppDependencyContainer: @unchecked Sendable {
     public let persistentContainer: NSPersistentContainer
     public let noteRepository: NoteRepository
     public let linkRepository: LinkRepository
-    public let rssRepository: RSSRepository
+    @MainActor public lazy var audioServices = AudioServices(repository: audioRecordingRepository)
     public let audioRecordingRepository: AudioRecordingRepository
+    public let rssRepository: RSSRepository
     public let searchService: SearchServiceProtocol
     public let rssConversionService: RSSConversionServiceProtocol
     public let rssFetchService: RSSFetchServiceProtocol
