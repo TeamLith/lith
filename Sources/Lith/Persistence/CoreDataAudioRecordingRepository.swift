@@ -18,7 +18,8 @@ public final class CoreDataAudioRecordingRepository: @unchecked Sendable, AudioR
             object.setValue(recording.noteID, forKey: "noteID")
             object.setValue(recording.recordedAt, forKey: "recordedAt")
             object.setValue(try JSONEncoder().encode(recording), forKey: "payload")
-            try self.context.save()
+            do { try self.context.save() }
+            catch { self.context.rollback(); throw error }
         }
     }
     public func recordings(noteID: UUID? = nil) async throws -> [AudioRecording] {
@@ -36,7 +37,8 @@ public final class CoreDataAudioRecordingRepository: @unchecked Sendable, AudioR
         try await context.perform {
             if let object = try self.fetch(id: recordingID) {
                 self.context.delete(object)
-                try self.context.save()
+                do { try self.context.save() }
+            catch { self.context.rollback(); throw error }
             }
         }
     }
